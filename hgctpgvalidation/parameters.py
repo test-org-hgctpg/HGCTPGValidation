@@ -21,7 +21,7 @@ class ConfigFileParameters():
     numberOfEvents = attr.ib(validator=instance_of(int), default=nbrOfEvents)
     conditions = attr.ib(validator=instance_of(str), default='auto:phase2_realistic')
     beamspot = attr.ib(validator=instance_of(str), default='HLLHC14TeV')
-    step = attr.ib(validator=instance_of(str), default='USER:Validation/HGCalTriggerPrimitives/hgcalRunEmulatorValidationTPG_cff.hgcalTPGRunEmulatorValidation')
+    step = attr.ib(validator=instance_of(str), default='USER:Validation/HGCalValidation/hgcalRunEmulatorValidationTPG_cff.hgcalTPGRunEmulatorValidation')
     geometryRef  = attr.ib(validator=instance_of(str), default='Extended2023D17')
     geometryTest  = attr.ib(validator=instance_of(str), default='Extended2023D17')
     eraRefName = attr.ib(validator=instance_of(str), default='Phase2')
