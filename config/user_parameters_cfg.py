@@ -29,7 +29,7 @@ generate_configFileParameters = ConfigFileParameters(
     customiseRefFile = 'L1Trigger/L1THGCal/customClustering.custom_2dclustering_constrainedtopological',
     customiseTestFile = 'L1Trigger/L1THGCal/customClustering.custom_2dclustering_constrainedtopological',
     dropedBranches = '"drop l1tEMTFHit2016Extras_simEmtfDigis_CSC_HLT","drop l1tEMTFHit2016Extras_simEmtfDigis_RPC_HLT","drop l1tEMTFHit2016s_simEmtfDigis__HLT","drop l1tEMTFTrack2016Extras_simEmtfDigis__HLT","drop l1tEMTFTrack2016s_simEmtfDigis__HLT"',
-    webDirPath = './GIFS_10_4_0_pre4'
+    webDirPath = './GIFS_10_4_0_pre3'
     )
 
 
