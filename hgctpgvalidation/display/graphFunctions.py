@@ -192,7 +192,7 @@ def createWebPageLite(input_rel_file, input_ref_file, tp_1, tp_2, cnv, webdir): 
     h2 = getHisto(f_ref, tp_2)
     h2.ls()
     
-    CMP_CONFIG = '../HGCTPGValidation/data/HGCALTriggerPrimitivesHistosLite.txt'
+    CMP_CONFIG = '../HGCTPGValidation/data/HGCALTriggerPrimitivesHistos.txt'
     CMP_TITLE = ' HGCAL Trigger Primitives Validation '
     CMP_RED_FILE = input_rel_file
     CMP_BLUE_FILE = input_ref_file
