@@ -66,4 +66,4 @@ python ../HGCTPGValidation/scripts/validation_tpg.py --cfg HGCTPGValidation.conf
 All the results of the validation will be saved in the my_test_directory
 * `two CMSSW working directories`
 * `directory containing all necessery for displaying the results: *.gif files, index2.html page`
-* 'log file'
+* `log file`
