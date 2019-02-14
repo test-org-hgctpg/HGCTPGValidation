@@ -77,9 +77,11 @@ def initRootStyle():
     ROOT.gROOT.ForceStyle()
 
 def createPicture2(histo1, histo2, scaled, err, filename, cnv, axisFormat):
-    new_entries = histo1.GetEntries()
-    ref_entries = histo2.GetEntries()
-       
+    nbins1 = histo1.GetNbinsX()
+    nbins2 = histo2.GetNbinsX()
+    new_entries = histo1.Integral(0,nbins1+1)
+    ref_entries = histo2.Integral(0,nbins2+1)
+
     if ((scaled =="1") and (new_entries != 0) and (ref_entries != 0)):
         rescale_factor = new_entries / ref_entries
         histo2.Scale(rescale_factor)
@@ -109,7 +111,7 @@ def createPicture2(histo1, histo2, scaled, err, filename, cnv, axisFormat):
         pad1.SetLogy(1)
     gPad.Update()
     statBox1 = histo1.GetListOfFunctions().FindObject("stats")
-    statBox1.SetTextColor(kRed)    
+    statBox1.SetTextColor(kRed)
     gPad.Update()
     histo2.Draw("sames hist")
     histo2.SetStats(1)
@@ -132,6 +134,7 @@ def createPicture2(histo1, histo2, scaled, err, filename, cnv, axisFormat):
     histo2.Draw("sames hist")
 
     cnv.cd()
+    # Define the ratio plot between histo1 and histo2
     pad2 = ROOT.TPad("pad2", "pad2", 0, 0.05, 1, 0.25)
     pad2.SetTopMargin(0.025)
     pad2.SetBottomMargin(0.2)
@@ -139,10 +142,12 @@ def createPicture2(histo1, histo2, scaled, err, filename, cnv, axisFormat):
     pad2.Draw()
     pad2.cd()
     
+    # Clone histo1
     histo3 = histo1.Clone("histo3")
     histo3.SetLineColor(kBlack)
     histo3.SetMaximum(2.)
     histo3.SetStats(0)
+    # Compare to histo2
     histo3.Divide(histo2)
     histo3.SetMarkerStyle(21)
     histo3.Draw("ep")
@@ -202,8 +207,6 @@ def createWebPageLite(input_rel_file, input_ref_file, tp_1, tp_2, cnv, webdir): 
     shutil.copy2('../HGCTPGValidation/data/img/point.gif', webdir+ '/img')
     image_up = './img/up.gif'
     image_point = './img/point.gif'
-    #image_up = "../HGCTPGValidation/data/img/up.gif"
-    #image_point = "../HGCTPGValidation/data/img/point.gif"
     f = open(CMP_CONFIG, 'r')
 
     wp = open(CMP_INDEX_FILE_DIR, 'w') # web page
@@ -343,7 +346,7 @@ def createWebPageLite(input_rel_file, input_ref_file, tp_1, tp_2, cnv, webdir): 
                     gif_name_log = webdir + '/' + histo_name + "_log.gif"
                     gif_name_log_index = histo_name + "_log.gif"
                     createPicture2(histo_1, histo_2, "1", "1", gif_name_log, cnv, "log")
-                                        
+
                 wp.write( "\n<td><a href=\"#TOP\"><img width=\"18\" height=\"18\" border=\"0\" align=\"middle\" src=" + image_up + " alt=\"Top\"/></a></td>\n" )
                 wp.write( "<td>" )
                 wp.write( "<a id=\"" + short_histo_name + "\" name=\"" + short_histo_name + "\"></a>" )
