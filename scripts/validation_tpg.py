@@ -51,12 +51,12 @@ def main(parameters):
     # Perform simulation for the reference release
     print('Step 1')
     print (logfile, 'Step 1')
-    #configParametersRef = parameters.installWorkingRefDir()
-    #launch_commands(configParametersRef, logfile)
+    configParametersRef = parameters.installWorkingRefDir()
+    launch_commands(configParametersRef, logfile)
     # Perform simulation for the test releases
     print('Step 2')
-    #configParametersTest = parameters.installWorkingTestDir()
-    #launch_commands(configParametersTest, logfile)
+    configParametersTest = parameters.installWorkingTestDir()
+    launch_commands(configParametersTest, logfile)
     # Call compare histos and create web pages tool
     print('Step 3')
     launchPlotHistos(parameters, logfile)
