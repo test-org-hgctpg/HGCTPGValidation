@@ -31,16 +31,16 @@ def main(refdir, testdir, webdir):
     createDir(webdir + '/img')
     
    # Files names
-    input_rel_file = refdir + "/DQM_V0001_R000000001__validation__HGCAL__TPG.root"
-    input_ref_file = testdir + "/DQM_V0001_R000000001__validation__HGCAL__TPG.root"
+    filename = "/DQM_V0001_R000000001__validation__HGCAL__TPG.root"
+    input_rel_file = refdir + filename
+    input_ref_file = testdir + filename
+    path_1 = 'DQMData/Run 1/HGCALTPG/Run summary'
+    path_2 = path_1
     print('input_rel_file=', input_rel_file)
-    
-    # Branches name 
-    tp_1 = ''
-    tp_2 = ''
+    print('input_ref_file=', input_ref_file)
     
     # web page creation. Title and others items are included into the createWebPage() function.
-    createWebPageLite(input_rel_file, input_ref_file, tp_1, tp_2, cnv, webdir)
+    createWebPageLite(input_rel_file, input_ref_file, path_1, path_2, cnv, webdir)
 
     print("Fin.")
 
