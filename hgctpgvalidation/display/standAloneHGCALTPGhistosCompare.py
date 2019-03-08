@@ -12,8 +12,8 @@ import ROOT
 ROOT.gROOT.SetBatch(True)
 argv.remove( '-b-' )
 
-from ROOT import * 
-from graphFunctions import *
+from ROOT import TCanvas
+from graphFunctions import createWebPageLite, initRootStyle
 
 sys.path.append('../')
 for p in sys.path:
@@ -47,7 +47,6 @@ def main(refdir, testdir, webdir):
 if __name__=='__main__':
     import optparse
     import importlib
-    itertools = importlib.import_module('itertools')
     usage = 'usage: %prog [options]'
     parser = optparse.OptionParser(usage)
     parser.add_option('--refdir', dest='refdir', help=' ', default='')

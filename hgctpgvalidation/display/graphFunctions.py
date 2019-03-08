@@ -14,7 +14,7 @@ ROOT.gROOT.SetBatch(True)
 ROOT.gErrorIgnoreLevel = ROOT.kWarning # remove info like : Info in <TCanvas::Print>: gif file gifs/h_ele_vertexPhi.gif has been created
 argv.remove( '-b-' )
 
-from ROOT import * 
+from ROOT import TCanvas, gStyle, gPad
 from math import log10
 
 import shutil
@@ -22,6 +22,7 @@ import shutil
 def getHisto(file, tp):
     path = 'DQMData/Run 1/HGCALTPG/Run summary'
     t_path = file.Get(path)
+    print('t_path= ',t_path)
     return t_path
 
 def RenderHisto(histo, canvas):
@@ -40,13 +41,13 @@ def RenderHisto(histo, canvas):
 def initRootStyle():
     eleStyle = ROOT.TStyle("eleStyle","Style for electron validation")
     eleStyle.SetCanvasBorderMode(0)
-    eleStyle.SetCanvasColor(kWhite)
+    eleStyle.SetCanvasColor(ROOT.kWhite)
     eleStyle.SetCanvasDefH(600)
     eleStyle.SetCanvasDefW(800)
     eleStyle.SetCanvasDefX(0)
     eleStyle.SetCanvasDefY(0)
     eleStyle.SetPadBorderMode(0)
-    eleStyle.SetPadColor(kWhite)
+    eleStyle.SetPadColor(ROOT.kWhite)
     eleStyle.SetPadGridX(False)
     eleStyle.SetPadGridY(False)
     eleStyle.SetGridColor(0)
@@ -111,7 +112,7 @@ def createPicture2(histo1, histo2, scaled, err, filename, cnv, axisFormat):
         pad1.SetLogy(1)
     gPad.Update()
     statBox1 = histo1.GetListOfFunctions().FindObject("stats")
-    statBox1.SetTextColor(kRed)
+    statBox1.SetTextColor(ROOT.kRed)
     gPad.Update()
     histo2.Draw("sames hist")
     histo2.SetStats(1)
@@ -120,7 +121,7 @@ def createPicture2(histo1, histo2, scaled, err, filename, cnv, axisFormat):
         pad1.SetLogy(1)
     cnv.Update()
     statBox2 = histo2.GetListOfFunctions().FindObject("stats")
-    statBox2.SetTextColor(kBlue)
+    statBox2.SetTextColor(ROOT.kBlue)
     y1 = statBox1.GetY1NDC()
     y2 = statBox1.GetY2NDC()
     statBox2.SetY1NDC(2*y1-y2)
@@ -144,7 +145,7 @@ def createPicture2(histo1, histo2, scaled, err, filename, cnv, axisFormat):
     
     # Clone histo1
     histo3 = histo1.Clone("histo3")
-    histo3.SetLineColor(kBlack)
+    histo3.SetLineColor(ROOT.kBlack)
     histo3.SetMaximum(2.)
     histo3.SetStats(0)
     # Compare to histo2
@@ -152,15 +153,15 @@ def createPicture2(histo1, histo2, scaled, err, filename, cnv, axisFormat):
     histo3.SetMarkerStyle(21)
     histo3.Draw("ep")
     
-    histo1.SetMarkerColor(kRed)
+    histo1.SetMarkerColor(ROOT.kRed)
     histo1.SetLineWidth(3) 
-    histo1.SetLineColor(kRed)
+    histo1.SetLineColor(ROOT.kRed)
     histo1.GetYaxis().SetTitleSize(25)
     histo1.GetYaxis().SetTitleFont(43)
     histo1.GetYaxis().SetTitleOffset(2.00)
     
-    histo2.SetLineColor(kBlue)
-    histo2.SetMarkerColor(kBlue)
+    histo2.SetLineColor(ROOT.kBlue)
+    histo2.SetMarkerColor(ROOT.kBlue)
     histo2.SetLineWidth(3) 
     
     histo3.SetTitle("")
