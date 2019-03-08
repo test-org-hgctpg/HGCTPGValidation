@@ -33,7 +33,6 @@ It is currently possible to choose the following parameters:
 * `remoteTest: remote of your new code to validate`
 * `numberOfEvents: number of events to be used for the simulation, default number is set to 50`
 * `conditions`
-* `step`: DO NOT CHANGE for running HGCAL TPG validation
 * `beamspot`
 * `geometryRef`
 * `geometryTest`
