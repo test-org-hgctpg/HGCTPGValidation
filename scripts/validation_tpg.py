@@ -55,17 +55,18 @@ def main(parameters):
     launch_commands(configParametersRef, logfile)
     # Perform simulation for the test releases
     print('Step 2')
+    print (logfile, 'Step 2')
     configParametersTest = parameters.installWorkingTestDir()
     launch_commands(configParametersTest, logfile)
     # Call compare histos and create web pages tool
     print('Step 3')
+    print (logfile, 'Step 3')
     launchPlotHistos(parameters, logfile)
     print('Simulation finished!')
 
 if __name__=='__main__':
     import optparse
     import importlib
-    itertools = importlib.import_module('itertools')
     usage = 'usage: %prog [options]'
     parser = optparse.OptionParser(usage)
     parser.add_option('--cfg', dest='parameter_file', help='Python file containing the definition of parameters ', default='pars.py')
