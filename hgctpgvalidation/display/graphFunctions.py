@@ -19,8 +19,7 @@ from math import log10
 
 import shutil
 
-def getHisto(file, tp):
-    path = 'DQMData/Run 1/HGCALTPG/Run summary'
+def getHisto(file, path):
     t_path = file.Get(path)
     print('t_path= ',t_path)
     return t_path
@@ -187,15 +186,15 @@ def createPicture2(histo1, histo2, scaled, err, filename, cnv, axisFormat):
     
     return
         
-def createWebPageLite(input_rel_file, input_ref_file, tp_1, tp_2, cnv, webdir): # simplified version of createWebPage()
+def createWebPageLite(input_rel_file, input_ref_file, path_1, path_2, cnv, webdir): # simplified version of createWebPage()
     print(input_rel_file)
     print(input_ref_file)
     f_rel = ROOT.TFile(input_rel_file)
-    h1 = getHisto(f_rel, tp_1)
+    h1 = getHisto(f_rel, path_1)
     h1.ls()
     
     f_ref = ROOT.TFile(input_ref_file)
-    h2 = getHisto(f_ref, tp_2)
+    h2 = getHisto(f_ref, path_2)
     h2.ls()
     
     CMP_CONFIG = '../HGCTPGValidation/data/HGCALTriggerPrimitivesHistos.txt'
