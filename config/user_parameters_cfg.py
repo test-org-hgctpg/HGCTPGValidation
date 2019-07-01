@@ -5,6 +5,7 @@ from HGCTPGValidation.hgctpgvalidation.parameters import ConfigFileParameters
 # Install working area for reference release and/or branch and
 # Generate configuration file that will simulate tpgs
 generate_configFileParameters = ConfigFileParameters(
+    scramArch = 'slc6_amd64_gcc700',
     releaseRefName = 'CMSSW_10_4_0_pre3',
     releaseTestName = 'CMSSW_10_4_0_pre3',
     workingRefDir = 'CMSSW_10_4_0_pre3_HGCalTPGValidation_ref',

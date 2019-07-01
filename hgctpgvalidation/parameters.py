@@ -8,6 +8,7 @@ nbrOfEvents = 50
 
 @attr.s  
 class ConfigFileParameters():
+    scramArch = attr.ib(validator=instance_of(str), default='slc6_amd64_gcc700')
     releaseRefName = attr.ib(validator=instance_of(str), default='CMSSW_10_4_0_pre4')
     releaseTestName = attr.ib(validator=instance_of(str), default='CMSSW_10_4_0_pre4')
     workingRefDir = attr.ib(validator=instance_of(str), default=str(releaseRefName) +'_HGCalTPGValidation_ref')
@@ -35,7 +36,9 @@ class ConfigFileParameters():
     webDirPath = attr.ib(validator=instance_of(str), default='./HGCALTPG_Validation/GIFS')
     
     def installWorkingRefDir(self):
-        command = 'scramv1 p -n ' + self.workingRefDir + ' CMSSW ' + self.releaseRefName + ';' + \
+        command = 'export SCRAM_ARCH=' + self.scramArch + ';' + \
+	'echo $SCRAM_ARCH'  + ';' + \
+        'scramv1 p -n ' + self.workingRefDir + ' CMSSW ' + self.releaseRefName + ';' + \
         'cd ' + self.workingRefDir + '/src;' + \
         'echo $PWD; ' + \
         'eval `scramv1 runtime -sh`;' + \
@@ -47,7 +50,7 @@ class ConfigFileParameters():
         '--geometry ' + self.geometryRef +  ' ' + '--era ' + self.eraRefName + ' ' + '--procModifiers ' + self.procModifiers + ' ' + \
         '--inputCommands "keep *",' + self.dropedBranches + ' ' + \
         '--filein ' + self.inputRefFileName + ' ' + \
-        '--no_output ' + '--customise=' + self.customiseRefFile + ' ' + \
+        '--no_output ' + '--no_exec ' + '--customise=' + self.customiseRefFile + ' ' + \
         '--customise_commands "process.schedule = cms.Schedule(process.user_step)" '
         return command
     
