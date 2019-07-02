@@ -1,7 +1,6 @@
 #! /usr/bin/env python3
 
 # To run use:
-# python3 validation_tpg.py --cfg python.user_parameters_cfg.py
 # Create a test validation directory at the same level as HGCTPGValidation package, from this new directory run the validation code
 # python ../HGCTPGValidation/scripts/validation_tpg.py --cfg HGCTPGValidation.config.user_parameters_cfg.py
     
@@ -28,9 +27,10 @@ from HGCTPGValidation.config.user_parameters_cfg import generate_configFileParam
 def launch_commands(command, logfile):
     print('Subprocess starts')
     sourceCmd = ['bash', '-c', command]
-    sourceProc = subprocess.Popen(sourceCmd, stdout=logfile, stderr=logfile)
+    sourceProc = subprocess.Popen(sourceCmd, stdout=logfile, stderr=subprocess.PIPE)
     (out, err) = sourceProc.communicate() # wait for subprocess to finish
-    print('Subprocess finished')
+    tee = subprocess.Popen(['tee', 'logfile'], stdin=sourceProc.stderr)
+    sourceProc.stderr.close()
     print (logfile, 'Subprocess finished')
   
 # setup Python 2.7 and ROOT 6, call tool to compare histos and create web pages
