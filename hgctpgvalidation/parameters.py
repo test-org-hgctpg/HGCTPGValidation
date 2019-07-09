@@ -8,6 +8,8 @@ nbrOfEvents = 50
 
 @attr.s  
 class ConfigFileParameters():
+    validationRef = attr.ib(validator=instance_of(str), default='yes')
+    validationTest = attr.ib(validator=instance_of(str), default='yes')
     scramArch = attr.ib(validator=instance_of(str), default='slc6_amd64_gcc700')
     releaseRefName = attr.ib(validator=instance_of(str), default='CMSSW_10_4_0_pre4')
     releaseTestName = attr.ib(validator=instance_of(str), default='CMSSW_10_4_0_pre4')
@@ -50,7 +52,7 @@ class ConfigFileParameters():
         '--geometry ' + self.geometryRef +  ' ' + '--era ' + self.eraRefName + ' ' + '--procModifiers ' + self.procModifiers + ' ' + \
         '--inputCommands "keep *",' + self.dropedBranches + ' ' + \
         '--filein ' + self.inputRefFileName + ' ' + \
-        '--no_output ' + '--no_exec ' + '--customise=' + self.customiseRefFile + ' ' + \
+        '--no_output ' + '--customise=' + self.customiseRefFile + ' ' + \
         '--customise_commands "process.schedule = cms.Schedule(process.user_step)" '
         return command
     

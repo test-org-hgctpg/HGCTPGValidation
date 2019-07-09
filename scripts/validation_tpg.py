@@ -71,6 +71,25 @@ def main(parameters):
     logfile.write('Start installing working test directory.')
     configParametersTest = parameters.installWorkingTestDir()
     launch_commands(configParametersTest, logfile)
+    if parameters.validationRef == 'yes':
+       # Perform simulation for the reference release
+       print('Start installing working reference directory ', parameters.workingRefDir)
+       logfile.write('Start installing working reference directory.')
+       configParametersRef = parameters.installWorkingRefDir()
+       launch_commands(configParametersRef, logfile)
+    else:
+       print('The validation of the reference release will not be performed.')
+       logfile.write('The validation of the reference release will not be performed.!')
+       
+    if parameters.validationTest == 'yes':
+       # Perform simulation for the test releases
+       print('Start installing working test directory ', parameters.workingTestDir)
+       logfile.write('Start installing working test directory.')
+       configParametersTest = parameters.installWorkingTestDir()
+       launch_commands(configParametersTest, logfile)
+    else:
+       print('The validation of the test release will not be performed.')
+       logfile.write('The validation of the test release will not be performed.!')
     
     # Call compare histos and create web pages tool
     print('Compare histos and create web pages tool')
