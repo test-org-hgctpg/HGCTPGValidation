@@ -23,14 +23,8 @@ for p in sys.path:
 from HGCTPGValidation.hgctpgvalidation.parameters import ConfigFileParameters
 from HGCTPGValidation.config.user_parameters_cfg import generate_configFileParameters
 
-
-def launch_commands(command, logfile):
-    print('Subprocess starts')
-    logfile.write('Subprocess starts')
-    sourceCmd = ['bash', '-c', command]
-    sourceProc = subprocess.Popen(sourceCmd, stdout=logfile, stderr=logfile)
-    (out, err) = sourceProc.communicate() # wait for subprocess to finish
-    if sourceProc.wait() != 0:
+def checkSubprocessStatus(subProc, logfile):
+    if subProc.wait() != 0:
        print('------------------------------------------------------------------------')
        print('=> Execution failed! There were some errors. Please, check the logfile.')
        print('------------------------------------------------------------------------')
@@ -39,6 +33,14 @@ def launch_commands(command, logfile):
     else:
        print('Subprocess completed successfully!')
        logfile.write('=> Subprocess completed successfully!')
+
+def launch_commands(command, logfile):
+    print('Subprocess starts')
+    logfile.write('Subprocess starts')
+    sourceCmd = ['bash', '-c', command]
+    sourceProc = subprocess.Popen(sourceCmd, stdout=logfile, stderr=logfile)
+    (out, err) = sourceProc.communicate() # wait for subprocess to finish
+    checkSubprocessStatus(sourceProc, logfile)
 
 # setup Python 2.7 and ROOT 6, call tool to compare histos and create web pages
 def launchPlotHistos(parameters, logfile):
@@ -49,8 +51,9 @@ def launchPlotHistos(parameters, logfile):
     print('currentWorkingRefDir=', currentWorkingRefDir)
     command = '../HGCTPGValidation/scripts/displayHistos.sh ' + currentWorkingRefDir + ' ' + currentWorkingTestDir + ' ' + webDir
     sourceCmd = ['bash', '-c', command]
-    subproc = subprocess.Popen(sourceCmd, stdout=logfile, stderr=logfile)
-    subproc.communicate()
+    subProc = subprocess.Popen(sourceCmd, stdout=logfile, stderr=logfile)
+    subProc.communicate()
+    checkSubprocessStatus(subProc, logfile)
     print('Plots were created.')
     logfile.write('Finished creating plots.')
     
