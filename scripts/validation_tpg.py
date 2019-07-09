@@ -26,13 +26,20 @@ from HGCTPGValidation.config.user_parameters_cfg import generate_configFileParam
 
 def launch_commands(command, logfile):
     print('Subprocess starts')
+    logfile.write('Subprocess starts')
     sourceCmd = ['bash', '-c', command]
-    sourceProc = subprocess.Popen(sourceCmd, stdout=logfile, stderr=subprocess.PIPE)
+    sourceProc = subprocess.Popen(sourceCmd, stdout=logfile, stderr=logfile)
     (out, err) = sourceProc.communicate() # wait for subprocess to finish
-    tee = subprocess.Popen(['tee', 'logfile'], stdin=sourceProc.stderr)
-    sourceProc.stderr.close()
-    print (logfile, 'Subprocess finished')
-  
+    if sourceProc.wait() != 0:
+       print('------------------------------------------------------------------------')
+       print('=> Execution failed! There were some errors. Please, check the logfile.')
+       print('------------------------------------------------------------------------')
+       logfile.write('=> Execution failed! There were some errors.')
+       sys.exit()
+    else:
+       print('Subprocess completed successfully!')
+       logfile.write('=> Subprocess completed successfully!')
+
 # setup Python 2.7 and ROOT 6, call tool to compare histos and create web pages
 def launchPlotHistos(parameters, logfile):
     # setup Python 2.7 and ROOT 6
@@ -44,25 +51,32 @@ def launchPlotHistos(parameters, logfile):
     sourceCmd = ['bash', '-c', command]
     subproc = subprocess.Popen(sourceCmd, stdout=logfile, stderr=logfile)
     subproc.communicate()
-    print (logfile, 'Finished plot')
+    print('Plots were created.')
+    logfile.write('Finished creating plots.')
     
 def main(parameters):
     logfile = open('logfile', 'w')
+    
     # Perform simulation for the reference release
-    print('Step 1')
-    print (logfile, 'Step 1')
+    print('Start installing working reference directory ', parameters.workingRefDir)
+    logfile.write('Start installing working reference directory.')
     configParametersRef = parameters.installWorkingRefDir()
     launch_commands(configParametersRef, logfile)
+    
     # Perform simulation for the test releases
-    print('Step 2')
-    print (logfile, 'Step 2')
+    print('Start installing working test directory ', parameters.workingTestDir)
+    logfile.write('Start installing working test directory.')
     configParametersTest = parameters.installWorkingTestDir()
     launch_commands(configParametersTest, logfile)
+    
     # Call compare histos and create web pages tool
-    print('Step 3')
-    print (logfile, 'Step 3')
+    print('Compare histos and create web pages tool')
+    logfile.write('Compare histos and create web pages tool')
     launchPlotHistos(parameters, logfile)
     print('Simulation finished!')
+    logfile.write('Simulation finished!')
+    
+    logfile.close()
 
 if __name__=='__main__':
     import optparse
