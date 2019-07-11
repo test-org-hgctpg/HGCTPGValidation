@@ -6,7 +6,7 @@
 # at LLR, working with sl6 releases
 source /usr/share/Modules/init/bash
 module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles
-module swap python/2.7.10 python/3.6.3
+module load python/3.6.3
 
 # at LLR, working with sl7 releases
 #module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/
