@@ -7,6 +7,9 @@ from HGCTPGValidation.hgctpgvalidation.parameters import ConfigFileParameters
 generate_configFileParameters = ConfigFileParameters(
     validationRef = 'yes', #yes or no
     validationTest = 'yes', #yes or no
+    installStep = 'yes', #yes or no
+    compileStep = 'yes', #yes or no
+    simulationStep = 'yes', #yes or no
     scramArch = 'slc6_amd64_gcc700',
     releaseRefName = 'CMSSW_10_4_0_pre3',
     releaseTestName = 'CMSSW_10_4_0_pre3',
