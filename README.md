@@ -51,8 +51,16 @@ Please, pay attention, the parameter "step" should not be changed!
 
 ## How to run the HGCAl TPG validation
 Install the environment
+
+Edit the file HGCTPGValidation/env_install.sh and select the working envirenment (CERN, LLR, sl6 or sl7) in order
+to get the python3 version.
+
 ```bash
 cd HGCTPGValidation
+```
+select the environment in env_install.sh (at CERN or at LLR)
+
+```bash
 source env_install.sh
 ```
 
