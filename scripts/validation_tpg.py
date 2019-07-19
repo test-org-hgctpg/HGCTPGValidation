@@ -169,7 +169,7 @@ def main(parameters):
        logfile = open('logfile', 'a+')
        logfile.write('The validation of the test release will not be performed!\n')
        logfile.close()
-    
+
     # Call compare histos and create web pages tool
     print('Compare histos and create web pages tool')
     logfile = open('logfile', 'a+')
