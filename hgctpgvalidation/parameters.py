@@ -8,11 +8,11 @@ nbrOfEvents = 50
 
 @attr.s  
 class ConfigFileParameters():
-    validationRef = attr.ib(validator=instance_of(str), default='yes')
-    validationTest = attr.ib(validator=instance_of(str), default='yes')
-    installStep = attr.ib(validator=instance_of(str), default='yes')
-    compileStep = attr.ib(validator=instance_of(str), default='yes')
-    simulationStep = attr.ib(validator=instance_of(str), default='yes')
+    validationRef = attr.ib(validator=instance_of(bool), default='true')
+    validationTest = attr.ib(validator=instance_of(bool), default='true')
+    installStep = attr.ib(validator=instance_of(bool), default='true')
+    compileStep = attr.ib(validator=instance_of(bool), default='true')
+    simulationStep = attr.ib(validator=instance_of(bool), default='true')
     scramArch = attr.ib(validator=instance_of(str), default='slc6_amd64_gcc700')
     releaseRefName = attr.ib(validator=instance_of(str), default='CMSSW_10_4_0_pre4')
     releaseTestName = attr.ib(validator=instance_of(str), default='CMSSW_10_4_0_pre4')
