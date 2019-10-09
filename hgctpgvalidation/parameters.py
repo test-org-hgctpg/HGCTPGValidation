@@ -59,8 +59,7 @@ class ConfigFileParameters():
         'echo $PWD; ' + \
         'eval `scramv1 runtime -sh`;' + \
         'git cms-merge-topic ' + self.remoteTest + ':' + self.remoteTestBranchName + ';' + \
-        'git checkout -b ' + self.localTestBranchName + ' ' + self.remoteTest + '/' + self.remoteTestBranchName + ';' + \
-        'scram b -j4; ' + 'echo === End of compilation ===;' + 'echo $PWD;'
+        'git checkout -b ' + self.localTestBranchName + ' ' + self.remoteTest + '/' + self.remoteTestBranchName + ';'
         return command
 
     def runCompileRefStep(self):
@@ -110,7 +109,7 @@ class ConfigFileParameters():
            '--filein ' + self.inputTestFileName + ' ' + \
            '--no_output ' + '--customise=' + self.customiseTestFile + ' ' + \
            '--customise_commands "process.schedule = cms.Schedule(process.user_step)" '
-	else:
+        else:
            command =  'export SCRAM_ARCH=' + self.scramArch + ';' + \
            'cd ' + self.workingTestDir + '/src; eval `scramv1 runtime -sh`;' + \
            'cmsDriver.py hgcal_tpg_validation -n ' + str(self.numberOfEvents) + ' --mc  --eventcontent FEVTDEBUG --datatier GEN-SIM-DIGI-RAW --conditions ' + self.conditions + ' ' + \
