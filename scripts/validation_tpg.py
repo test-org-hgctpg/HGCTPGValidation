@@ -58,8 +58,8 @@ def launchPlotHistos(parameters, logfile):
     subProc.communicate()
     checkSubprocessStatus(subProc, logfile)
     print('Plots were created.')
-    #logfile = open('logfile', 'a+')
-    #logfile.write('Finished creating plots.')
+    logfile = open('logfile', 'a+')
+    logfile.write('Finished creating plots.')
     logfile.close()
     
 def main(parameters):
