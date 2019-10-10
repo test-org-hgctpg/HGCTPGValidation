@@ -201,7 +201,7 @@ def createWebPageLite(input_rel_file, input_ref_file, path_1, path_2, cnv, webdi
     CMP_TITLE = ' HGCAL Trigger Primitives Validation '
     CMP_RED_FILE = input_rel_file
     CMP_BLUE_FILE = input_ref_file
-    CMP_INDEX_FILE_DIR = webdir + '/index2.html'
+    CMP_INDEX_FILE_DIR = webdir + '/index.html'
     
     shutil.copy2('../HGCTPGValidation/data/img/up.gif', webdir+ '/img')
     shutil.copy2('../HGCTPGValidation/data/img/point.gif', webdir+ '/img')
