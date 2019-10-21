@@ -68,13 +68,13 @@ def main(parameters):
     logfile.close()
 
     # Perform simulation for the reference release
-    if parameters.validationRef == 'yes':
+    if parameters.validationRef == True:
        print('Simulation with the reference release ', parameters.workingRefDir)
        logfile = open('logfile', 'a+')
        logfile.write('Simulation with the reference release.\n')
        logfile.close()
        # Perform simulation for the reference release
-       if parameters.installStep == 'yes':
+       if parameters.installStep == True:
           print('Start installing working reference directory ', parameters.workingRefDir)
           logfile = open('logfile', 'a+')
           logfile.write('Start installing working reference directory.\n')
@@ -87,7 +87,7 @@ def main(parameters):
           logfile.write('Will not perform installStep.\n')
           logfile.close()
 	  
-       if parameters.compileStep == 'yes':
+       if parameters.compileStep == True:
           print('Will perform compileStep')
           logfile = open('logfile', 'a+')
           logfile.write('Will perform compileStep.\n')
@@ -100,7 +100,7 @@ def main(parameters):
           logfile.write('Will not perform compileStep.\n')
           logfile.close()
 	  
-       if parameters.simulationStep == 'yes':
+       if parameters.simulationStep == True:
           print('Will perform runSimulationStep')
           logfile = open('logfile', 'a+')
           logfile.write('Will perform runSimulationStep.\n')
@@ -119,13 +119,13 @@ def main(parameters):
        logfile.close()
        
     # Perform simulation for the test releases   
-    if parameters.validationTest == 'yes':
+    if parameters.validationTest == True:
        print('Simulation with the test release ', parameters.workingTestDir)
        logfile = open('logfile', 'a+')
        logfile.write('Simulation with the test release.\n')
        logfile.close()
        # Perform simulation for the test releases
-       if parameters.installStep == 'yes':
+       if parameters.installStep == True:
           print('Start installing working test directory ', parameters.workingTestDir)
           logfile = open('logfile', 'a+')
           logfile.write('Start installing working test directory.\n')
@@ -138,7 +138,7 @@ def main(parameters):
           logfile.write('Will not perform installStep.\n')
           logfile.close()
 
-       if parameters.compileStep == 'yes':
+       if parameters.compileStep == True:
           print('Will perform compileStep')
           logfile = open('logfile', 'a+')
           logfile.write('Will perform compileStep.\n')
@@ -151,7 +151,7 @@ def main(parameters):
           logfile.write('Will not perform compileStep.\n')
           logfile.close()
 
-       if parameters.simulationStep == 'yes':
+       if parameters.simulationStep == True:
           print('Will perform runSimulationStep')
           logfile = open('logfile', 'a+')
           logfile.write('Will perform runSimulationStep.\n')
