@@ -54,7 +54,7 @@ class ConfigFileParameters():
     def installWorkingTestDir(self):
         command = 'export SCRAM_ARCH=' + self.scramArch + ';' + \
         'echo $SCRAM_ARCH'  + ';' + \
-	'scramv1 p -n ' + self.workingTestDir + ' CMSSW ' + self.releaseTestName + ';' + \
+        'scramv1 p -n ' + self.workingTestDir + ' CMSSW ' + self.releaseTestName + ';' + \
         'cd ' + self.workingTestDir + '/src;' + \
         'echo $PWD; ' + \
         'eval `scramv1 runtime -sh`;' + \
@@ -84,7 +84,7 @@ class ConfigFileParameters():
            '--inputCommands "keep *",' + self.dropedBranches + ' ' + \
            '--filein ' + self.inputRefFileName + ' ' + \
            '--no_output ' + '--customise=' + self.customiseRefFile + ' ' + \
-           '--customise_commands "process.schedule = cms.Schedule(process.user_step)" '
+           '--customise_commands "process.MessageLogger.destinations = cms.untracked.vstring(\'out_ref\',\'cout\'); process.Timing = cms.Service(\'Timing\', summaryOnly = cms.untracked.bool(False), useJobReport = cms.untracked.bool(True)); process.SimpleMemoryCheck = cms.Service(\'SimpleMemoryCheck\', ignoreTotal = cms.untracked.int32(1)); process.schedule = cms.Schedule(process.user_step)"' + ';'
         else:
            command =  'export SCRAM_ARCH=' + self.scramArch + ';' + \
            'cd ' + self.workingRefDir + '/src; eval `scramv1 runtime -sh`;' + \
@@ -94,7 +94,7 @@ class ConfigFileParameters():
            '--inputCommands "keep *",' + self.dropedBranches + ' ' + \
            '--filein ' + self.inputRefFileName + ' ' + \
            '--no_output ' + '--customise=' + self.customiseRefFile + ' ' + \
-           '--customise_commands "process.schedule = cms.Schedule(process.user_step)" '
+           '--customise_commands "process.MessageLogger.destinations = cms.untracked.vstring(\'out_ref\',\'cout\'); process.Timing = cms.Service(\'Timing\', summaryOnly = cms.untracked.bool(False), useJobReport = cms.untracked.bool(True)); process.SimpleMemoryCheck = cms.Service(\'SimpleMemoryCheck\', ignoreTotal = cms.untracked.int32(1)); process.schedule = cms.Schedule(process.user_step)"' + ';'
         return command
    
 
@@ -108,7 +108,7 @@ class ConfigFileParameters():
            '--inputCommands "keep *",' + self.dropedBranches + ' ' + \
            '--filein ' + self.inputTestFileName + ' ' + \
            '--no_output ' + '--customise=' + self.customiseTestFile + ' ' + \
-           '--customise_commands "process.schedule = cms.Schedule(process.user_step)" '
+           '--customise_commands "process.MessageLogger.destinations = cms.untracked.vstring(\'out_test\',\'cout\'); process.Timing = cms.Service(\'Timing\', summaryOnly = cms.untracked.bool(False), useJobReport = cms.untracked.bool(True)); process.SimpleMemoryCheck = cms.Service(\'SimpleMemoryCheck\', ignoreTotal = cms.untracked.int32(1)); process.schedule = cms.Schedule(process.user_step)"' + ';'
         else:
            command =  'export SCRAM_ARCH=' + self.scramArch + ';' + \
            'cd ' + self.workingTestDir + '/src; eval `scramv1 runtime -sh`;' + \
@@ -118,5 +118,5 @@ class ConfigFileParameters():
            '--inputCommands "keep *",' + self.dropedBranches + ' ' + \
            '--filein ' + self.inputTestFileName + ' ' + \
            '--no_output ' + '--customise=' + self.customiseTestFile + ' ' + \
-           '--customise_commands "process.schedule = cms.Schedule(process.user_step)" '
+           '--customise_commands "process.MessageLogger.destinations = cms.untracked.vstring(\'out_test\',\'cout\'); process.Timing = cms.Service(\'Timing\', summaryOnly = cms.untracked.bool(False), useJobReport = cms.untracked.bool(True)); process.SimpleMemoryCheck = cms.Service(\'SimpleMemoryCheck\', ignoreTotal = cms.untracked.int32(1)); process.schedule = cms.Schedule(process.user_step)"' + ';'
         return command
