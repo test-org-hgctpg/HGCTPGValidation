@@ -43,7 +43,7 @@ def launch_commands(command, logfile):
     (out, err) = sourceProc.communicate() # wait for subprocess to finish
     checkSubprocessStatus(sourceProc, logfile)
     logfile.close()
-    
+
 # setup Python 2.7 and ROOT 6, call tool to compare histos and create web pages
 def launchPlotHistos(parameters, logfile):
     # setup Python 2.7 and ROOT 6
@@ -86,12 +86,15 @@ def main(parameters):
           logfile = open('logfile', 'a+')
           logfile.write('Will not perform installStep.\n')
           logfile.close()
-	  
+
        if parameters.compileStep == True:
           print('Will perform compileStep')
           logfile = open('logfile', 'a+')
           logfile.write('Will perform compileStep.\n')
           logfile.close()
+          # Go to the release directory in case the installStep was not performed
+          os.chdir(parameters.workingRefDir + '/src') 
+          os.system('eval `scramv1 runtime -sh`;' )
           configParametersRef = parameters.runCompileRefStep()
           launch_commands(configParametersRef, logfile)
        else:
@@ -99,12 +102,15 @@ def main(parameters):
           logfile = open('logfile', 'a+')
           logfile.write('Will not perform compileStep.\n')
           logfile.close()
-	  
+
        if parameters.simulationStep == True:
           print('Will perform runSimulationStep')
           logfile = open('logfile', 'a+')
           logfile.write('Will perform runSimulationStep.\n')
           logfile.close()
+          # Go to the release directory in case the installStep&compileStep were not performed
+          os.chdir(parameters.workingRefDir + '/src') 
+          os.system('eval `scramv1 runtime -sh`;' )
           configParametersRef = parameters.runSimulationRefStep()
           launch_commands(configParametersRef, logfile)
        else:
@@ -129,7 +135,7 @@ def main(parameters):
           print('Start installing working test directory ', parameters.workingTestDir)
           logfile = open('logfile', 'a+')
           logfile.write('Start installing working test directory.\n')
-          logfile.close()  
+          logfile.close()
           configParametersTest = parameters.installWorkingTestDir()
           launch_commands(configParametersTest, logfile)
        else:
@@ -143,6 +149,9 @@ def main(parameters):
           logfile = open('logfile', 'a+')
           logfile.write('Will perform compileStep.\n')
           logfile.close()
+          # Go to the release directory in case the installStep was not performed
+          os.chdir('../../' + parameters.workingTestDir + '/src')
+          os.system('eval `scramv1 runtime -sh`;' )
           configParametersTest = parameters.runCompileTestStep()
           launch_commands(configParametersTest, logfile)
        else:
@@ -156,6 +165,9 @@ def main(parameters):
           logfile = open('logfile', 'a+')
           logfile.write('Will perform runSimulationStep.\n')
           logfile.close()
+          # Go to the release directory in case the installStep&compileStep were not performed
+          os.chdir('../../' + parameters.workingTestDir + '/src') 
+          os.system('eval `scramv1 runtime -sh`;' )
           configParametersTest = parameters.runSimulationTestStep()
           launch_commands(configParametersTest, logfile)
        else:
@@ -163,7 +175,6 @@ def main(parameters):
           logfile = open('logfile', 'a+')
           logfile.write('Will not perform runSimulationStep.\n')
           logfile.close()
-
     else:
        print('The validation of the test release will not be performed.')
        logfile = open('logfile', 'a+')
