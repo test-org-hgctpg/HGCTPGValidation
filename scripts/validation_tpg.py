@@ -50,7 +50,6 @@ def launchPlotHistos(parameters, logfile):
     currentWorkingRefDir = os.getcwd() + '/' + parameters.workingRefDir + '/src'
     currentWorkingTestDir = os.getcwd() + '/' + parameters.workingTestDir + '/src'
     webDir = parameters.webDirPath
-    print('currentWorkingRefDir=', currentWorkingRefDir)
     command = '../HGCTPGValidation/scripts/displayHistos.sh ' + currentWorkingRefDir + ' ' + currentWorkingTestDir + ' ' + webDir
     sourceCmd = ['bash', '-c', command]
     logfile = open('logfile', 'a+')
