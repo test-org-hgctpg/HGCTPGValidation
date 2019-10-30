@@ -92,8 +92,9 @@ def main(parameters):
           logfile.write('Will perform compileStep.\n')
           logfile.close()
           # Go to the release directory in case the installStep was not performed
-          os.chdir(parameters.workingRefDir + '/src') 
-          os.system('eval `scramv1 runtime -sh`;' )
+          if parameters.installStep == False:
+              os.chdir(parameters.workingRefDir + '/src') 
+              os.system('eval `scramv1 runtime -sh`;' )
           configParametersRef = parameters.runCompileRefStep()
           launch_commands(configParametersRef, logfile)
        else:
@@ -108,8 +109,9 @@ def main(parameters):
           logfile.write('Will perform runSimulationStep.\n')
           logfile.close()
           # Go to the release directory in case the installStep&compileStep were not performed
-          os.chdir(parameters.workingRefDir + '/src') 
-          os.system('eval `scramv1 runtime -sh`;' )
+          if parameters.installStep == False or parameters.compileStep == False:
+              os.chdir(parameters.workingRefDir + '/src') 
+              os.system('eval `scramv1 runtime -sh`;' )
           configParametersRef = parameters.runSimulationRefStep()
           launch_commands(configParametersRef, logfile)
        else:
@@ -149,8 +151,9 @@ def main(parameters):
           logfile.write('Will perform compileStep.\n')
           logfile.close()
           # Go to the release directory in case the installStep was not performed
-          os.chdir('../../' + parameters.workingTestDir + '/src')
-          os.system('eval `scramv1 runtime -sh`;' )
+          if parameters.installStep == False:
+              os.chdir('../../' + parameters.workingTestDir + '/src')
+              os.system('eval `scramv1 runtime -sh`;' )
           configParametersTest = parameters.runCompileTestStep()
           launch_commands(configParametersTest, logfile)
        else:
@@ -165,8 +168,9 @@ def main(parameters):
           logfile.write('Will perform runSimulationStep.\n')
           logfile.close()
           # Go to the release directory in case the installStep&compileStep were not performed
-          os.chdir('../../' + parameters.workingTestDir + '/src') 
-          os.system('eval `scramv1 runtime -sh`;' )
+          if parameters.installStep == False or parameters.compileStep == False:
+              os.chdir('../../' + parameters.workingTestDir + '/src')
+              os.system('eval `scramv1 runtime -sh`;' )
           configParametersTest = parameters.runSimulationTestStep()
           launch_commands(configParametersTest, logfile)
        else:
