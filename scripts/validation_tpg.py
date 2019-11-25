@@ -109,7 +109,7 @@ def main(parameters):
           logfile.write('Will perform runSimulationStep.\n')
           logfile.close()
           # Go to the release directory in case the installStep&compileStep were not performed
-          if parameters.installStep == False or parameters.compileStep == False:
+          if parameters.compileStep == False:
               os.chdir(parameters.workingRefDir + '/src') 
               os.system('eval `scramv1 runtime -sh`;' )
           configParametersRef = parameters.runSimulationRefStep()
@@ -168,7 +168,7 @@ def main(parameters):
           logfile.write('Will perform runSimulationStep.\n')
           logfile.close()
           # Go to the release directory in case the installStep&compileStep were not performed
-          if parameters.installStep == False or parameters.compileStep == False:
+          if parameters.compileStep == False:
               os.chdir('../../' + parameters.workingTestDir + '/src')
               os.system('eval `scramv1 runtime -sh`;' )
           configParametersTest = parameters.runSimulationTestStep()
