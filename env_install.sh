@@ -17,12 +17,15 @@ then
     # at LLR, working with sl6 releases
     source /usr/share/Modules/init/bash
     module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles
+    # useful in case we rerun only the simulation step
+    module purge python
     module load python/3.6.3
     echo 'Working at LLR in sl6 environment'
 else [ $simu_env -eq 3 ]
     # at LLR, working with sl7 releases
     module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/
-    module unload python/3.6.3
+    # useful in case we rerun only the simulation stepÒ
+    module purge python
     module load python/3.6.6
     echo 'Working at LLR in sl7 environment'
 fi
