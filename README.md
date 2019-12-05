@@ -58,8 +58,20 @@ to get the python3 version.
 ```bash
 cd HGCTPGValidation
 ```
-select the environment in env_install.sh (at CERN or at LLR)
+Select the environment in env_install.sh (at CERN or at LLR)
+If working at LLR, before starting, please check the python2 and python3 available versions on polui and put the right versions in env_install.sh and HGCTPGValidation/scripts/displayHistos.sh
 
+For sl6 check:
+```bash
+module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles
+module avail
+```
+
+For sl7 please check:
+```bash
+module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/
+module avail
+```
 ```bash
 source env_install.sh
 ```
