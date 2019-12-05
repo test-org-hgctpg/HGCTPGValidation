@@ -59,3 +59,12 @@ tower_etHad
 tower_iEta
 tower_iPhi
 
+Histogram Time Memory
+
+h_VFE
+h_Conc
+h_BackendL1
+h_BackendL2
+h_TowerMap
+h_Tower
+
