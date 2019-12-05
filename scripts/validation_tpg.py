@@ -47,8 +47,8 @@ def launch_commands(command, logfile):
 # setup Python 2.7 and ROOT 6, call tool to compare histos and create web pages
 def launchPlotHistos(parameters, logfile):
     # setup Python 2.7 and ROOT 6
-    currentWorkingRefDir = os.getcwd() + '/' + parameters.workingRefDir + '/src'
-    currentWorkingTestDir = os.getcwd() + '/' + parameters.workingTestDir + '/src'
+    currentWorkingRefDir = parameters.workingRefDir + '/src'
+    currentWorkingTestDir = parameters.workingTestDir + '/src'
     webDir = parameters.webDirPath
     command = '../HGCTPGValidation/scripts/displayHistos.sh ' + currentWorkingRefDir + ' ' + currentWorkingTestDir + ' ' + webDir
     sourceCmd = ['bash', '-c', command]
@@ -66,6 +66,9 @@ def main(parameters):
     logfile.write('=== Main programme starts!\n')
     logfile.close()
 
+    topDirectory = os.getcwd()
+    print('topDirectory =', topDirectory)
+     
     # Perform simulation for the reference release
     if parameters.validationRef == True:
        print('Simulation with the reference release ', parameters.workingRefDir)
@@ -107,11 +110,12 @@ def main(parameters):
           print('Will perform runSimulationStep')
           logfile = open('logfile', 'a+')
           logfile.write('Will perform runSimulationStep.\n')
-          logfile.close()
           # Go to the release directory in case the installStep&compileStep were not performed
           if parameters.compileStep == False:
-              os.chdir(parameters.workingRefDir + '/src') 
-              os.system('eval `scramv1 runtime -sh`;' )
+              if (os.getcwd() != topDirectory + '/' + parameters.workingRefDir + '/src'):
+                  os.chdir(topDirectory + '/' + parameters.workingRefDir + '/src') 
+                  os.system('eval `scramv1 runtime -sh`;' )
+          logfile.close()
           configParametersRef = parameters.runSimulationRefStep()
           launch_commands(configParametersRef, logfile)
        else:
@@ -152,7 +156,7 @@ def main(parameters):
           logfile.close()
           # Go to the release directory in case the installStep was not performed
           if parameters.installStep == False:
-              os.chdir('../../' + parameters.workingTestDir + '/src')
+              os.chdir(parameters.workingTestDir + '/src')
               os.system('eval `scramv1 runtime -sh`;' )
           configParametersTest = parameters.runCompileTestStep()
           launch_commands(configParametersTest, logfile)
@@ -166,11 +170,14 @@ def main(parameters):
           print('Will perform runSimulationStep')
           logfile = open('logfile', 'a+')
           logfile.write('Will perform runSimulationStep.\n')
-          logfile.close()
           # Go to the release directory in case the installStep&compileStep were not performed
           if parameters.compileStep == False:
-              os.chdir('../../' + parameters.workingTestDir + '/src')
-              os.system('eval `scramv1 runtime -sh`;' )
+              logfile.write('Change directory.\n')
+              print('Test : compile step is false, simu test dir os.getcwd() = ', os.getcwd())
+              if (os.getcwd() != topDirectory + '/' + parameters.workingTestDir + '/src'):
+                  os.chdir(topDirectory + '/' + parameters.workingTestDir + '/src')
+                  os.system('eval `scramv1 runtime -sh`;' )
+          logfile.close()
           configParametersTest = parameters.runSimulationTestStep()
           launch_commands(configParametersTest, logfile)
        else:
@@ -182,6 +189,7 @@ def main(parameters):
        print('The validation of the test release will not be performed.')
        logfile = open('logfile', 'a+')
        logfile.write('The validation of the test release will not be performed!\n')
+    
        logfile.close()
 
     # Call compare histos and create web pages tool
@@ -189,6 +197,7 @@ def main(parameters):
     logfile = open('logfile', 'a+')
     logfile.write('Compare histos and create web pages tool.\n')
     logfile.close()
+    os.chdir(topDirectory)
     launchPlotHistos(parameters, logfile)
     print('Simulation finished!')
     logfile = open('logfile', 'a+')
