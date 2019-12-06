@@ -25,7 +25,7 @@ def getHisto(file, path):
     return t_path
 
 def RenderHisto(histo, canvas):
-    
+
     if ("ELE_LOGY" in histo.GetOption() and histo.GetMaximum() > 0):
         canvas.SetLogy(1)
     histo_name_flag = 1 ; # use 0 to switch off
@@ -98,12 +98,12 @@ def createPicture2(histo1, histo2, scaled, err, filename, cnv, axisFormat):
     pad1.SetBottomMargin(0.05)
     pad1.Draw()
     pad1.cd()
-    
+
     if err == "1":
         newDrawOptions ="E1 P"
     else:
         newDrawOptions = "hist"
-    
+
     histo1.SetStats(1)
     histo1.Draw(newDrawOptions)
     RenderHisto(histo1, cnv)
@@ -185,8 +185,9 @@ def createPicture2(histo1, histo2, scaled, err, filename, cnv, axisFormat):
     cnv.SaveAs(filename)
     
     return
-        
+
 def createWebPageLite(input_rel_file, input_ref_file, path_1, path_2, cnv, webdir): # simplified version of createWebPage()
+    print('Start creating web pages')
     print(input_rel_file)
     print(input_ref_file)
     f_rel = ROOT.TFile(input_rel_file)
@@ -203,12 +204,17 @@ def createWebPageLite(input_rel_file, input_ref_file, path_1, path_2, cnv, webdi
     CMP_BLUE_FILE = input_ref_file
     CMP_INDEX_FILE_DIR = webdir + '/index.html'
     
+    MEM_REP_REF = './MemoryReport_ref.log'
+    MEM_REP_TEST = './MemoryReport_test.log'
+    
     shutil.copy2('../HGCTPGValidation/data/img/up.gif', webdir+ '/img')
     shutil.copy2('../HGCTPGValidation/data/img/point.gif', webdir+ '/img')
     image_up = './img/up.gif'
     image_point = './img/point.gif'
     f = open(CMP_CONFIG, 'r')
-
+    fmemref = open(MEM_REP_REF, 'r')
+    fmemtest = open(MEM_REP_TEST, 'r')
+    
     wp = open(CMP_INDEX_FILE_DIR, 'w') # web page
     wp.write("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 3.2 Final//EN\">\n")
     wp.write("<html>\n")
@@ -240,6 +246,7 @@ def createWebPageLite(input_rel_file, input_ref_file, path_1, path_2, cnv, webdi
     key = ""
     tmp = []
     for line in f:
+        print('line = ', line)
         if ( len(line) == 1 ): # len == 0, empty line
             if ( ( len(key) != 0 ) and ( len(tmp) != 0) ): 
                 histoArray_0[key] = tmp
@@ -324,7 +331,7 @@ def createWebPageLite(input_rel_file, input_ref_file, path_1, path_2, cnv, webdi
         wp.write( titlesList[i] + "</b></td>" )
         wp.write( "</tr><tr valign=\"top\">" )
         for elem in histoArray_0[titlesList[i]]:
-            if ( elem != "endLine" ): 
+            if ( elem != "endLine" ):
                 histo_names = elem.split("/")
                 histoShortNames = histo_names[0]
                 short_histo_names = histoShortNames.split(" ")
@@ -342,18 +349,29 @@ def createWebPageLite(input_rel_file, input_ref_file, path_1, path_2, cnv, webdi
                 gif_name = webdir + '/' + histo_name + ".gif"
                 gif_name_index = histo_name + ".gif"
                 createPicture2(histo_1, histo_2, "1", "1", gif_name, cnv, "lin")
-                if (histo_1.GetMaximum() > 0 and histo_1.GetMinimum() >= 0):
-                    gif_name_log = webdir + '/' + histo_name + "_log.gif"
-                    gif_name_log_index = histo_name + "_log.gif"
-                    createPicture2(histo_1, histo_2, "1", "1", gif_name_log, cnv, "log")
+                # Make histo in log
+                #if (histo_1.GetMaximum() > 0 and histo_1.GetMinimum() >= 0):
+                #    gif_name_log = webdir + '/' + histo_name + "_log.gif"
+                #    gif_name_log_index = histo_name + "_log.gif"
+                #    createPicture2(histo_1, histo_2, "1", "1", gif_name_log, cnv, "log")
 
                 wp.write( "\n<td><a href=\"#TOP\"><img width=\"18\" height=\"18\" border=\"0\" align=\"middle\" src=" + image_up + " alt=\"Top\"/></a></td>\n" )
                 wp.write( "<td>" )
                 wp.write( "<a id=\"" + short_histo_name + "\" name=\"" + short_histo_name + "\"></a>" )
                 wp.write( "<a href=\"" + gif_name_index + "\"><img border=\"0\" class=\"image\" width=\"440\" src=\"" + gif_name_index + "\"></a>" )
-                if (histo_1.GetMaximum() > 0 and histo_1.GetMinimum() >= 0):
-                    wp.write( "</td><td><a href=\"" + gif_name_log_index + "\"><img border=\"0\" class=\"image\" width=\"440\" src=\"" + gif_name_log_index + "\"></a>" )
+                # For histo in log
+                #if (histo_1.GetMaximum() > 0 and histo_1.GetMinimum() >= 0):
+                #    wp.write( "</td><td><a href=\"" + gif_name_log_index + "\"><img border=\"0\" class=\"image\" width=\"440\" src=\"" + gif_name_log_index + "\"></a>" )
                 wp.write( "</td></tr><tr valign=\"top\">" )
+    
+    wp.write( "<h2>" + "Memory Report" + "</h2>\n" )
+    with open(MEM_REP_REF) as file:
+        for line in file.readlines():
+            wp.write(line)
+ 
+    with open(MEM_REP_TEST) as file:
+        for line in file.readlines():
+            wp.write("<p>Datatest => " + line)
 
     wp.write( "</tr></table>\n" )
     wp.close()

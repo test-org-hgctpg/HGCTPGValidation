@@ -30,7 +30,7 @@ def main(refdir, testdir, webdir):
     createDir(webdir)
     createDir(webdir + '/img')
     
-   # Files names
+    # Files names
     filename = "/DQM_V0001_R000000001__validation__HGCAL__TPG.root"
     input_rel_file = refdir + filename
     input_ref_file = testdir + filename
