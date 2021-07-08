@@ -10,14 +10,12 @@ from ROOT import TCanvas, TFile, TProfile, TNtuple, TH1F, TH2F
 from ROOT import gROOT, gBenchmark, gRandom, gSystem, gDirectory, Double
 
 def readFileStatement(namefile, dirname):
-    # for test
-    f= open("test_resizeHistos.txt","a+")
-    f.write('Open test_resizeHistos.txt')
     print('dirname = ', dirname)
     # Name of the file containing histograms
-    rootFileName = "/DQM_V0001_R000000001__validation__HGCAL__TPG.root"
+    rootFileName = "/DQM_V0001_validation_HGCAL_TPG_R000000001.root"
     rootFile = dirname + '/' + rootFileName
-
+    print("rootFile = ", rootFile)
+    
     # Open existing ROOT file
     hFile = TFile( rootFile, 'UPDATE' )
     # Places into the directory containing histograms
@@ -37,7 +35,6 @@ def readFileStatement(namefile, dirname):
     listProducers=['HGCalVFEProducer', 'HGCalConcentratorProducer','HGCalBackendLayer1Producer','HGCalBackendLayer2Producer', 'HGCalTowerMapProducer','HGCalTowerProducer']
  
     # Open TimingInfo_.txt
-    f.write(namefile)
     with open(namefile) as file:
         # Read data in the file
         data = file.readlines()
@@ -48,7 +45,7 @@ def readFileStatement(namefile, dirname):
                 if words[4]==listProducers[i]:
                     listHistos[i].Fill(float(words[5]))
                     # Set new histo range, -10% bellow the first non zero bin, and + 10% above the last non zero bin
-                    if (listHistos[i].FindFirstBinAbove() <> listHistos[i].FindLastBinAbove()):
+                    if (listHistos[i].FindFirstBinAbove() != listHistos[i].FindLastBinAbove()):
                         add = int(listHistos[i].FindLastBinAbove()*0.10)
                         if (add == 0):
                             add = 5
@@ -56,7 +53,6 @@ def readFileStatement(namefile, dirname):
                     elif (listHistos[i].FindLastBinAbove() == 1):
                         listHistos[i].GetXaxis().SetRange(listHistos[i].FindFirstBinAbove(), listHistos[i].FindLastBinAbove() + 10)
     hFile.Write()
-    f.close()
 
 def main(reffile, testfile, refdir, testdir):
     print('reffile = \n', reffile)
