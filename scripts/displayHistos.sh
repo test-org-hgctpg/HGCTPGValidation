@@ -24,13 +24,12 @@ then
     module load python/2.7.9
     source /opt/exp_soft/llr/root/v6.06.00-el6-gcc48/etc/init.sh
 else [ $simu_env -eq 3 ]
-    # Config at LLR in sl7, switch to python2
-    echo 'Config at LLR in sl7, switch to python2'
+    # Config at LLR in sl7, python3
     module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/
     module purge
-    module load python/2.7.9
-    source /opt/exp_soft/llr/root/v6.06.00-el6-gcc48/etc/init.sh
-    echo 'Installed sl7 environment at LLR'
+    module load python/3.7.0
+    module load compilers/gcc/9.x.x
+    source /opt/exp_soft/llr/root/vv6.20.06-el7-gcc9-py37/etc/init.sh
 fi
 
 echo 'The Python version was changed to '

@@ -33,8 +33,10 @@ else [ $simu_env -eq 3 ]
     # at LLR, working with sl7 releases
     module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/
     # useful in case we rerun only the simulation step
-    module purge python
+    module purge
     module load python/3.6.6
+    module load compilers/gcc/9.x.x
+    source /opt/exp_soft/llr/root/vv6.20.06-el7-gcc9-py37/etc/init.sh
     echo 'Working at LLR in sl7 environment'
 fi
 
