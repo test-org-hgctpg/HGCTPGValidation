@@ -156,8 +156,9 @@ def main(parameters):
           logfile.close()
           # Go to the release directory in case the installStep was not performed
           if parameters.installStep == False:
-              os.chdir(parameters.workingTestDir + '/src')
-              os.system('eval `scramv1 runtime -sh`;' )
+            if (os.getcwd() != topDirectory + '/' + parameters.workingTestDir + '/src'):
+                os.chdir(topDirectory + '/' + parameters.workingTestDir + '/src')
+                os.system('eval `scramv1 runtime -sh`;' )
           configParametersTest = parameters.runCompileTestStep()
           launch_commands(configParametersTest, logfile)
        else:
