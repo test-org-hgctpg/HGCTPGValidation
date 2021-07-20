@@ -25,16 +25,12 @@ then
     source /opt/exp_soft/llr/root/v6.06.00-el6-gcc48/etc/init.sh
 else [ $simu_env -eq 3 ]
     # Config at LLR in sl7, python3
-    module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/
-    module purge
-    module load python/3.7.0
-    module load compilers/gcc/9.x.x
-    source /opt/exp_soft/llr/root/vv6.20.06-el7-gcc9-py37/etc/init.sh
+     echo 'Config at LLR in sl7'
 fi
 
-echo 'The Python version was changed to '
+echo 'The Python version is: '
 python -V
-echo 'The ROOT version is '
+echo 'The ROOT version is:'
 root-config --version
 
 # Extract Time information for all modules
