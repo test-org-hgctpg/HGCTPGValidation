@@ -43,6 +43,7 @@ class ConfigFileParameters():
     def installWorkingRefDir(self):
         command = 'export SCRAM_ARCH=' + self.scramArch + ';' + \
         'echo $SCRAM_ARCH'  + ';' + \
+        'module purge; ' + \
         'scramv1 p -n ' + self.workingRefDir + ' CMSSW ' + self.releaseRefName + ';' + \
         'cd ' + self.workingRefDir + '/src;' + \
         'echo $PWD; ' + \
@@ -54,6 +55,7 @@ class ConfigFileParameters():
     def installWorkingTestDir(self):
         command = 'export SCRAM_ARCH=' + self.scramArch + ';' + \
         'echo $SCRAM_ARCH'  + ';' + \
+        'module purge; ' + \
         'scramv1 p -n ' + self.workingTestDir + ' CMSSW ' + self.releaseTestName + ';' + \
         'cd ' + self.workingTestDir + '/src;' + \
         'echo $PWD; ' + \
@@ -64,13 +66,13 @@ class ConfigFileParameters():
 
     def runCompileRefStep(self):
         command = 'export SCRAM_ARCH=' + self.scramArch + ';' + \
-        'cd ' + self.workingRefDir + '/src; eval `scramv1 runtime -sh`;' + \
+        'cd ' + self.workingRefDir + '/src; module purge; eval `scramv1 runtime -sh`;' + \
         'scram b -j4; ' + 'echo === End of compilation ===;' + 'echo $PWD;'
         return command
 
     def runCompileTestStep(self):
         command = 'export SCRAM_ARCH=' + self.scramArch + ';' + \
-        'cd ' + self.workingTestDir + '/src; eval `scramv1 runtime -sh`;' + \
+        'cd ' + self.workingTestDir + '/src; module purge; eval `scramv1 runtime -sh`;' + \
         'scram b -j4; ' + 'echo === End of compilation ===;' + 'echo $PWD;'
         return command
 
