@@ -2,7 +2,9 @@ pipeline {
     agent {
         label 'llrgrhgtrig.in2p3.fr'
     }
-
+    options {
+        skipDefaultCheckout() 
+    }
     stages {
         stage('Build') {
             steps {
