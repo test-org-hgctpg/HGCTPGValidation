@@ -14,6 +14,22 @@ pipeline {
                 whoami
                 pwd
                 ls -l
+                if [ -d "./HGCTPGValidation" ] 
+                then
+                    rm -rf HGCTPGValidation
+                fi
+                git clone -b master https://github.com/ebecheva/HGCTPGValidation HGCTPGValidation
+                source HGCTPGValidation/env_install.sh
+                if [ -d "./test_dir" ] 
+                then
+                    echo "Directory test_dir exists." 
+                    rm -rf test_dir
+                fi
+                mkdir test_dir
+                cd test_dir
+                pwd
+                ls -lrt ..
+                python ../HGCTPGValidation/test.py 
                 '''
             }
         }
