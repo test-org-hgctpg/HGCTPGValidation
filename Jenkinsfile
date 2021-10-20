@@ -3,7 +3,7 @@ pipeline {
         label 'llrgrhgtrig.in2p3.fr'
     }
     options {
-        skipDefaultCheckout() 
+    //    skipDefaultCheckout() 
     }
     stages {
         stage('Build') {
