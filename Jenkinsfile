@@ -20,6 +20,7 @@ pipeline {
                 fi
                 git clone -b master https://github.com/ebecheva/HGCTPGValidation HGCTPGValidation
                 source HGCTPGValidation/env_install.sh
+                pip install attrs
                 if [ -d "./test_dir" ] 
                 then
                     echo "Directory test_dir exists." 
