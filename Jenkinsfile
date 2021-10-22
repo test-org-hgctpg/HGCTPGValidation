@@ -2,9 +2,9 @@ pipeline {
     agent {
         label 'llrgrhgtrig.in2p3.fr'
     }
-    //options {
-    //    skipDefaultCheckout() 
-    //}
+    options {
+        skipDefaultCheckout() 
+    }
     stages {
         stage('Build') {
             steps {
@@ -29,7 +29,7 @@ pipeline {
                 cd test_dir
                 pwd
                 ls -lrt ..
-                python ../HGCTPGValidation/test.py 
+                python ../HGCTPGValidation/scripts/validation_tpg.py --cfg HGCTPGValidation.config.user_parameters_testJenkins_cfg.py
                 '''
             }
         }
