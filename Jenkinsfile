@@ -19,6 +19,7 @@ pipeline {
                     rm -rf HGCTPGValidation
                 fi
                 git clone -b master https://github.com/ebecheva/HGCTPGValidation HGCTPGValidation
+                ~/grid_login
                 source HGCTPGValidation/env_install.sh
                 pip install attrs
                 if [ -d "./test_dir" ] 
