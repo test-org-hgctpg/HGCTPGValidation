@@ -1,0 +1,39 @@
+
+pipeline {
+    agent {
+        label 'llrgrhgtrig.in2p3.fr'
+    }
+    options {
+        skipDefaultCheckout() 
+    }
+    stages {
+        stage('InstallAutoValidationPackage') {
+            steps {
+                echo 'Building..'
+                sh '''
+                uname -a
+                whoami
+                pwd
+                ls -l
+                if [ -d "./HGCTPGValidation" ] 
+                then
+                    rm -rf HGCTPGValidation
+                fi
+                git clone -b master https://github.com/ebecheva/HGCTPGValidation HGCTPGValidation
+                ~/grid_login
+                source HGCTPGValidation/env_install.sh
+                pip install attrs
+                if [ -d "./test_dir" ] 
+                then
+                    echo "Directory test_dir exists." 
+                    rm -rf test_dir
+                fi
+                mkdir test_dir
+                cd test_dir
+                pwd
+                ls -lrt ..
+                '''
+            }
+        }
+    }
+}
