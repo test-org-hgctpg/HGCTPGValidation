@@ -29,8 +29,7 @@ pipeline {
                     rm -rf test_dir
                 fi
                 mkdir test_dir
-                cd test_dir
-                pwd
+
                 ls -lrt ..
                 '''
             }
@@ -39,6 +38,8 @@ pipeline {
             steps {
                 echo 'InstallCMSSW step..'
                 sh '''
+                pwd
+                cd test_dir
                 ~/grid_login
                 source /cvmfs/cms.cern.ch/cmsset_default.sh
                 export SCRAM_ARCH=slc7_amd64_gcc900
