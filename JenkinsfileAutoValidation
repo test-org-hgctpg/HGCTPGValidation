@@ -67,7 +67,8 @@ pipeline {
                 sh '''
                 cd CMSSW_12_1_0_pre3_HGCalTPGValidation_ref/src
                 echo $PWD
-                eval `scramv1 runtime -sh`                '''
+                eval `scramv1 runtime -sh`                
+                '''
                 script{
                     gv.runcmsDriver()
                 }
