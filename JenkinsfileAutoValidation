@@ -128,7 +128,7 @@ pipeline {
             steps {
                 sh '''
                 cd test_dir
-                source HGCTPGValidation/env_install.sh
+                source ../HGCTPGValidation/env_install.sh
                 echo $PWD
                 ../HGCTPGValidation/scripts/displayHistos.sh ./CMSSW_12_1_0_pre3_HGCalTPGValidation_ref/src ./CMSSW_12_1_0_pre3_HGCalTPGValidation_test/src ./GIFS
                 '''            
