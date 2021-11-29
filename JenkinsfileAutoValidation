@@ -129,7 +129,7 @@ pipeline {
                 sh '''
                 cd test_dir
                 echo $PWD
-                ../HGCTPGValidation/scripts/displayHistos.sh test_dir/CMSSW_12_1_0_pre3_HGCalTPGValidation_ref/src test_dir/CMSSW_12_1_0_pre3_HGCalTPGValidation_test/src ./HGCALTPG_Validation/GIFS
+                ../HGCTPGValidation/scripts/displayHistos.sh ./CMSSW_12_1_0_pre3_HGCalTPGValidation_ref/src ./CMSSW_12_1_0_pre3_HGCalTPGValidation_test/src ./GIFS
                 '''            
             }
         }
