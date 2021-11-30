@@ -57,7 +57,7 @@ pipeline {
                                 git config --global user.email emilia.becheva@llr.in2p3.fr
                                 git cms-merge-topic ebecheva:main-dev-CMSSW_12_1_0_pre3
                                 git checkout -b local_main-dev-CMSSW_12_1_0_pre3 ebecheva/main-dev-CMSSW_12_1_0_pre3
-                                scram b -j4
+                                scram b -j8
                                 '''
                             }
                         }
@@ -103,7 +103,7 @@ pipeline {
                                 eval `scramv1 runtime -sh`
                                 git cms-merge-topic ebecheva:fix-dev-CMSSW_12_1_0_pre3
                                 git checkout -b local_main-dev-CMSSW_12_1_0_pre3 ebecheva/fix-dev-CMSSW_12_1_0_pre3
-                                scram b -j4
+                                scram b -j8
                                 '''
                             }
                         }
