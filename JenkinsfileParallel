@@ -125,6 +125,7 @@ pipeline {
                     }
                 }
             }
+        }
         stage('Display') {
             steps {
                 sh '''
