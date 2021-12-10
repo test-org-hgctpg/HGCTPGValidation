@@ -82,7 +82,7 @@ pipeline {
                                 cd test_dir/CMSSW_12_1_0_pre3_HGCalTPGValidation_test/src
                                 source ../../../HGCTPGValidation/scripts/produceDataTest.sh
                                 echo 'CHANGE_ID= ', $CHANGE_ID
-                                cp GIFS /data/jenkins/workspace/validation_data/$CHANGE_ID
+                                cp GIFS /data/jenkins/workspace/validation_data/PR$CHANGE_ID
                                 '''            
                             }
                         }
