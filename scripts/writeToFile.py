@@ -12,7 +12,7 @@ def main(dirname, prnumber, prtitle):
     print('dirname = ', dirname)
     print('prtitle = ', prtitle)
     print('prnumber= ', prnumber)
-    os.mkdir(dirname)
+    #os.mkdir(dirname)
     os.chdir(dirname) 
     writeIntoFile(prnumber, prtitle)
 
