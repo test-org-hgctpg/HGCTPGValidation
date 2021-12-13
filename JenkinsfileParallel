@@ -104,7 +104,7 @@ pipeline {
                 fi
                 mkdir /data/jenkins/workspace/validation_data/PR$CHANGE_ID
                 cp -rf GIFS/. /data/jenkins/workspace/validation_data/PR$CHANGE_ID
-                python writeToFile.py --dirname PR$CHANGE_ID --prnumber $CHANGE_ID --prtitle "$CHANGE_TITLE"
+                python ../HGCTPGValidation/scripts/writeToFile.py --dirname PR$CHANGE_ID --prnumber $CHANGE_ID --prtitle "$CHANGE_TITLE"
                 '''            
             }
         }
