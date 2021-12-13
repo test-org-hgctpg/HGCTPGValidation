@@ -96,8 +96,15 @@ pipeline {
                 echo $PWD
                 ../HGCTPGValidation/scripts/displayHistos.sh ./CMSSW_12_1_0_pre3_HGCalTPGValidation_ref/src ./CMSSW_12_1_0_pre3_HGCalTPGValidation_test/src ./GIFS
                 echo 'CHANGE_ID= ', $CHANGE_ID
+                echo '$CHANGE_TITLE= ', $CHANGE_TITLE
+                if [ -d /data/jenkins/workspace/validation_data/PR$CHANGE_ID ] 
+                then
+                    echo "Directory test_dir exists." 
+                    rm -rf /data/jenkins/workspace/validation_data/PR$CHANGE_ID
+                fi
                 mkdir /data/jenkins/workspace/validation_data/PR$CHANGE_ID
-                cp GIFS /data/jenkins/workspace/validation_data/PR$CHANGE_ID
+                cp -rf GIFS/. /data/jenkins/workspace/validation_data/PR$CHANGE_ID
+                python writeToFile.py --dirname PR$CHANGE_ID --prnumber $CHANGE_ID --prtitle "$CHANGE_TITLE"
                 '''            
             }
         }
