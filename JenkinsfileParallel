@@ -99,7 +99,7 @@ pipeline {
                 echo '$CHANGE_TITLE= ', $CHANGE_TITLE
                 if [ -d /data/jenkins/workspace/validation_data/PR$CHANGE_ID ] 
                 then
-                    echo "Directory test_dir exists." 
+                    echo "Directory " PR$CHANGE_ID " exists." 
                     rm -rf /data/jenkins/workspace/validation_data/PR$CHANGE_ID
                 fi
                 mkdir /data/jenkins/workspace/validation_data/PR$CHANGE_ID
