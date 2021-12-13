@@ -6,8 +6,6 @@ import sys
 
 def writeIntoFile(prnumber, prtitle):
     with open('validation_webpages.txt', 'w') as f:
-        title='PR'
-        print(prnumber)
         f.write(prtitle)
     
 def main(dirname, prnumber, prtitle):
