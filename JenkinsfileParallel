@@ -102,7 +102,7 @@ pipeline {
                     rm -rf /data/jenkins/workspace/validation_data/PR$CHANGE_ID
                 fi
                 mkdir /data/jenkins/workspace/validation_data/PR$CHANGE_ID
-                cp -rf GIFS /data/jenkins/workspace/validation_data/PR$CHANGE_ID
+                cp -rf GIFS/. /data/jenkins/workspace/validation_data/PR$CHANGE_ID
                 '''            
             }
         }
