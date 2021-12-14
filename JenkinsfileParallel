@@ -116,9 +116,9 @@ pipeline {
     post {
         always {
             echo 'One way or another, I have finished'
-            mail to: '${EMAIL_TO}',
-            subject: "Failed Pipeline: ${currentBuild.fullDisplayName}",
-            body: "The job finished successfully."
+            mail to: 'emilia.becheva@llr.in2p3.fr',
+                 subject: "Failed Pipeline: ${currentBuild.fullDisplayName}",
+                 body: "The job finished successfully."
         }
         success {
             echo 'I succeeded!'
@@ -128,9 +128,9 @@ pipeline {
         }
         failure {
             echo 'Job failed'
-            mail to: '${EMAIL_TO}',
-            subject: "Failed Pipeline: ${currentBuild.fullDisplayName}",
-            body: "Something is wrong with ${env.BUILD_URL}, $PROJECT_NAME - #$BUILD_NUMBER, Check console output at $BUILD_URL to view the results. \n\n ${CHANGES}"
+            mail to: 'emilia.becheva@llr.in2p3.fr',
+                 subject: "Failed Pipeline: ${currentBuild.fullDisplayName}",
+                 body: "Something is wrong with ${env.BUILD_URL}, $PROJECT_NAME - #$BUILD_NUMBER, Check console output at $BUILD_URL to view the results. \n\n ${CHANGES}"
         }
         changed {
             echo 'Things were different before...'
