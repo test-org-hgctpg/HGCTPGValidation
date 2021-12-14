@@ -118,7 +118,7 @@ pipeline {
             echo 'One way or another, I have finished'
             mail to: '${EMAIL_TO}',
             subject: "Failed Pipeline: ${currentBuild.fullDisplayName}",
-            body: "The job finished successfully. The histograms are in the '/data/jenkins/workspace/validation_data/PR$CHANGE_ID directory.'“
+            body: "The job finished successfully.“
         }
         success {
             echo 'I succeeded!'
