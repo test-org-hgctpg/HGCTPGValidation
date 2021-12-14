@@ -130,7 +130,7 @@ pipeline {
             echo ‘Job failed’
             mail to: '${EMAIL_TO}',
             subject: "Failed Pipeline: ${currentBuild.fullDisplayName}",
-            body: "Something is wrong with ${env.BUILD_URL}, $PROJECT_NAME - #$BUILD_NUMBER, Check console output at $BUILD_URL to view the results. \n\n ${CHANGES}“
+            body: "Something is wrong with ${env.BUILD_URL}, $PROJECT_NAME - #$BUILD_NUMBER, Check console output at $BUILD_URL to view the results. \n\n ${CHANGES}"
         }
         changed {
             echo 'Things were different before...'
