@@ -118,7 +118,7 @@ pipeline {
             echo 'One way or another, I have finished'
             mail to: '${EMAIL_TO}',
             subject: "Failed Pipeline: ${currentBuild.fullDisplayName}",
-            body: "The job finished successfully.“
+            body: "The job finished successfully."
         }
         success {
             echo 'I succeeded!'
