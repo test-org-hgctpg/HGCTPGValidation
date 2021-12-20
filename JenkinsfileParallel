@@ -48,7 +48,8 @@ pipeline {
                                 pwd
                                 ~/grid_login
                                 cd test_dir
-                                ../HGCTPGValidation/scripts/installCMSSWRef.sh
+                                REF_RELEASE==$(echo $CHANGE_TARGET | cut -d'-' -f 4)
+                                ../HGCTPGValidation/scripts/installCMSSWRef.sh $REF_RELEASE
                                 '''
                             }
                         }
@@ -73,7 +74,8 @@ pipeline {
                                 pwd
                                 ~/grid_login
                                 cd test_dir
-                                ../HGCTPGValidation/scripts/installCMSSWTest.sh
+                                TEST_RELEASE==$(echo $CHANGE_BRANCH | cut -d'-' -f 4)
+                                ../HGCTPGValidation/scripts/installCMSSWTest.sh $TEST_RELEASE
                                 '''
                             }
                         }
