@@ -7,9 +7,9 @@ source /cvmfs/cms.cern.ch/cmsset_default.sh
 export SCRAM_ARCH=slc7_amd64_gcc900
 echo $SCRAM_ARCH
 module purge
-#scramv1 p -n $1_HGCalTPGValidation_ref $1
+#scramv1 p -n $1_HGCalTPGValidation_ref CMSSW $1
 #cd $1_HGCalTPGValidation_ref/src
-scramv1 p -n CMSSW_12_1_0_pre3_HGCalTPGValidation_ref CMSSW_12_1_0_pre3
+scramv1 p -n CMSSW_12_1_0_pre3_HGCalTPGValidation_ref CMSSW CMSSW_12_1_0_pre3
 cd CMSSW_12_1_0_pre3_HGCalTPGValidation_ref/src
 echo $PWD
 eval `scramv1 runtime -sh`
