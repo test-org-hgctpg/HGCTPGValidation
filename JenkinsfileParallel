@@ -75,8 +75,8 @@ pipeline {
                                 pwd
                                 ~/grid_login
                                 cd test_dir
-                                TEST_RELEASE=$(echo $CHANGE_BRANCH | cut -d'-' -f 3)
-                                ../HGCTPGValidation/scripts/installCMSSWTest.sh $TEST_RELEASE
+                                REF_RELEASE=$(echo $CHANGE_TARGET | cut -d'-' -f 3)
+                                ../HGCTPGValidation/scripts/installCMSSWTest.sh $REF_RELEASE
                                 '''
                             }
                         }
@@ -85,8 +85,8 @@ pipeline {
                                 sh '''
                                 pwd
                                 ~/grid_login
-                                TEST_RELEASE=$(echo $CHANGE_BRANCH | cut -d'-' -f 3)
-                                cd test_dir/${TEST_RELEASE}_HGCalTPGValidation_test/src
+                                REF_RELEASE=$(echo $CHANGE_TARGET | cut -d'-' -f 3)
+                                cd test_dir/${REF_RELEASE}_HGCalTPGValidation_test/src
                                 ../../../HGCTPGValidation/scripts/produceDataTest.sh
                                 '''            
                             }
@@ -102,8 +102,7 @@ pipeline {
                 source ../HGCTPGValidation/env_install.sh
                 echo $PWD
                 REF_RELEASE=$(echo $CHANGE_TARGET | cut -d'-' -f 3)
-                TEST_RELEASE=$(echo $CHANGE_BRANCH | cut -d'-' -f 3)
-                ../HGCTPGValidation/scripts/displayHistos.sh ./${REF_RELEASE}_HGCalTPGValidation_ref/src ./${TEST_RELEASE}_HGCalTPGValidation_test/src ./GIFS
+                ../HGCTPGValidation/scripts/displayHistos.sh ./${REF_RELEASE}_HGCalTPGValidation_ref/src ./${REF_RELEASE}_HGCalTPGValidation_test/src ./GIFS
                 echo 'CHANGE_ID= ', $CHANGE_ID
                 echo '$CHANGE_TITLE= ', $CHANGE_TITLE
                 if [ -d /data/jenkins/workspace/validation_data/PR$CHANGE_ID ] 
