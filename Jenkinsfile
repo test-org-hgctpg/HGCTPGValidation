@@ -21,7 +21,7 @@ pipeline {
                 then
                     rm -rf HGCTPGValidation
                 fi
-                git clone -b master https://github.com/ebecheva/HGCTPGValidation HGCTPGValidation
+                git clone -b master https://github.com/hgc-tpg/HGCTPGValidation HGCTPGValidation
                 ~/grid_login
                 source HGCTPGValidation/env_install.sh
                 pip install attrs
@@ -47,7 +47,7 @@ pipeline {
                                 ~/grid_login
                                 cd test_dir
                                 REF_RELEASE=$(echo $CHANGE_TARGET | cut -d'-' -f 4)
-                                ../HGCTPGValidation/scripts/installCMSSWRef.sh $REF_RELEASE
+                                ../HGCTPGValidation/scripts/installCMSSWRef.sh $REF_RELEASE $CHANGE_TARGET
                                 '''
                             }
                         }
@@ -74,7 +74,7 @@ pipeline {
                                 ~/grid_login
                                 cd test_dir
                                 REF_RELEASE=$(echo $CHANGE_TARGET | cut -d'-' -f 4)
-                                ../HGCTPGValidation/scripts/installCMSSWTest.sh $REF_RELEASE
+                                ../HGCTPGValidation/scripts/installCMSSWTest.sh $REF_RELEASE $CHANGE_BRANCH
                                 '''
                             }
                         }
