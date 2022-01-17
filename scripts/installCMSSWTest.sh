@@ -1,15 +1,14 @@
-
 #!/bin/bash
 
 # installCMSSWTest.sh $RELEASE
-# $1 name of the release
+# $1 name of the release, it is taken from the $CHANGE_TARGET
 # $2 name of the change branch, $CHANGE_BRANCH
 
 source /cvmfs/cms.cern.ch/cmsset_default.sh
 export SCRAM_ARCH=slc7_amd64_gcc900
 echo $SCRAM_ARCH
 module purge
-scramv1 p -n $1_HGCalTPGValidation_test $1
+scramv1 p -n $1_HGCalTPGValidation_test CMSSW $1
 cd $1_HGCalTPGValidation_test/src
 echo $PWD
 eval `scramv1 runtime -sh`

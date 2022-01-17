@@ -21,7 +21,7 @@ pipeline {
                 then
                     rm -rf HGCTPGValidation
                 fi
-                git clone -b master https://github.com/hgc-tpg/HGCTPGValidation HGCTPGValidation
+                git clone -b master https://github.com/ebecheva/HGCTPGValidation HGCTPGValidation
                 ~/grid_login
                 source HGCTPGValidation/env_install.sh
                 pip install attrs
@@ -31,6 +31,8 @@ pipeline {
                     rm -rf test_dir
                 fi
                 mkdir test_dir
+
+                ls -lrt ..
                 '''
             }
         }
@@ -46,7 +48,9 @@ pipeline {
                                 pwd
                                 ~/grid_login
                                 cd test_dir
-                                REF_RELEASE=$(echo $CHANGE_TARGET | cut -d'-' -f 4)
+                                #REF_RELEASE=$(echo $CHANGE_TARGET | cut -d'-' -f 3)
+                                source ../HGCTPGValidation/scripts/extractReleaseName.sh $CHANGE_TARGET
+                                unset IFS
                                 ../HGCTPGValidation/scripts/installCMSSWRef.sh $REF_RELEASE $CHANGE_TARGET
                                 '''
                             }
@@ -56,7 +60,9 @@ pipeline {
                                 sh '''
                                 pwd
                                 ~/grid_login
-                                REF_RELEASE=$(echo $CHANGE_TARGET | cut -d'-' -f 4)
+                                #REF_RELEASE=$(echo $CHANGE_TARGET | cut -d'-' -f 3)
+                                source ./HGCTPGValidation/scripts/extractReleaseName.sh $CHANGE_TARGET
+                                unset IFS
                                 cd test_dir/${REF_RELEASE}_HGCalTPGValidation_ref/src
                                 ../../../HGCTPGValidation/scripts/produceDataRef.sh
                                 '''            
@@ -73,7 +79,9 @@ pipeline {
                                 pwd
                                 ~/grid_login
                                 cd test_dir
-                                REF_RELEASE=$(echo $CHANGE_TARGET | cut -d'-' -f 4)
+                                #REF_RELEASE=$(echo $CHANGE_TARGET | cut -d'-' -f 3)
+                                source ../HGCTPGValidation/scripts/extractReleaseName.sh $CHANGE_TARGET
+                                unset IFS
                                 ../HGCTPGValidation/scripts/installCMSSWTest.sh $REF_RELEASE $CHANGE_BRANCH
                                 '''
                             }
@@ -83,7 +91,9 @@ pipeline {
                                 sh '''
                                 pwd
                                 ~/grid_login
-                                REF_RELEASE=$(echo $CHANGE_TARGET | cut -d'-' -f 4)
+                                #REF_RELEASE=$(echo $CHANGE_TARGET | cut -d'-' -f 3)
+                                source ./HGCTPGValidation/scripts/extractReleaseName.sh $CHANGE_TARGET
+                                unset IFS
                                 cd test_dir/${REF_RELEASE}_HGCalTPGValidation_test/src
                                 ../../../HGCTPGValidation/scripts/produceDataTest.sh
                                 '''            
@@ -99,7 +109,7 @@ pipeline {
                 cd test_dir
                 source ../HGCTPGValidation/env_install.sh
                 echo $PWD
-                REF_RELEASE=$(echo $CHANGE_TARGET | cut -d'-' -f 4)
+                REF_RELEASE=$(echo $CHANGE_TARGET | cut -d'-' -f 3)
                 ../HGCTPGValidation/scripts/displayHistos.sh ./${REF_RELEASE}_HGCalTPGValidation_ref/src ./${REF_RELEASE}_HGCalTPGValidation_test/src ./GIFS
                 echo 'CHANGE_ID= ', $CHANGE_ID
                 echo '$CHANGE_TITLE= ', $CHANGE_TITLE
@@ -111,7 +121,7 @@ pipeline {
                 export data_dir=/data/jenkins/workspace/validation_data
                 mkdir $data_dir/PR$CHANGE_ID
                 cp -rf GIFS/. $data_dir/PR$CHANGE_ID
-                python ../HGCTPGValidation/scripts/writeToFile.py --dirname $data_dir/PR$CHANGE_ID --prnumber $CHANGE_ID --prtitle "PR$CHANGE_ID : $CHANGE_TITLE (from $CHANGE_AUTHOR)"
+                python ../HGCTPGValidation/scripts/writeToFile.py --dirname $data_dir/PR$CHANGE_ID --prnumber $CHANGE_ID --prtitle "PR$CHANGE_ID : $CHANGE_TITLE (from $CHANGE_AUTHOR, $CHANGE_URL)"
                 '''            
             }
         }
@@ -119,31 +129,31 @@ pipeline {
     post {
         always {
             echo 'The job finished.'
-            mail to: 'jenkins@llr.in2p3.fr',
+            mail to: "${EMAIL_TO}",
                  subject: "Jenkins job was run: ${currentBuild.fullDisplayName} was run.",
                  body:  "The Jenkins job was run. \n\n Pull request: ${env.BRANCH_NAME} build number: #${env.BUILD_NUMBER} \n\n Title: ${env.CHANGE_TITLE} \n\n Author of the PR: ${env.CHANGE_AUTHOR} \n\n Target branch: ${env.CHANGE_TARGET} \n\n Feature branch: ${env.CHANGE_BRANCH} \n\n Check console output at ${env.BUILD_URL} to view the results."
         }
         success {
             echo 'The job finished successfully.'
-            mail to: 'jenkins@llr.in2p3.fr',
+            mail to: "${EMAIL_TO}",
                  subject: "Jenkins job succeded: ${currentBuild.fullDisplayName}",
                  body:  "The job finished successfully. \n\n Pull request: ${env.BRANCH_NAME} build number: #${env.BUILD_NUMBER} \n\n Title: ${env.CHANGE_TITLE} \n\n Author of the PR: ${env.CHANGE_AUTHOR} \n\n Target branch: ${env.CHANGE_TARGET} \n\n Feature branch: ${env.CHANGE_BRANCH} \n\n Check console output at ${env.BUILD_URL} to view the results."
         }
         unstable {
             echo 'The job is unstable :/'
-            mail to: 'jenkins@llr.in2p3.fr',
+            mail to: "${EMAIL_TO}",
                  subject: "Jenkins job, status Unstable : ${currentBuild.fullDisplayName}",
                  body:  "Unit tests failed. \n\n Pull request: ${env.BRANCH_NAME} build number: #${env.BUILD_NUMBER} \n\n Title: ${env.CHANGE_TITLE} \n\n Author of the PR: ${env.CHANGE_AUTHOR} \n\n Target branch: ${env.CHANGE_TARGET} \n\n Feature branch: ${env.CHANGE_BRANCH} \n\n Check console output at ${env.BUILD_URL} to view the results."
         }
         failure {
             echo 'Job failed'
-            mail to: 'jenkins@llr.in2p3.fr',
+            mail to: "${EMAIL_TO}",
                  subject: "Failed Jenkins job: ${currentBuild.fullDisplayName}",
                  body: "The compilation or the build steps failed. \n\n Pull request: ${env.BRANCH_NAME} build number: #${env.BUILD_NUMBER} \n\n Title: ${env.CHANGE_TITLE} \n\n Author of the PR: ${env.CHANGE_AUTHOR} \n\n Target branch: ${env.CHANGE_TARGET} \n\n Feature branch: ${env.CHANGE_BRANCH} \n\n Check console output at ${env.BUILD_URL} to view the results."
         }
         changed {
             echo 'Things were different before...'
-            mail to: 'jenkins@llr.in2p3.fr',
+            mail to: "${EMAIL_TO}",
                  subject: "Status=Changed for Jenkins job: ${currentBuild.fullDisplayName}",
                  body: "Build status has changed. \n\n Pull request: ${env.BRANCH_NAME} build number: #${env.BUILD_NUMBER} \n\n Title: ${env.CHANGE_TITLE} \n\n Author of the PR: ${env.CHANGE_AUTHOR} \n\n Target branch: ${env.CHANGE_TARGET} \n\n Feature branch: ${env.CHANGE_BRANCH} \n\n Check console output at ${env.BUILD_URL} to view the results."    
         }

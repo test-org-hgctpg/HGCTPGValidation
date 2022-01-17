@@ -4,6 +4,8 @@
 # $1 name of the release
 # $2 name of the change branch, $CHANGE_BRANCH
 
+echo $1
+echo $2
 source /cvmfs/cms.cern.ch/cmsset_default.sh
 export SCRAM_ARCH=slc7_amd64_gcc900
 echo $SCRAM_ARCH

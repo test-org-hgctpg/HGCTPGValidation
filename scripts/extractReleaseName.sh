@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-STR="hgc-tpg-devel-CMSSW_12_1_0_pre3-test"
-
 ########################################################
 IFS="-"
 for i in $STR
@@ -19,4 +17,4 @@ do
   fi
   done
 done
-echo "release after for => $refrel"
+echo "The name of the release is $REF_RELEASE"
