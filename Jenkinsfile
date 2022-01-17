@@ -21,7 +21,7 @@ pipeline {
                 then
                     rm -rf HGCTPGValidation
                 fi
-                git clone -b master https://github.com/ebecheva/HGCTPGValidation HGCTPGValidation
+                git clone -b master https://github.com/hgc-tpg/HGCTPGValidation HGCTPGValidation
                 ~/grid_login
                 source HGCTPGValidation/env_install.sh
                 pip install attrs
