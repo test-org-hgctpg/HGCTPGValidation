@@ -48,7 +48,6 @@ pipeline {
                                 pwd
                                 ~/grid_login
                                 cd test_dir
-                                #REF_RELEASE=$(echo $CHANGE_TARGET | cut -d'-' -f 3)
                                 source ../HGCTPGValidation/scripts/extractReleaseName.sh $CHANGE_TARGET
                                 unset IFS
                                 ../HGCTPGValidation/scripts/installCMSSWRef.sh $REF_RELEASE $CHANGE_TARGET
@@ -60,7 +59,6 @@ pipeline {
                                 sh '''
                                 pwd
                                 ~/grid_login
-                                #REF_RELEASE=$(echo $CHANGE_TARGET | cut -d'-' -f 3)
                                 source ./HGCTPGValidation/scripts/extractReleaseName.sh $CHANGE_TARGET
                                 unset IFS
                                 cd test_dir/${REF_RELEASE}_HGCalTPGValidation_ref/src
@@ -79,7 +77,6 @@ pipeline {
                                 pwd
                                 ~/grid_login
                                 cd test_dir
-                                #REF_RELEASE=$(echo $CHANGE_TARGET | cut -d'-' -f 3)
                                 source ../HGCTPGValidation/scripts/extractReleaseName.sh $CHANGE_TARGET
                                 unset IFS
                                 ../HGCTPGValidation/scripts/installCMSSWTest.sh $REF_RELEASE $CHANGE_BRANCH
@@ -91,7 +88,6 @@ pipeline {
                                 sh '''
                                 pwd
                                 ~/grid_login
-                                #REF_RELEASE=$(echo $CHANGE_TARGET | cut -d'-' -f 3)
                                 source ./HGCTPGValidation/scripts/extractReleaseName.sh $CHANGE_TARGET
                                 unset IFS
                                 cd test_dir/${REF_RELEASE}_HGCalTPGValidation_test/src
