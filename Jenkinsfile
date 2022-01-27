@@ -108,7 +108,8 @@ pipeline {
                 cd test_dir
                 source ../HGCTPGValidation/env_install.sh
                 echo $PWD
-                REF_RELEASE=$(echo $CHANGE_TARGET | cut -d'-' -f 3)
+                source ../HGCTPGValidation/scripts/extractReleaseName.sh $CHANGE_TARGET
+                unset IFS
                 ../HGCTPGValidation/scripts/displayHistos.sh ./${REF_RELEASE}_HGCalTPGValidation_ref/src ./${REF_RELEASE}_HGCalTPGValidation_test/src ./GIFS
                 echo 'CHANGE_ID= ', $CHANGE_ID
                 echo '$CHANGE_TITLE= ', $CHANGE_TITLE
