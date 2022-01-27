@@ -4,6 +4,9 @@
 # $1 label "ref" or "test"
 # $2 procModifier 
 
+echo "label " $1
+echo "procModifiers " $2
+
 source /cvmfs/cms.cern.ch/cmsset_default.sh
 echo $PWD
 eval `scramv1 runtime -sh`
