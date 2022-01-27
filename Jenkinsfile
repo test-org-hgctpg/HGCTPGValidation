@@ -31,7 +31,6 @@ pipeline {
                     rm -rf test_dir
                 fi
                 mkdir test_dir
-
                 ls -lrt ..
                 '''
             }
@@ -50,7 +49,8 @@ pipeline {
                                 cd test_dir
                                 source ../HGCTPGValidation/scripts/extractReleaseName.sh $CHANGE_TARGET
                                 unset IFS
-                                ../HGCTPGValidation/scripts/installCMSSWRef.sh $REF_RELEASE $CHANGE_TARGET
+                                export LABEL="ref"
+                                ../HGCTPGValidation/scripts/installCMSSW.sh $REF_RELEASE $CHANGE_TARGET $LABEL
                                 '''
                             }
                         }
@@ -61,8 +61,9 @@ pipeline {
                                 ~/grid_login
                                 source ./HGCTPGValidation/scripts/extractReleaseName.sh $CHANGE_TARGET
                                 unset IFS
-                                cd test_dir/${REF_RELEASE}_HGCalTPGValidation_ref/src
-                                ../../../HGCTPGValidation/scripts/produceDataRef.sh
+                                export LABEL="ref"
+                                cd test_dir/${REF_RELEASE}_HGCalTPGValidation_$LABEL/src
+                                ../../../HGCTPGValidation/scripts/produceData.sh $LABEL
                                 '''            
                             }
                         }
@@ -79,7 +80,8 @@ pipeline {
                                 cd test_dir
                                 source ../HGCTPGValidation/scripts/extractReleaseName.sh $CHANGE_TARGET
                                 unset IFS
-                                ../HGCTPGValidation/scripts/installCMSSWTest.sh $REF_RELEASE $CHANGE_BRANCH
+                                export LABEL="test"
+                                ../HGCTPGValidation/scripts/installCMSSW.sh $REF_RELEASE $CHANGE_BRANCH $LABEL
                                 '''
                             }
                         }
@@ -90,8 +92,9 @@ pipeline {
                                 ~/grid_login
                                 source ./HGCTPGValidation/scripts/extractReleaseName.sh $CHANGE_TARGET
                                 unset IFS
-                                cd test_dir/${REF_RELEASE}_HGCalTPGValidation_test/src
-                                ../../../HGCTPGValidation/scripts/produceDataTest.sh
+                                export LABEL="test"
+                                cd test_dir/${REF_RELEASE}_HGCalTPGValidation_$LABEL/src
+                                ../../../HGCTPGValidation/scripts/produceData.sh $LABEL
                                 '''            
                             }
                         }
