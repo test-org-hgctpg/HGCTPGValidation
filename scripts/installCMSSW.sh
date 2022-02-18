@@ -15,11 +15,11 @@ branch=$3
 echo $branch
 label=$4
 echo $label
-echo "directory = " $relversion_HGCalTPGValidation_$label
+echo "directory = " ${relversion}_HGCalTPGValidation_$label
 
 source /cvmfs/cms.cern.ch/cmsset_default.sh
 module purge
-scramv1 p -n $relversion_HGCalTPGValidation_$label CMSSW $relversion
+scramv1 p -n ${relversion}_HGCalTPGValidation_$label CMSSW $relversion
 cd $relversion_HGCalTPGValidation_$label/src
 echo $PWD
 eval `scramv1 runtime -sh`
