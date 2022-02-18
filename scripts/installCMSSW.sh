@@ -15,6 +15,7 @@ branch=$3
 echo $branch
 label=$4
 echo $label
+echo "directory = " $relversion_HGCalTPGValidation_$label
 
 source /cvmfs/cms.cern.ch/cmsset_default.sh
 module purge
