@@ -51,7 +51,8 @@ pipeline {
                                 unset IFS
                                 source ../HGCTPGValidation/scripts/getScramArch.sh $REF_RELEASE
                                 export LABEL="ref"
-                                ../HGCTPGValidation/scripts/installCMSSW.sh $SCRAM_ARCH $REF_RELEASE $CHANGE_TARGET $LABEL
+                                export REMOTE="hgc-tpg"
+                                ../HGCTPGValidation/scripts/installCMSSW.sh $SCRAM_ARCH $REF_RELEASE $REMOTE $CHANGE_TARGET $LABEL
                                 '''
                             }
                         }
@@ -83,7 +84,14 @@ pipeline {
                                 unset IFS
                                 source ../HGCTPGValidation/scripts/getScramArch.sh $REF_RELEASE
                                 export LABEL="test"
-                                ../HGCTPGValidation/scripts/installCMSSW.sh $SCRAM_ARCH $REF_RELEASE $CHANGE_BRANCH $LABEL
+                                if [ -z "$CHANGE_FORK" ]
+                                then
+                                    export REMOTE="hgc-tpg"
+                                else
+                                    export REMOTE=$CHANGE_FORK
+                                fi
+                                echo 'REMOTE= ', $REMOTE
+                                ../HGCTPGValidation/scripts/installCMSSW.sh $SCRAM_ARCH $REF_RELEASE $REMOTE $CHANGE_BRANCH $LABEL
                                 '''
                             }
                         }
