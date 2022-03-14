@@ -12,10 +12,10 @@ export SCRAM_ARCH=$1
 echo $SCRAM_ARCH
 relversion=$2
 echo $relversion
-branch=$3
-echo $branch
-remote=$4
+remote=$3
 echo $remote
+branch=$4
+echo $branch
 label=$5
 echo $label
 #echo "directory = " ${relversion}_HGCalTPGValidation_$label
