@@ -64,8 +64,9 @@ pipeline {
                                 source ./HGCTPGValidation/scripts/extractReleaseName.sh $CHANGE_TARGET
                                 unset IFS
                                 export LABEL="ref"
+                                export PROC_MODIFIER=""
                                 cd test_dir/${REF_RELEASE}_HGCalTPGValidation_$LABEL/src
-                                ../../../HGCTPGValidation/scripts/produceData.sh $LABEL
+                                ../../../HGCTPGValidation/scripts/produceData.sh $LABEL $PROC_MODIFIER
                                 '''            
                             }
                         }
@@ -103,8 +104,9 @@ pipeline {
                                 source ./HGCTPGValidation/scripts/extractReleaseName.sh $CHANGE_TARGET
                                 unset IFS
                                 export LABEL="test"
+                                export PROC_MODIFIER=""
                                 cd test_dir/${REF_RELEASE}_HGCalTPGValidation_$LABEL/src
-                                ../../../HGCTPGValidation/scripts/produceData.sh $LABEL
+                                ../../../HGCTPGValidation/scripts/produceData.sh $LABEL $PROC_MODIFIER
                                 '''            
                             }
                         }
