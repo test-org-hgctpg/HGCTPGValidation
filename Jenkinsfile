@@ -96,6 +96,19 @@ pipeline {
                                 '''
                             }
                         }
+                        stage('QualityChecks'){
+                            steps{
+                                sh '''
+                                source /cvmfs/cms.cern.ch/cmsset_default.sh
+                                source ./HGCTPGValidation/scripts/extractReleaseName.sh $CHANGE_TARGET
+                                unset IFS
+                                export LABEL="test"
+                                cd test_dir/${REF_RELEASE}_HGCalTPGValidation_$LABEL/src
+                                scram build code-checks
+                                scram build code-format
+                                '''
+                            }
+                        }
                         stage('Produce'){
                             steps {
                                 sh '''
