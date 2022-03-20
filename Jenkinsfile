@@ -107,6 +107,9 @@ pipeline {
                                 scram build code-checks
                                 scram build code-format
                                 '''
+                                mail to: "${EMAIL_TO}",
+                                     subject: "Quality checks for ${currentBuild.fullDisplayName} finished.",
+                                     body: "Quality checks for ${currentBuild.fullDisplayName} finished."
                             }
                         }
                         stage('Produce'){
