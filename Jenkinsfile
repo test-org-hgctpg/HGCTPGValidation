@@ -11,7 +11,7 @@ pipeline {
     stages {
         stage('InstallAutoValidationPackage') {
             steps {
-                echo 'Building..'
+                echo 'Install automatic validation package HGCTPGValidation.'
                 sh '''
                 uname -a
                 whoami
