@@ -105,11 +105,17 @@ pipeline {
                                 export LABEL="test"
                                 cd test_dir/${REF_RELEASE}_HGCalTPGValidation_$LABEL/src
                                 scram build code-checks
+                                if [ $? -eq 0 ]
+                                then
+                                    echo "code-checks succeeded."
+                                else
+                                    echo "code-checks failed: script returned exit code " $?
+                                    mail to: "${EMAIL_TO}",
+                                        subject: "Pull request: ${env.BRANCH_NAME} => code-checks failed",
+                                        body: "Quality checks for ${currentBuild.fullDisplayName} finished. code-checks failed: script returned exit code $?."
+                                fi
                                 scram build code-format
                                 '''
-                                mail to: "${EMAIL_TO}",
-                                     subject: "Quality checks for ${currentBuild.fullDisplayName} finished.",
-                                     body: "Quality checks for ${currentBuild.fullDisplayName} finished."
                             }
                         }
                         stage('Produce'){
@@ -159,31 +165,31 @@ pipeline {
             echo 'The job finished.'
             mail to: "${EMAIL_TO}",
                  subject: "Jenkins job was run: ${currentBuild.fullDisplayName} was run.",
-                 body:  "The Jenkins job was run. \n\n Pull request: ${env.BRANCH_NAME} build number: #${env.BUILD_NUMBER} \n\n Title: ${env.CHANGE_TITLE} \n\n Author of the PR: ${env.CHANGE_AUTHOR} \n\n Target branch: ${env.CHANGE_TARGET} \n\n Feature branch: ${env.CHANGE_BRANCH} \n\n Check console output at ${env.BUILD_URL} to view the results."
+                 body:  "The Jenkins job was run. \n\n Pull request: ${env.BRANCH_NAME} build number: #${env.BUILD_NUMBER} \n\n Title: ${env.CHANGE_TITLE} \n\n Author of the PR: ${env.CHANGE_AUTHOR} \n\n Target branch: ${env.CHANGE_TARGET} \n\n Feature branch: ${env.CHANGE_BRANCH} \n\n Check console output at ${env.BUILD_URL} and ${env.CHANGE_URL} to view the results."
         }
         success {
             echo 'The job finished successfully.'
             mail to: "${EMAIL_TO}",
                  subject: "Jenkins job succeded: ${currentBuild.fullDisplayName}",
-                 body:  "The job finished successfully. \n\n Pull request: ${env.BRANCH_NAME} build number: #${env.BUILD_NUMBER} \n\n Title: ${env.CHANGE_TITLE} \n\n Author of the PR: ${env.CHANGE_AUTHOR} \n\n Target branch: ${env.CHANGE_TARGET} \n\n Feature branch: ${env.CHANGE_BRANCH} \n\n Check console output at ${env.BUILD_URL} to view the results."
+                 body:  "The job finished successfully. \n\n Pull request: ${env.BRANCH_NAME} build number: #${env.BUILD_NUMBER} \n\n Title: ${env.CHANGE_TITLE} \n\n Author of the PR: ${env.CHANGE_AUTHOR} \n\n Target branch: ${env.CHANGE_TARGET} \n\n Feature branch: ${env.CHANGE_BRANCH} \n\n Check console output at ${env.BUILD_URL} and ${env.CHANGE_URL} to view the results."
         }
         unstable {
             echo 'The job is unstable :/'
             mail to: "${EMAIL_TO}",
                  subject: "Jenkins job, status Unstable : ${currentBuild.fullDisplayName}",
-                 body:  "Unit tests failed. \n\n Pull request: ${env.BRANCH_NAME} build number: #${env.BUILD_NUMBER} \n\n Title: ${env.CHANGE_TITLE} \n\n Author of the PR: ${env.CHANGE_AUTHOR} \n\n Target branch: ${env.CHANGE_TARGET} \n\n Feature branch: ${env.CHANGE_BRANCH} \n\n Check console output at ${env.BUILD_URL} to view the results."
+                 body:  "Unit tests failed. \n\n Pull request: ${env.BRANCH_NAME} build number: #${env.BUILD_NUMBER} \n\n Title: ${env.CHANGE_TITLE} \n\n Author of the PR: ${env.CHANGE_AUTHOR} \n\n Target branch: ${env.CHANGE_TARGET} \n\n Feature branch: ${env.CHANGE_BRANCH} \n\n Check console output at ${env.BUILD_URL} and ${env.CHANGE_URL} to view the results."
         }
         failure {
             echo 'Job failed'
             mail to: "${EMAIL_TO}",
                  subject: "Failed Jenkins job: ${currentBuild.fullDisplayName}",
-                 body: "The compilation or the build steps failed. \n\n Pull request: ${env.BRANCH_NAME} build number: #${env.BUILD_NUMBER} \n\n Title: ${env.CHANGE_TITLE} \n\n Author of the PR: ${env.CHANGE_AUTHOR} \n\n Target branch: ${env.CHANGE_TARGET} \n\n Feature branch: ${env.CHANGE_BRANCH} \n\n Check console output at ${env.BUILD_URL} to view the results."
+                 body: "The compilation or the build steps failed. \n\n Pull request: ${env.BRANCH_NAME} build number: #${env.BUILD_NUMBER} \n\n Title: ${env.CHANGE_TITLE} \n\n Author of the PR: ${env.CHANGE_AUTHOR} \n\n Target branch: ${env.CHANGE_TARGET} \n\n Feature branch: ${env.CHANGE_BRANCH} \n\n Check console output at ${env.BUILD_URL} and ${env.CHANGE_URL} to view the results."
         }
         changed {
             echo 'Things were different before...'
             mail to: "${EMAIL_TO}",
                  subject: "Status=Changed for Jenkins job: ${currentBuild.fullDisplayName}",
-                 body: "Build status has changed. \n\n Pull request: ${env.BRANCH_NAME} build number: #${env.BUILD_NUMBER} \n\n Title: ${env.CHANGE_TITLE} \n\n Author of the PR: ${env.CHANGE_AUTHOR} \n\n Target branch: ${env.CHANGE_TARGET} \n\n Feature branch: ${env.CHANGE_BRANCH} \n\n Check console output at ${env.BUILD_URL} to view the results."    
+                 body: "Build status has changed. \n\n Pull request: ${env.BRANCH_NAME} build number: #${env.BUILD_NUMBER} \n\n Title: ${env.CHANGE_TITLE} \n\n Author of the PR: ${env.CHANGE_AUTHOR} \n\n Target branch: ${env.CHANGE_TARGET} \n\n Feature branch: ${env.CHANGE_BRANCH} \n\n Check console output at ${env.BUILD_URL} and ${env.CHANGE_URL} to view the results."    
         }
     }
 }
