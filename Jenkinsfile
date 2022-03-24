@@ -35,103 +35,98 @@ pipeline {
                 '''
             }
         }
-        stage('BuildValidation'){
-            failFast true
-            parallel{
-                stage(BuildCMSSWRef){
-                    stages{
-                        stage('Install'){
-                            steps {
-                                echo 'InstallCMSSW Ref step..'
-                                sh '''
-                                pwd
-                                ~/grid_login
-                                cd test_dir
-                                source ../HGCTPGValidation/scripts/extractReleaseName.sh $CHANGE_TARGET
-                                unset IFS
-                                source ../HGCTPGValidation/scripts/getScramArch.sh $REF_RELEASE
-                                export LABEL="ref"
-                                export REMOTE="hgc-tpg"
-                                ../HGCTPGValidation/scripts/installCMSSW.sh $SCRAM_ARCH $REF_RELEASE $REMOTE $CHANGE_TARGET $LABEL
-                                '''
-                            }
-                        }
-                        stage('Produce'){
-                            steps {
-                                sh '''
-                                pwd
-                                ~/grid_login
-                                source ./HGCTPGValidation/scripts/extractReleaseName.sh $CHANGE_TARGET
-                                unset IFS
-                                export LABEL="ref"
-                                export PROC_MODIFIER=""
-                                cd test_dir/${REF_RELEASE}_HGCalTPGValidation_$LABEL/src
-                                ../../../HGCTPGValidation/scripts/produceData.sh $LABEL $PROC_MODIFIER
-                                '''            
-                            }
-                        }
+        stage(BuildCMSSWRef){
+            stages{
+                stage('Install'){
+                    steps {
+                        echo 'InstallCMSSW Ref step..'
+                        sh '''
+                        pwd
+                        ~/grid_login
+                        cd test_dir
+                        source ../HGCTPGValidation/scripts/extractReleaseName.sh $CHANGE_TARGET
+                        unset IFS
+                        source ../HGCTPGValidation/scripts/getScramArch.sh $REF_RELEASE
+                        export LABEL="ref"
+                        export REMOTE="hgc-tpg"
+                        ../HGCTPGValidation/scripts/installCMSSW.sh $SCRAM_ARCH $REF_RELEASE $REMOTE $CHANGE_TARGET $LABEL
+                        '''
+                    }
+                }           
+                stage('Produce'){
+                    steps {
+                        sh '''
+                        pwd
+                        ~/grid_login
+                        source ./HGCTPGValidation/scripts/extractReleaseName.sh $CHANGE_TARGET
+                        unset IFS
+                        export LABEL="ref"
+                        export PROC_MODIFIER=""
+                        cd test_dir/${REF_RELEASE}_HGCalTPGValidation_$LABEL/src
+                        ../../../HGCTPGValidation/scripts/produceData.sh $LABEL $PROC_MODIFIER
+                        '''            
                     }
                 }
-                stage(BuildCMSSWTest){
-                    stages{
-                        stage('Install'){
-                            steps {
-                                echo 'InstallCMSSW Test step..'
-                                sh '''
-                                pwd
-                                ~/grid_login
-                                cd test_dir
-                                source ../HGCTPGValidation/scripts/extractReleaseName.sh $CHANGE_TARGET
-                                unset IFS
-                                source ../HGCTPGValidation/scripts/getScramArch.sh $REF_RELEASE
-                                export LABEL="test"
-                                if [ -z "$CHANGE_FORK" ]
-                                then
-                                    export REMOTE="hgc-tpg"
-                                else
-                                    export REMOTE=$CHANGE_FORK
-                                fi
-                                echo 'REMOTE= ', $REMOTE
-                                ../HGCTPGValidation/scripts/installCMSSW.sh $SCRAM_ARCH $REF_RELEASE $REMOTE $CHANGE_BRANCH $LABEL
-                                '''
-                            }
-                        }
-                        stage('QualityChecks'){
-                            steps{
-                                sh '''
-                                source /cvmfs/cms.cern.ch/cmsset_default.sh
-                                source ./HGCTPGValidation/scripts/extractReleaseName.sh $CHANGE_TARGET
-                                unset IFS
-                                export LABEL="test"
-                                cd test_dir/${REF_RELEASE}_HGCalTPGValidation_$LABEL/src
-                                scram build code-checks
-                                if [ $? -eq 0 ]
-                                then
-                                    echo "code-checks succeeded."
-                                else
-                                    echo "code-checks failed: script returned exit code " $?
-                                    mail to: "${EMAIL_TO}",
-                                        subject: "Pull request: ${env.BRANCH_NAME} => code-checks failed",
-                                        body: "Quality checks for ${currentBuild.fullDisplayName} finished. code-checks failed: script returned exit code $?."
-                                fi
-                                scram build code-format
-                                '''
-                            }
-                        }
-                        stage('Produce'){
-                            steps {
-                                sh '''
-                                pwd
-                                ~/grid_login
-                                source ./HGCTPGValidation/scripts/extractReleaseName.sh $CHANGE_TARGET
-                                unset IFS
-                                export LABEL="test"
-                                export PROC_MODIFIER=""
-                                cd test_dir/${REF_RELEASE}_HGCalTPGValidation_$LABEL/src
-                                ../../../HGCTPGValidation/scripts/produceData.sh $LABEL $PROC_MODIFIER
-                                '''            
-                            }
-                        }
+            }
+        }
+        stage(BuildCMSSWTest){
+            stages{
+                stage('Install'){
+                    steps {
+                        echo 'InstallCMSSW Test step..'
+                        sh '''
+                        pwd
+                        ~/grid_login
+                        cd test_dir
+                        source ../HGCTPGValidation/scripts/extractReleaseName.sh $CHANGE_TARGET
+                        unset IFS
+                        source ../HGCTPGValidation/scripts/getScramArch.sh $REF_RELEASE
+                        export LABEL="test"
+                        if [ -z "$CHANGE_FORK" ]
+                        then
+                            export REMOTE="hgc-tpg"
+                        else
+                            export REMOTE=$CHANGE_FORK
+                        fi
+                        echo 'REMOTE= ', $REMOTE
+                        ../HGCTPGValidation/scripts/installCMSSW.sh $SCRAM_ARCH $REF_RELEASE $REMOTE $CHANGE_BRANCH $LABEL
+                        '''
+                    }
+                }
+                stage('QualityChecks'){
+                    steps{
+                        sh '''
+                        source /cvmfs/cms.cern.ch/cmsset_default.sh
+                        source ./HGCTPGValidation/scripts/extractReleaseName.sh $CHANGE_TARGET
+                        unset IFS
+                        export LABEL="test"
+                        cd test_dir/${REF_RELEASE}_HGCalTPGValidation_$LABEL/src
+                        scram build code-checks
+                        if [ $? -eq 0 ]
+                        then
+                            echo "code-checks succeeded."
+                        else
+                            echo "code-checks failed: script returned exit code " $?
+                            mail to: "${EMAIL_TO}",
+                            subject: "Pull request: ${env.BRANCH_NAME} => code-checks failed",
+                            body: "Quality checks for ${currentBuild.fullDisplayName} finished. code-checks failed: script returned exit code $?."
+                        fi
+                        scram build code-format
+                        '''
+                    }
+                }
+                stage('Produce'){
+                    steps {
+                        sh '''
+                        pwd
+                        ~/grid_login
+                        source ./HGCTPGValidation/scripts/extractReleaseName.sh $CHANGE_TARGET
+                        unset IFS
+                        export LABEL="test"
+                        export PROC_MODIFIER=""
+                        cd test_dir/${REF_RELEASE}_HGCalTPGValidation_$LABEL/src
+                        ../../../HGCTPGValidation/scripts/produceData.sh $LABEL $PROC_MODIFIER
+                        '''            
                     }
                 }
             }
