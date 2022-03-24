@@ -35,7 +35,7 @@ pipeline {
                 '''
             }
         }
-        stage(BuildCMSSWRef){
+        stage('BuildCMSSWRef'){
             stages{
                 stage('Install'){
                     steps {
@@ -69,7 +69,7 @@ pipeline {
                 }
             }
         }
-        stage(BuildCMSSWTest){
+        stage('BuildCMSSWTest'){
             stages{
                 stage('Install'){
                     steps {
