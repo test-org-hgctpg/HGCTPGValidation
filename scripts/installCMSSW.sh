@@ -4,8 +4,8 @@
 # 
 # $1 SCRAM_ARCH
 # $2 release name
-# $3 target branch name
-# $4 remote remote name
+# $3 remote name 
+# $4 branch name
 # $5 label "ref" or "test"
 
 export SCRAM_ARCH=$1
@@ -28,4 +28,5 @@ echo $PWD
 eval `scramv1 runtime -sh`
 git cms-merge-topic $remote:$branch
 git checkout -b local_$branch $remote/$branch
+git cms-merge-topic hgc-tpg/hgc-tpg-devel-${relversion}
 scram b -j8
