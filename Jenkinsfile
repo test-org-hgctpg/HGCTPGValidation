@@ -102,17 +102,29 @@ pipeline {
                         export LABEL="test"
                         cd test_dir/${REF_RELEASE}_HGCalTPGValidation_$LABEL/src
                         scram build code-checks
-                        if [ $? -eq 0 ]
-                        then
-                            echo "code-checks succeeded."
-                        else
-                            echo "code-checks failed: script returned exit code " $?
-                            mail to: "${EMAIL_TO}",
-                            subject: "Pull request: ${env.BRANCH_NAME} => code-checks failed",
-                            body: "Quality checks for ${currentBuild.fullDisplayName} finished. code-checks failed: script returned exit code $?."
-                        fi
+                        echo 'exit code from code-checks ', $?
                         scram build code-format
+                        GIT_STATUS=`git status --porcelain`
+                        if [ ! -z "$GIT_STATUS" ]; then
+                            echo "Code-format failed."
+                            export MESSAGE="Code-format failed."
+                            echo "MESSAGE= ", $MESSAGE
+                        fi
                         '''
+                    }
+                    post {
+                        success {
+                            echo "Quality checks succeeded."
+                            mail to: "${EMAIL_TO}",
+                            subject: "Quality checks results",
+                            body: "Quality checks was run for Pull request: ${env.BRANCH_NAME} build number: #${env.BUILD_NUMBER} \n\n Title: ${env.CHANGE_TITLE} \n\n Author of the PR: ${env.CHANGE_AUTHOR} \n\n Target branch: ${env.CHANGE_TARGET} \n\n Feature branch: ${env.CHANGE_BRANCH} \n\n Check console output at ${env.BUILD_URL} to view the results."
+                        }
+                        failure {
+                            echo "code-checks failed: script returned exit code "
+                            mail to: "${EMAIL_TO}",
+                            subject: "Pull request:  => code-checks failed",
+                            body: "Quality checks finished. code-checks failed."
+                        }
                     }
                 }
                 stage('Produce'){
