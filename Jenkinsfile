@@ -5,9 +5,11 @@ pipeline {
     environment {
         EMAIL_TO = 'jenkins@llr.in2p3.fr'
     }
+    /*
     options {
         skipDefaultCheckout() 
     }
+    */
     stages {
         stage('InstallAutoValidationPackage') {
             steps {
