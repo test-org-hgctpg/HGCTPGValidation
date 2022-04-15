@@ -1,13 +1,14 @@
 #!/bin/bash
 
-# ./installCMSSW.sh $SCRAM_ARCH $REF_RELEASE $REMOTE $CHANGE_TARGET $LABEL
+# ./installCMSSW.sh $SCRAM_ARCH $REF_RELEASE $REMOTE $BRANCH $CHANGE_TARGET $LABEL
 
 # 
 # $1 SCRAM_ARCH
 # $2 release name
 # $3 remote name 
-# $4 branch name
-# $5 label "ref" or "test"
+# $4 branch name (ref or test)
+# $5 branch name ref
+# $6 label "ref" or "test"
 
 export SCRAM_ARCH=$1
 echo $SCRAM_ARCH
@@ -17,7 +18,9 @@ remote=$3
 echo $remote
 branch=$4
 echo $branch
-label=$5
+branch_ref=$5
+echo $branch_ref
+label=$6
 echo $label
 #echo "directory = " ${relversion}_HGCalTPGValidation_$label
 
@@ -29,5 +32,5 @@ echo $PWD
 eval `scramv1 runtime -sh`
 git cms-merge-topic $remote:$branch
 git checkout -b local_$branch $remote/$branch
-git cms-merge-topic hgc-tpg:hgc-tpg-devel-${relversion}
+git cms-merge-topic hgc-tpg:$branch_ref
 scram b -j8
