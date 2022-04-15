@@ -35,40 +35,6 @@ pipeline {
                 '''
             }
         }
-        stage('BuildCMSSWRef'){
-            stages{
-                stage('Install'){
-                    steps {
-                        echo 'InstallCMSSW Ref step..'
-                        sh '''
-                        pwd
-                        ~/grid_login
-                        cd test_dir
-                        source ../HGCTPGValidation/scripts/extractReleaseName.sh $CHANGE_TARGET
-                        unset IFS
-                        source ../HGCTPGValidation/scripts/getScramArch.sh $REF_RELEASE
-                        export LABEL="ref"
-                        export REMOTE="hgc-tpg"
-                        ../HGCTPGValidation/scripts/installCMSSW.sh $SCRAM_ARCH $REF_RELEASE $REMOTE $CHANGE_TARGET $LABEL
-                        '''
-                    }
-                }           
-                stage('Produce'){
-                    steps {
-                        sh '''
-                        pwd
-                        ~/grid_login
-                        source ./HGCTPGValidation/scripts/extractReleaseName.sh $CHANGE_TARGET
-                        unset IFS
-                        export LABEL="ref"
-                        export PROC_MODIFIER=""
-                        cd test_dir/${REF_RELEASE}_HGCalTPGValidation_$LABEL/src
-                        ../../../HGCTPGValidation/scripts/produceData.sh $LABEL $PROC_MODIFIER
-                        '''            
-                    }
-                }
-            }
-        }
         stage('BuildCMSSWTest'){
             stages{
                 stage('Install'){
@@ -135,6 +101,40 @@ pipeline {
                         source ./HGCTPGValidation/scripts/extractReleaseName.sh $CHANGE_TARGET
                         unset IFS
                         export LABEL="test"
+                        export PROC_MODIFIER=""
+                        cd test_dir/${REF_RELEASE}_HGCalTPGValidation_$LABEL/src
+                        ../../../HGCTPGValidation/scripts/produceData.sh $LABEL $PROC_MODIFIER
+                        '''            
+                    }
+                }
+            }
+        }
+        stage('BuildCMSSWRef'){
+            stages{
+                stage('Install'){
+                    steps {
+                        echo 'InstallCMSSW Ref step..'
+                        sh '''
+                        pwd
+                        ~/grid_login
+                        cd test_dir
+                        source ../HGCTPGValidation/scripts/extractReleaseName.sh $CHANGE_TARGET
+                        unset IFS
+                        source ../HGCTPGValidation/scripts/getScramArch.sh $REF_RELEASE
+                        export LABEL="ref"
+                        export REMOTE="hgc-tpg"
+                        ../HGCTPGValidation/scripts/installCMSSW.sh $SCRAM_ARCH $REF_RELEASE $REMOTE $CHANGE_TARGET $LABEL
+                        '''
+                    }
+                }           
+                stage('Produce'){
+                    steps {
+                        sh '''
+                        pwd
+                        ~/grid_login
+                        source ./HGCTPGValidation/scripts/extractReleaseName.sh $CHANGE_TARGET
+                        unset IFS
+                        export LABEL="ref"
                         export PROC_MODIFIER=""
                         cd test_dir/${REF_RELEASE}_HGCalTPGValidation_$LABEL/src
                         ../../../HGCTPGValidation/scripts/produceData.sh $LABEL $PROC_MODIFIER
