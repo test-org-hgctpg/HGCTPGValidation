@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# ./installCMSSW.sh $SCRAM_ARCH $RELEASE $CHANGE_TARGET $LABEL
+# ./installCMSSW.sh $SCRAM_ARCH $REF_RELEASE $REMOTE $CHANGE_TARGET $LABEL
+
 # 
 # $1 SCRAM_ARCH
 # $2 release name
