@@ -68,13 +68,11 @@ pipeline {
                         export LABEL="test"
                         cd test_dir/${REF_RELEASE}_HGCalTPGValidation_$LABEL/src
                         scram build code-checks
-                        echo 'exit code from code-checks ', $?
                         scram build code-format
                         GIT_STATUS=`git status --porcelain`
                         if [ ! -z "$GIT_STATUS" ]; then
-                            echo "Code-format failed."
-                            export MESSAGE="Code-format failed."
-                            echo "MESSAGE= ", $MESSAGE
+                            echo "Code-checks or code-format failed."
+                            exit 1;
                         fi
                         '''
                     }
