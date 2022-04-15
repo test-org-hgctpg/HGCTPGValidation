@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# ./produceData.sh
+# ./produceData.sh $LABEL $PROC_MODIFIER
+
 # $1 label "ref" or "test"
 # $2 procModifier 
 
