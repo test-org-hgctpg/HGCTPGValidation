@@ -76,20 +76,6 @@ pipeline {
                         fi
                         '''
                     }
-                    post {
-                        success {
-                            echo "Quality checks succeeded."
-                            mail to: "${EMAIL_TO}",
-                            subject: "Quality checks results",
-                            body: "Quality checks was run for Pull request: ${env.BRANCH_NAME} build number: #${env.BUILD_NUMBER} \n\n Title: ${env.CHANGE_TITLE} \n\n Author of the PR: ${env.CHANGE_AUTHOR} \n\n Target branch: ${env.CHANGE_TARGET} \n\n Feature branch: ${env.CHANGE_BRANCH} \n\n Check console output at ${env.BUILD_URL} to view the results."
-                        }
-                        failure {
-                            echo "code-checks failed: script returned exit code "
-                            mail to: "${EMAIL_TO}",
-                            subject: "Pull request:  => code-checks failed",
-                            body: "Quality checks finished. code-checks failed."
-                        }
-                    }
                 }
                 stage('Produce'){
                     steps {
@@ -175,7 +161,7 @@ pipeline {
         failure {
             echo 'Job failed'
             mail to: "${EMAIL_TO}",
-                 subject: "Failed Jenkins job: ${currentBuild.fullDisplayName}",
+                 subject: "Jenkins job failed: ${currentBuild.fullDisplayName}",
                  body: "The compilation or the build steps failed. \n\n Pull request: ${env.BRANCH_NAME} build number: #${env.BUILD_NUMBER} \n\n Title: ${env.CHANGE_TITLE} \n\n Author of the PR: ${env.CHANGE_AUTHOR} \n\n Target branch: ${env.CHANGE_TARGET} \n\n Feature branch: ${env.CHANGE_BRANCH} \n\n Check console output at ${env.BUILD_URL} \n\n and ${env.CHANGE_URL} to view the results.  \n\n The validation histograms are available at https://llrhgcaltpgvalidation.in2p3.fr/PR/ \n\n"
         }
     }
