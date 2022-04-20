@@ -13,8 +13,11 @@ The package is organized in several directories:
 * `config`: user_parameters.py allows users to customise the HGCAL TPG simulation  
 * `data`: the histograms to be compared are listed in HGCALTriggerPrimitivesHistos.txt file
 * `scripts`: 
+
   ** validation validation_tpg.py is the main program for the automatic HGCAL TPG, the displayHistos.sh is the bash script running the compare/display part of the validation, 
+  
   ** installCMSSW.sh and produceData.sh are the main scripts used in the Jenkins pipeline
+  
   ** extractReleaseName.sh, getScramArch.sh and writeToFile.py are used to get 1) the release name from the target branch name, 2) to get scram arch for this release, and 3) to write the information to be displayed on the web page. 
 
 
