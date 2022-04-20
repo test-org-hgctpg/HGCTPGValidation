@@ -1,4 +1,4 @@
-# Write the PulRequest ($CHANGE_TITLE) name into a text file
+# Write the PullRequest ($CHANGE_TITLE) name into a text file
 # python writeToFile.py --dirname PR$CHANGE_ID --prnumber $CHANGE_ID --prtitle "$CHANGE_TITLE"
 
 import os
