@@ -2,7 +2,6 @@
 
 # ./installCMSSW.sh $SCRAM_ARCH $REF_RELEASE $REMOTE $BRANCH $CHANGE_TARGET $LABEL
 
-# 
 # $1 SCRAM_ARCH
 # $2 release name
 # $3 remote name 
@@ -22,7 +21,6 @@ branch_ref=$5
 echo $branch_ref
 label=$6
 echo $label
-#echo "directory = " ${relversion}_HGCalTPGValidation_$label
 
 source /cvmfs/cms.cern.ch/cmsset_default.sh
 module purge
