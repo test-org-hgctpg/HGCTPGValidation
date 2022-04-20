@@ -22,7 +22,6 @@ pipeline {
                     rm -rf HGCTPGValidation
                 fi
                 git clone -b master https://github.com/hgc-tpg/HGCTPGValidation HGCTPGValidation
-                ~/grid_login
                 source HGCTPGValidation/env_install.sh
                 pip install attrs
                 if [ -d "./test_dir" ] 
@@ -42,7 +41,6 @@ pipeline {
                         echo 'InstallCMSSW Test step..'
                         sh '''
                         pwd
-                        ~/grid_login
                         cd test_dir
                         source ../HGCTPGValidation/scripts/extractReleaseName.sh $CHANGE_TARGET
                         unset IFS
@@ -81,7 +79,6 @@ pipeline {
                     steps {
                         sh '''
                         pwd
-                        ~/grid_login
                         source ./HGCTPGValidation/scripts/extractReleaseName.sh $CHANGE_TARGET
                         unset IFS
                         export LABEL="test"
@@ -100,7 +97,6 @@ pipeline {
                         echo 'InstallCMSSW Ref step..'
                         sh '''
                         pwd
-                        ~/grid_login
                         cd test_dir
                         source ../HGCTPGValidation/scripts/extractReleaseName.sh $CHANGE_TARGET
                         unset IFS
@@ -115,7 +111,6 @@ pipeline {
                     steps {
                         sh '''
                         pwd
-                        ~/grid_login
                         source ./HGCTPGValidation/scripts/extractReleaseName.sh $CHANGE_TARGET
                         unset IFS
                         export LABEL="ref"
