@@ -18,3 +18,4 @@ do
   done
 done
 echo "The name of the release is $REF_RELEASE"
+unset IFS
