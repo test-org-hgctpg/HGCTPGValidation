@@ -149,8 +149,9 @@ pipeline {
                 fi
                 export data_dir=/data/jenkins/workspace/validation_data
                 mkdir $data_dir/PR$CHANGE_ID
-                cp -rf GIFS/. $data_dir/PR$CHANGE_ID
-                python ../HGCTPGValidation/scripts/writeToFile.py --dirname $data_dir/PR$CHANGE_ID --prnumber $CHANGE_ID --prtitle "PR$CHANGE_ID : $CHANGE_TITLE (from $CHANGE_AUTHOR, $CHANGE_URL)"
+                mkdir $data_dir/PR$CHANGE_IDconfig1
+                cp -rf GIFS/. $data_dir/PR$CHANGE_IDconfig1
+                python ../HGCTPGValidation/scripts/writeToFile.py --dirname $data_dir/PR$CHANGE_ID --prnumber $CHANGE_ID --prtitle "$CHANGE_TITLE (from $CHANGE_AUTHOR, $CHANGE_URL)"
                 '''            
             }
         }
