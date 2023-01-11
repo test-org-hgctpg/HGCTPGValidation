@@ -132,7 +132,7 @@ pipeline {
                         pwd
                         source ./HGCTPGValidation/scripts/extractReleaseName.sh $CHANGE_TARGET
                         export PROC_MODIFIER=""
-                        cd test_dir/${REF_RELEASE}_HGCalTPGValidation_$LABEL/src
+                        cd test_dir/${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src
                         ../../../HGCTPGValidation/scripts/produceData.sh ${LABEL_TEST} $PROC_MODIFIER
                         '''            
                     }
