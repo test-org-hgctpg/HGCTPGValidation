@@ -23,22 +23,29 @@ pipeline {
                             env.BASE_REMOTE=env.BASE_REMOTE_MAIN
                             env.DATA_DIR=env.DATA_DIR_MAIN
                             env.BRANCH_VAL=env.BRANCH_VAL_MAIN
+                            break
                         case 'HGC TPG Automatic Validation - TEST':
                             env.EMAIL_TO=env.EMAIL_TO_EB
                             env.BASE_REMOTE=env.BASE_REMOTE_TEST
                             env.DATA_DIR=env.DATA_DIR_TEST
                             env.BRANCH_VAL=env.BRANCH_VAL_TEST
+                            break
                         case 'HGC TPG Automatic Validation - TEST ebecheva':
                             env.EMAIL_TO=env.EMAIL_TO_EB
                             env.BASE_REMOTE=env.BASE_REMOTE_EB
                             env.DATA_DIR=env.DATA_DIR_EB
                             env.BRANCH_VAL=env.BRANCH_VAL_EB
+                            break
                         case 'Job HGC TPG Automatic Validation - TEST jbsauvan':
                             env.EMAIL_TO=env.EMAIL_TO_JB
                             env.BASE_REMOTE=env.BASE_REMOTE_JB
                             env.DATA_DIR=env.DATA_DIR_JB
                             env.BRANCH_VAL=env.BRANCH_VAL_JB
+                            break
                     }
+                    println(env.BASE_REMOTE)
+                    println(env.DATA_DIR)
+                    println(env.BRANCH_VAL)
                 }
             }  
         }
@@ -125,7 +132,7 @@ pipeline {
                         pwd
                         source ./HGCTPGValidation/scripts/extractReleaseName.sh $CHANGE_TARGET
                         export PROC_MODIFIER=""
-                        cd test_dir/${REF_RELEASE}_HGCalTPGValidation_$LABEL/src
+                        cd test_dir/${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src
                         ../../../HGCTPGValidation/scripts/produceData.sh ${LABEL_TEST} $PROC_MODIFIER
                         '''            
                     }
@@ -166,7 +173,7 @@ pipeline {
                 source ../HGCTPGValidation/env_install.sh
                 echo $PWD
                 source ../HGCTPGValidation/scripts/extractReleaseName.sh $CHANGE_TARGET
-                ../HGCTPGValidation/scripts/displayHistos.sh ./${REF_RELEASE}_HGCalTPGValidation_ref/src ./${REF_RELEASE}_HGCalTPGValidation_test/src ./GIFS
+                ../HGCTPGValidation/scripts/displayHistos.sh ./${REF_RELEASE}_HGCalTPGValidation_${LABEL_REF}/src ./${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src ./GIFS
                 echo 'CHANGE_ID= ', $CHANGE_ID
                 echo '$CHANGE_TITLE= ', $CHANGE_TITLE
                 if [ -d /data/jenkins/workspace/${DATA_DIR}/PR$CHANGE_ID ] 
