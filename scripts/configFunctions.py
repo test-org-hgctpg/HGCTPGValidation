@@ -19,10 +19,9 @@ def check_schema_subset(config, filename):
 
     try:
       config_schema.validate(config)
-      print("Subset configuration is valid.")
-    except SchemaErroras as se:
-      print("The configuration format is not correct. Please check the file", filename)
-      raise se
+    except SchemaError as se:
+      print(f"\n\n === The configuration format is not correct. Please check the file {filename}. === \n\n {se}")
+      raise Exception(f"\n\n === The configuration format is not correct. Please check the file {filename}. === \n\n {se}")
       
 # Define the schema of the configuration data
 def check_schema_config(config, filename):
@@ -47,8 +46,8 @@ def check_schema_config(config, filename):
     try:
         config_schema.validate(config)
     except SchemaError as se:
-        print("The configuration format is not correct. Please check the file ", filename)
-        raise se
+        print(f"\n\n === The configuration format is not correct. Please check the file {filename}. === \n\n {se}")
+        raise Exception(f"\n\n The configuration format is not correct. Please check the file {filename}. === \n\n {se}")
 
 # Define the schema of the config for the Jenkins job
 # validating the validation code
@@ -63,22 +62,23 @@ def check_schema_paramValJob(config, filename):
 
     try:
       config_schema.validate(config)
-      #print("Check the schema of the config file ", filename)
-      #print("Subset configuration is valid.")
-    except SchemaErroras as se:
-      print("The configuration format is not correct. Please check the file", filename)
-      raise se
+    except SchemaError as se:
+      print(f"\n\n === The configuration format is not correct. Please check the file {filename}. === \n\n {se}")
+      raise Exception(f"\n\n === The configuration format is not correct. Please check the file {filename}. === \n\n {se}")
  
 # Read the file with configurations sets
 def read_subset(path, config):
     filename = path + config + '.yaml'
 
-    with open(filename) as f:
-        try:
+    try:
+        with open(filename) as f:
             subset = yaml.safe_load(f)
-        except yaml.YAMLError as e:
-            print("Error occured when loading the file containing the configuration subsets file ", filename)
-            print(e)
+    except OSError as e:
+        print(f"\n\n === Error occured when loading configuration subsets file {filename}. === \n\n {e}")
+        raise Exception(f"\n\n === Error occured when loading configuration subsets file {filename}. === \n\n {e}")
+    except yaml.YAMLError as e:
+        print(f"\n\n === Error parsing YAML file: {filename} === \n\n {e}")
+        raise Exception(f"\n\n === Error parsing YAML file: {filename}. === \n\n{e}")
 
     check_schema_subset(subset, filename)
 
@@ -112,19 +112,21 @@ def get_listOfConfigs(path, confSubsets):
 def read_config(path, configuration, config_type):
     filename = path + configuration + '.yaml'
 
-    with open(filename) as f:
-        try:
+    try:
+        with open(filename) as f:
             config = yaml.safe_load(f)
-            #print("Read validation configuration file.")
-        except yaml.YAMLError as e:
-            print("Error occured when loading the configuration file ", filename)
-            print(e)
+    except OSError as e:
+        print(f"\n\n === Error occured when loading configuration file {filename}. === \n\n {e}")
+        raise Exception(f"\n\n === Error occured when loading configuration file {filename} === \n\n {e}")
+    except yaml.YAMLError as e:
+        print(f"\n\n === Error parsing configuration YAML file: {filename}. === \n\n {e}")
+        raise Exception(f"\n\n === Error parsing configuration YAML file: {filename}. === \n\n {e}")
     
     if (config_type == 1):
         check_schema_config(config, filename)
     elif (config_type == 2):
         check_schema_paramValJob(config, filename)
     else:
-        print("Please, check if there is a schema corresponding the configuration.")
+        print(f"\n\n === The config_type doesn't correspond to the defined validation types. === \n\n")
 
     return config

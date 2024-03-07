@@ -11,8 +11,20 @@ pipeline {
         skipDefaultCheckout() 
     }
     stages {
-        stage('SetEnvVar'){
+        stage('Set environment variables'){
             steps{
+                sh '''
+                set +x
+                echo '==> Set environment variables'
+                exec >> log_Jenkins
+                if [ -f "log_Jenkins" ]; then
+                    echo "Remove the last created log_Jenkins."
+                    rm log_Jenkins
+                else 
+                    echo "log_Jenkins does not exist."
+                fi 
+                echo '==> Set environment variables'
+                '''
                 script{
                     String s = env.JOB_NAME
                     s = s.substring(s.indexOf("/") + 1)
@@ -102,21 +114,28 @@ pipeline {
         }
         stage('Initialize'){
             stages{
-                stage('CleanEnv'){
+                stage('Clean the working environment'){
                     steps{
-                        echo 'Clean the working environment.'
                         sh '''
+                        set +x
+                        echo '==> Clean the working environment. ============================'
+                        exec >> log_Jenkins
+                        echo '==> Clean the working environment. ============================'
                         if [ -d "/data/jenkins/workspace/${DATA_DIR}/PR$CHANGE_ID" ]
                         then
                             rm -rf /data/jenkins/workspace/${DATA_DIR}/PR$CHANGE_ID
                         fi
+                        echo '   '
                         '''
                     }
                 }
-                stage('InstallAutoValidationPackage') {
+                stage('Install automatic validation package HGCTPGValidation') {
                     steps {
-                        echo 'Install automatic validation package HGCTPGValidation.'
                         sh '''
+                        set +x
+                        echo '==> Install automatic validation package HGCTPGValidation. ============================'
+                        exec >> log_Jenkins
+                        echo '==> Install automatic validation package HGCTPGValidation. ============================'
                         uname -a
                         whoami
                         pwd
@@ -135,15 +154,22 @@ pipeline {
                         fi
                         mkdir test_dir
                         ls -lrt ..
+                        echo '   '
                         '''
                     }
                 }
-                stage('SetCMSSWEnvVar'){
+                stage('Set CMSSW environment variables'){
                     steps{
                         script{
+                            sh '''
+                            set +x
+                            echo 'echo ==> Set CMSSW environment variables. ============================'
+                            exec >> log_Jenkins
+                            echo 'echo ==> Set CMSSW environment variables. ============================'
+                            '''
                             if ( env.JOB_FLAG == '0' ){
-                                env.REF_RELEASE = sh(returnStdout: true, script: 'source ./HGCTPGValidation/scripts/extractReleaseName.sh ${CHANGE_TARGET}').trim()
-                                env.SCRAM_ARCH = sh(returnStdout: true, script: 'source ./HGCTPGValidation/scripts/getScramArch.sh ${REF_RELEASE}').trim()
+                                env.REF_RELEASE = sh(returnStdout: true, script: 'set +x exec >> log_Jenkins; source ./HGCTPGValidation/scripts/extractReleaseName.sh ${CHANGE_TARGET}').trim()
+                                env.SCRAM_ARCH = sh(returnStdout: true, script: 'set +x exec >> log_Jenkins; source ./HGCTPGValidation/scripts/getScramArch.sh ${REF_RELEASE}').trim()
                                 
                                 if (env.CHANGE_FORK){
                                     env.REMOTE = env.CHANGE_FORK
@@ -157,10 +183,10 @@ pipeline {
                                 println(env.REMOTE)
                             } 
                             else {
-                                env.REF_BRANCH = sh(returnStdout: true, script: 'module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/; module purge; module load python/3.9.9; python ./HGCTPGValidation/scripts/get_cmsswRefBranch.py').trim()
-                                env.REF_RELEASE = sh(returnStdout: true, script: 'source ./HGCTPGValidation/scripts/extractReleaseName.sh ${REF_BRANCH}').trim()
-                                env.SCRAM_ARCH = sh(returnStdout: true, script: 'source ./HGCTPGValidation/scripts/getScramArch.sh ${REF_RELEASE}').trim()
-                                env.BASE_REMOTE = sh(returnStdout: true, script: 'module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/; module purge; module load python/3.9.9; python ./HGCTPGValidation/scripts/get_remoteParam.py').trim()
+                                env.REF_BRANCH = sh(returnStdout: true, script: 'set +x exec >> log_Jenkins; module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/; module purge; module load python/3.9.9; python ./HGCTPGValidation/scripts/get_cmsswRefBranch.py').trim()
+                                env.REF_RELEASE = sh(returnStdout: true, script: 'set +x exec >> log_Jenkins; source ./HGCTPGValidation/scripts/extractReleaseName.sh ${REF_BRANCH}').trim()
+                                env.SCRAM_ARCH = sh(returnStdout: true, script: 'set +x exec >> log_Jenkins; source ./HGCTPGValidation/scripts/getScramArch.sh ${REF_RELEASE}').trim()
+                                env.BASE_REMOTE = sh(returnStdout: true, script: 'set +x exec >> log_Jenkins; module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/; module purge; module load python/3.9.9; python ./HGCTPGValidation/scripts/get_remoteParam.py').trim()
                                 env.CHANGE_BRANCH = env.REF_BRANCH
                                 env.CHANGE_TARGET = env.REF_BRANCH
                                 env.REMOTE = env.BASE_REMOTE
@@ -172,25 +198,40 @@ pipeline {
                                 println(env.REMOTE)
                             }
                         }
+                        sh '''
+                        set +x
+                        exec >> log_Jenkins
+                        echo '  '
+                        '''
                     }
                 }
             }
         }
-        stage('BuildCMSSWTest'){
+        stage('Build CMSSW Test release'){
             stages{
                 stage('Install'){
                     steps {
-                        echo 'InstallCMSSW Test step..'
                         sh '''
+                        set +x
+                        echo '==> Build CMSSW Test ========================='
+                        echo '===> InstallCMSSW Test Step'
+                        exec >> log_Jenkins
+                        echo '==> Build CMSSW Test ========================='
+                        echo '===> InstallCMSSW Test Step'
                         pwd
                         cd test_dir
                         ../HGCTPGValidation/scripts/installCMSSW.sh $SCRAM_ARCH $REF_RELEASE $REMOTE $BASE_REMOTE $CHANGE_BRANCH $CHANGE_TARGET ${LABEL_TEST}
+                        echo '     '
                         '''
                     }
                 }
-                stage('QualityChecks'){
+                stage('Quality Checks'){
                     steps{
                         sh '''
+                        set +x
+                        echo '===> Quality checks'
+                        exec >> log_Jenkins
+                        echo '===> Quality checks'
                         source /cvmfs/cms.cern.ch/cmsset_default.sh
                         cd test_dir/${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src
                         scram build code-checks
@@ -200,12 +241,17 @@ pipeline {
                             echo "Code-checks or code-format failed."
                             exit 1;
                         fi
+                        echo '    '
                         '''
                     }
                 }
                 stage('Produce'){
                     steps {
                         sh '''
+                        set +x
+                        echo '===> Produce test data.'
+                        exec >> log_Jenkins
+                        echo '===> Produce test data.'
                         pwd
                         cd test_dir/${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src
                         module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/
@@ -216,26 +262,37 @@ pipeline {
                         echo 'LABEL_TEST = ' ${LABEL_TEST}
                         echo 'SCRAM_ARCH = ' ${SCRAM_ARCH}
                         python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_TEST}
+                        echo '      '
                         '''
                     }
                 }
             }
         }
-        stage('BuildCMSSWRef'){
+        stage('Build CMSSW Ref release'){
             stages{
                 stage('Install'){
                     steps {
-                        echo 'InstallCMSSW Ref step..'
                         sh '''
+                        set +x
+                        echo '==> Build CMSSW Reference ======================='
+                        echo '===> InstallCMSSW Ref'
+                        exec >> log_Jenkins
+                        echo '==> Build CMSSW Reference ======================='
+                        echo '===> InstallCMSSW Ref'
                         pwd
                         cd test_dir
                         ../HGCTPGValidation/scripts/installCMSSW.sh $SCRAM_ARCH $REF_RELEASE $BASE_REMOTE $BASE_REMOTE $CHANGE_TARGET $CHANGE_TARGET ${LABEL_REF}
+                        echo '      '
                         '''
                     }
                 }           
                 stage('Produce'){
                     steps {
                         sh '''
+                        set +x
+                        echo '===> Produce reference data.'
+                        exec >> log_Jenkins
+                        echo '===> Produce reference data.'
                         pwd
                         cd test_dir/${REF_RELEASE}_HGCalTPGValidation_${LABEL_REF}/src
                         module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/
@@ -244,7 +301,8 @@ pipeline {
                         python --version
                         echo ' CONFIG_SUBSET = ' ${CONFIG_SUBSET}
                         python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_REF}
-                        '''            
+                        echo '      '
+                        '''
                     }
                 }
             }
@@ -252,11 +310,16 @@ pipeline {
         stage('Display') {
             steps {
                 sh '''
+                set +x
+                echo '==> Display ======================='
+                exec >> log_Jenkins
+                echo '==> Display ======================='
                 cd test_dir
                 source ../HGCTPGValidation/env_install.sh
                 echo $PWD
                 python ../HGCTPGValidation/scripts/displayHistos.py --subsetconfig ${CONFIG_SUBSET} --refdir ${REF_RELEASE}_HGCalTPGValidation_${LABEL_REF}/src --testdir ${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src --datadir ${DATA_DIR} --prnumber $CHANGE_ID --prtitle "$CHANGE_TITLE (from $CHANGE_AUTHOR, $CHANGE_URL)"
-                '''            
+                echo '      '
+                '''
             }
         }
     }
@@ -269,6 +332,7 @@ pipeline {
                     println( "Validation of the validation: Set the original name of CHANGE_BRANCH => " + env.CHANGE_BRANCH )
                 }
             }
+            archiveArtifacts artifacts: 'log_Jenkins', fingerprint: true
         }
         success {
             echo 'The job finished successfully.'

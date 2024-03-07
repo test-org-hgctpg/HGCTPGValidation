@@ -11,30 +11,35 @@
 # $6 reference branch name (this is the target or base branch to which the change could be merged, it is in https://github.com/hgc-tpg repository)
 # $7 label "ref" or "test"
 
+set -e
+
 export SCRAM_ARCH=$1
-echo $SCRAM_ARCH
+echo "SCRAM_ARCH: " $SCRAM_ARCH
 relversion=$2
-echo $relversion
+echo "CMSSW version: " $relversion
 remote=$3
-echo $remote
+echo "Change remote: " $remote
 baseremote=$4
-echo $baseremote
+echo "Target remote: " $baseremote
 branch=$5
-echo $branch
+echo "Change branch: " $branch
 branch_ref=$6
-echo $branch_ref
+echo "Target branch: " $branch_ref
 label=$7
-echo $label
+echo "Label: " $label
+
 
 source /cvmfs/cms.cern.ch/cmsset_default.sh
 module purge
+# Install working directory for the release CMSSW $relversion
 scramv1 p -n ${relversion}_HGCalTPGValidation_$label CMSSW $relversion
 cd ${relversion}_HGCalTPGValidation_$label/src
-echo $PWD
 eval `scramv1 runtime -sh`
 # Get the reference (target) branch from the base remote
 git cms-merge-topic $baseremote:$branch_ref
 git checkout -b local_$branch_ref $baseremote/$branch_ref
 # Merge the change branch into the reference branch
 git cms-merge-topic $remote:$branch
+# Compile
 scram b -j8
+
