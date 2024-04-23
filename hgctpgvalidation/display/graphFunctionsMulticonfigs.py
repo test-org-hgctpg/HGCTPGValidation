@@ -7,6 +7,8 @@ import urllib
 #import urllib.request, urllib.error
 import re
 
+from datetime import datetime
+
 from sys import argv
 argv.append( '-b-' )
 import ROOT
@@ -236,12 +238,18 @@ def createWebPageLite(ref_configname, test_configname, input_ref_file, input_tes
     test_description=test_configData['description']
     ref_configData=read_config(filePath, ref_configname, 1)
     ref_description=ref_configData['description']
+    
+    # get time 
+    # dd/mm/YY H:M:S
+    now = datetime.now()
+    time = now.strftime("%d/%m/%Y %H:%M:%S")
 
     # Comment not needed informations
     if (f_ref == 0):
         wp.write("<p>In all plots below, there was no reference histograms to compare with")
         wp.write(", and the " + CMP_RED_FILE + " histograms are in red.") # new release red in OvalFile
     else:
+        wp.write("<h3><p><font color='black'> Generated " + time + "</h3><p>")
         wp.write("<h3><p><font color='red'> Test: " + test_configname + "</h3>")
         wp.write("<p>" + test_description )
         wp.write("<h3><p><font color='blue'> Ref: " + ref_configname + "</h3>" )
@@ -410,6 +418,11 @@ def createWebPageLite(ref_configname, test_configname, input_ref_file, input_tes
                 
                 histo_2 = h2.Get(histo_name)
                 histo_1 = h1.Get(histo_name)
+                
+                # Change the name of the histograms
+                histo_2.SetName(histo_name + " - ref")
+                histo_1.SetName(histo_name + " - test")
+                
                 gif_name = webdir + '/' + histo_name + ".gif"
                 gif_name_index = histo_name + ".gif"
                 createPicture2(histo_1, histo_2, "1", "1", gif_name, cnv, "lin")
