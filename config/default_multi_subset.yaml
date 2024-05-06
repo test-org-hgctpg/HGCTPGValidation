@@ -6,3 +6,7 @@ configuration:
       test: default
     - ref: bcstc
       test: bcstc
+    - ref: s1fw
+      test: s1fw
+    - ref: default
+      test: s1fw
