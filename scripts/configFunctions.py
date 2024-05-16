@@ -6,7 +6,7 @@ import os
 import sys
 import subprocess
 
-from schema import Schema, SchemaError
+from schema import Schema, Optional, SchemaError
 
 # Define the schema of the subset config file
 def check_schema_subset(config, filename):
@@ -18,11 +18,13 @@ def check_schema_subset(config, filename):
     })
 
     try:
-      config_schema.validate(config)
+      validated_config_schema = config_schema.validate(config)
     except SchemaError as se:
       print(f"\n\n === The configuration format is not correct. Please check the file {filename}. === \n\n {se}")
       raise Exception(f"\n\n === The configuration format is not correct. Please check the file {filename}. === \n\n {se}")
-      
+
+    return validated_config_schema
+    
 # Define the schema of the configuration data
 def check_schema_config(config, filename):
     config_schema = Schema({
@@ -36,19 +38,21 @@ def check_schema_config(config, filename):
             "geometry": str,
             "era": str,
             "inputCommands": str,
-            "procModifiers": str,
+            Optional("procModifiers", default='empty'): str,
             "filein": str,
-            "customise": str,
-            "customise_commands": str
+            Optional("customise", default="empty"): str,
+            Optional("customise_commands", default=''): str
         }
     })
 
     try:
-        config_schema.validate(config)
+        validated_config_schema = config_schema.validate(config)
     except SchemaError as se:
         print(f"\n\n === The configuration format is not correct. Please check the file {filename}. === \n\n {se}")
         raise Exception(f"\n\n The configuration format is not correct. Please check the file {filename}. === \n\n {se}")
-
+    
+    return validated_config_schema
+    
 # Define the schema of the config for the Jenkins job
 # validating the validation code
 def check_schema_paramValJob(config, filename):
@@ -61,11 +65,13 @@ def check_schema_paramValJob(config, filename):
     })
 
     try:
-      config_schema.validate(config)
+      validated_config_schema = config_schema.validate(config)
     except SchemaError as se:
       print(f"\n\n === The configuration format is not correct. Please check the file {filename}. === \n\n {se}")
       raise Exception(f"\n\n === The configuration format is not correct. Please check the file {filename}. === \n\n {se}")
- 
+    
+    return validated_config_schema
+    
 # Read the file with configurations sets
 def read_subset(path, config):
     filename = path + config + '.yaml'
@@ -80,9 +86,9 @@ def read_subset(path, config):
         print(f"\n\n === Error parsing YAML file: {filename} === \n\n {e}")
         raise Exception(f"\n\n === Error parsing YAML file: {filename}. === \n\n{e}")
 
-    check_schema_subset(subset, filename)
+    validated_subset = check_schema_subset(subset, filename)
 
-    return subset
+    return validated_subset
 
 
 # Return a list with config pairs (ref, test)
@@ -123,10 +129,10 @@ def read_config(path, configuration, config_type):
         raise Exception(f"\n\n === Error parsing configuration YAML file: {filename}. === \n\n {e}")
     
     if (config_type == 1):
-        check_schema_config(config, filename)
+        validated_config = check_schema_config(config, filename)
     elif (config_type == 2):
-        check_schema_paramValJob(config, filename)
+        validated_config = check_schema_paramValJob(config, filename)
     else:
         print(f"\n\n === The config_type doesn't correspond to the defined validation types. === \n\n")
 
-    return config
+    return validated_config
