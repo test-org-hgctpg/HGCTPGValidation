@@ -35,6 +35,10 @@ def run_cmsDriver(configdata, release):
     # else --customise {customiseUser}
     customise = f'{"" if customiseUser=="empty" else f"--customise {customiseUser}"}'
     
+    INTERVAL=int(10)
+    RSS_limit=int(10000000)
+    print("INTERVAL=", INTERVAL)
+    print("RSS_limit=", RSS_limit)
     command = f"echo $PWD; source /cvmfs/cms.cern.ch/cmsset_default.sh; eval `scramv1 runtime -sh`; \
     cmsDriver.py hgcal_tpg_validation_{configName}_{release} -n {str(nbEvents)} \
     --mc --eventcontent FEVTDEBUG --datatier GEN-SIM-DIGI-RAW \
@@ -47,7 +51,7 @@ def run_cmsDriver(configdata, release):
     --filein {filein} \
     --no_output \
     {customise} \
-    --customise_commands {customiseCommand}"
+    --customise_commands {customiseCommand} & ../../../HGCTPGValidation/scripts/get_rss_memory.sh $! {INTERVAL} {RSS_limit}"
     
     pprint.pprint(command)
     return command
@@ -68,8 +72,8 @@ def main(subsetconfig, release):
         #  test: bcstc
         for key, value in conf.items():
             # Do only for "test" or for "ref"
-            print("value=", value)
             if key==release:
+              print("Configuration: ", key, ": ", value)
               # Read the config file corresponding to key:value
               # the config_type=1 is set for reading parameters for running CMSSW HGCal TPG code
               config_data=read_config(path, value, 1)
@@ -78,11 +82,12 @@ def main(subsetconfig, release):
               if os.path.exists(f"hgcal_tpg_validation_{confName}_{release}_USER.py"):
                 print("Python file for the config ", value, ":", key, "was already created.")  
               else:
+                print("Running on config: ", key, ": ", value)
                 command = run_cmsDriver(config_data, release)
                 sourceCmd = ['bash', '-c', command]
-                sourceProc = subprocess.run(sourceCmd, stdout=logfile, stderr=logfile, check=True, text=True)
+                sourceProc = subprocess.run(sourceCmd, check=True, text=True)
             else:
-              print("Do not run this configuration: ", key, ": ", value)
+              print("Go for the next configuration.")
 
 if __name__ == "__main__":
     import optparse
