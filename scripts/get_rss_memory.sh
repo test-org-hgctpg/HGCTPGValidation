@@ -32,6 +32,10 @@ fi
 INTERVAL=$2
 RSS_limit=$3
 
+# testing
+echo "STARTS"
+p_all=$(ps -eo pid,user,comm | grep cmsRun | grep jenkins | awk '{print}')
+
 # Wait the process cmsRun starts running
 sleep 60
 
