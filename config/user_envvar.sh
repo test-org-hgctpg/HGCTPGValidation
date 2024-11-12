@@ -6,7 +6,7 @@
 # Variables to modify by the user ############################
 
 # CMSSW
-export SCRAM_ARCH='slc7_amd64_gcc10'
+export SCRAM_ARCH='slc7_amd64_gcc12'
 echo $SCRAM_ARCH
 
 export REF_RELEASE='CMSSW_14_0_0_pre1'
