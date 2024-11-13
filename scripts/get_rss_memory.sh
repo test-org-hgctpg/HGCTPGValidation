@@ -37,9 +37,10 @@ echo "STARTS"
 p_all=$(ps -eo pid,user,comm | grep cmsRun | grep jenkins | awk '{print}')
 
 # Wait the process cmsRun starts running
-sleep 60
+sleep 20
 
 # Get PID for the process "cmsRun" and the user "jenkins"
+ps
 p_all=$(ps -eo pid,user,comm | grep cmsRun | grep jenkins | awk '{print}')
 PID=$(ps -eo pid,user,comm | grep cmsRun | grep jenkins | awk '{print $1}')
 
