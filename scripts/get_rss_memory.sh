@@ -12,19 +12,19 @@ DEBUG=1
 
 # Check if the PID of the last process is provided
 if [ -z "$1" ]; then
-    echo "Usage: $0 PID INTERVAL RSS_LIMIT"
+    echo "ERROR Usage: $0 PID INTERVAL RSS_LIMIT" 1>&2 &&
     exit 1
 fi
 
 # Check if the Interval (in s) is provided
 if [ -z "$2" ]; then
-    echo "Usage: $0 PID INTERVAL RSS_LIMIT"
+    echo "ERROR Usage: $0 PID INTERVAL RSS_LIMIT" 1>&2 &&
     exit 1
 fi
 
 # Check if the limit RSS is provided
 if [ -z "$3" ]; then
-    echo "Usage: $0 PID INTERVAL RSS_LIMIT"
+    echo "ERROR Usage: $0 PID INTERVAL RSS_LIMIT" 1>&2 &&
     exit 1
 fi
 
@@ -64,7 +64,7 @@ while true; do
         fi
         
         if [ "${RSS}" -gt "${RSS_limit}" ]; then
-            echo "===> RSS memory $(( ${RSS} / 1000 )) MB > RSS limit $(( ${RSS_limit} / 1000 )) MB"  1>&2 &&
+            echo "ERROR: RSS memory $(( ${RSS} / 1000 )) MB > RSS limit $(( ${RSS_limit} / 1000 )) MB"  1>&2 &&
             kill -9 $PID &&
             exit 1;
         fi  
