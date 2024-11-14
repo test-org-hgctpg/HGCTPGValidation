@@ -33,24 +33,30 @@ INTERVAL=$2
 RSS_limit=$3
 
 # testing
-echo "STARTS"
-p_all=$(ps -eo pid,user,comm | grep cmsRun | grep jenkins | awk '{print}')
+echo "STARTS get_rss_memory"
 
-# Wait the process cmsRun starts running
-sleep 20
-
-# Get PID for the process "cmsRun" and the user "jenkins"
-ps
-p_all=$(ps -eo pid,user,comm | grep cmsRun | grep jenkins | awk '{print}')
-PID=$(ps -eo pid,user,comm | grep cmsRun | grep jenkins | awk '{print $1}')
-
-if [ -z "$PID" ] ; then
-    echo "ERROR: Process $PID not found!" 1>&2 &&
-    exit 1;
-else
-    echo "=== > Information about the process (PID user name_process): " $p_all
-    echo "PID=" $PID
-fi
+# Waiting for the process cmsRun to be run
+i=0
+limit_time=300
+while true; do
+    
+    echo "i = " $i
+    PID=$(ps -eo pid,user,comm | grep cmsRun | grep jenkins | awk '{print $1}')
+    
+    if [ -z "$PID" ] && [ $i -lt $limit_time ] ; then
+       sleep 10
+       echo "Waiting for the process cmsRun to be run."
+       ((i++))
+    elif [ $i -eq $limit_time ] ; then
+        echo "ERROR: The PID for the process cmsRun has not been found." 1>&2 &&
+        exit 1;
+    else
+        p_all=$(ps -eo pid,user,comm | grep cmsRun | grep jenkins | awk '{print}')
+        echo "=== > Information about the process (PID user name_process): " $p_all
+        echo "PID=" $PID
+        break
+    fi
+done
     
 while true; do
     
