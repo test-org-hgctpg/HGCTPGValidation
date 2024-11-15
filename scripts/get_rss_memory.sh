@@ -47,8 +47,8 @@ while true; do
        echo "Waiting for the process cmsRun to be run."
        ((i++))
     elif [ $i -eq $limit_time ] ; then
-        echo "ERROR: The PID for the process cmsRun has not been found." 1>&2 &&
-        exit 1;
+        echo "WARNING: The PID for the process cmsRun has not been found." 1>&2 &&
+        break;
     else
         p_all=$(ps -eo pid,user,comm | grep cmsRun | grep jenkins | awk '{print}')
         echo "=== > Information about the process (PID user name_process): " $p_all
