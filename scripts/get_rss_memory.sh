@@ -35,9 +35,9 @@ RSS_limit=$3
 echo "STARTS get_rss_memory"
 
 # Waiting for the process cmsRun to be run
-# Max waiting time = 300s
+# Max waiting time = 120s
 i=0
-limit_time=300
+limit_time=120
 while true; do
     
     PID=$(ps -eo pid,user,comm | grep cmsRun | grep jenkins | awk '{print $1}')
