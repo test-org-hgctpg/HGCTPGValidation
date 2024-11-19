@@ -12,19 +12,19 @@ DEBUG=1
 
 # Check if the PID of the last process is provided
 if [ -z "$1" ]; then
-    echo "Usage: $0 PID INTERVAL RSS_LIMIT"
+    echo "ERROR Usage: $0 PID INTERVAL RSS_LIMIT" 1>&2 &&
     exit 1
 fi
 
 # Check if the Interval (in s) is provided
 if [ -z "$2" ]; then
-    echo "Usage: $0 PID INTERVAL RSS_LIMIT"
+    echo "ERROR Usage: $0 PID INTERVAL RSS_LIMIT" 1>&2 &&
     exit 1
 fi
 
 # Check if the limit RSS is provided
 if [ -z "$3" ]; then
-    echo "Usage: $0 PID INTERVAL RSS_LIMIT"
+    echo "ERROR Usage: $0 PID INTERVAL RSS_LIMIT" 1>&2 &&
     exit 1
 fi
 
@@ -32,24 +32,31 @@ fi
 INTERVAL=$2
 RSS_limit=$3
 
-# Wait the process cmsRun starts running
-sleep 20
+# testing
+echo "STARTS get_rss_memory"
 
-# Get PID for the process "cmsRun" and the user "jenkins"
-p_all=$(ps -eo pid,user,comm | grep cmsRun | grep jenkins | awk '{print}')
-PID=$(ps -eo pid,user,comm | grep cmsRun | grep jenkins | awk '{print $1}')
-
-if [ "$DEBUG" = "1" ] ; then
-    echo "LastProcess PID= " $1
-    ps
-    echo "=== > Information about the process (PID user name_process): " $p_all
-    echo "PID=" $PID
-fi
+# Waiting for the process cmsRun to be run
+i=0
+limit_time=300
+while true; do
     
-if [ -z "$PID" ] ; then
-    echo "Process $PID not found!"
-    exit 1;
-fi
+    echo "i = " $i
+    PID=$(ps -eo pid,user,comm | grep cmsRun | grep jenkins | awk '{print $1}')
+    
+    if [ -z "$PID" ] && [ $i -lt $limit_time ] ; then
+       sleep 10
+       echo "Waiting for the process cmsRun to be run."
+       ((i++))
+    elif [ $i -eq $limit_time ] ; then
+        echo "ERROR: The PID for the process cmsRun has not been found." 1>&2 &&
+        exit 1;
+    else
+        p_all=$(ps -eo pid,user,comm | grep cmsRun | grep jenkins | awk '{print}')
+        echo "=== > Information about the process (PID user name_process): " $p_all
+        echo "PID=" $PID
+        break
+    fi
+done
     
 while true; do
     
@@ -64,7 +71,7 @@ while true; do
         fi
         
         if [ "${RSS}" -gt "${RSS_limit}" ]; then
-            echo "===> RSS memory $(( ${RSS} / 1000 )) MB > RSS limit $(( ${RSS_limit} / 1000 )) MB"  1>&2 &&
+            echo "ERROR: RSS memory $(( ${RSS} / 1000 )) MB > RSS limit $(( ${RSS_limit} / 1000 )) MB"  1>&2 &&
             kill -9 $PID &&
             exit 1;
         fi  
