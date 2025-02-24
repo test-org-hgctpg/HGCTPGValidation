@@ -1,9 +1,10 @@
 def run() {
     sh '''
-    set +x
+    
+    #set +x
     echo '==> Install automatic validation package HGCTPGValidation. ============================'
-    exec >> log_Jenkins
-    echo '==> Install automatic validation package HGCTPGValidation. ============================'
+    #exec >> log_Jenkins
+    #echo '==> Install automatic validation package HGCTPGValidation. ============================'
     uname -a
     whoami
     pwd
