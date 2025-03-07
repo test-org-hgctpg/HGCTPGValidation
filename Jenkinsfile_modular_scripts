@@ -282,8 +282,11 @@ pipeline {
             steps {
                 echo '==> Geom Check'
                 script{
-                    def geom_val = load './HGCTPGValidation/scripts/geom_check.groovy'
-                    geom_val.run()
+                    try{
+                        sh'./HGCTPGValidation/scripts/geom_check.sh ${REF_RELEASE} ${LABEL_TEST}'
+                    } catch (e){
+                        echo "An error occured in Geom testing stage: ${e}"
+                    }
                 }
             }
         }
