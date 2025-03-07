@@ -1,5 +1,4 @@
 def run() {
-    script{
         try{
             sh'''
             echo '===> Geometry checking.'
@@ -12,7 +11,6 @@ def run() {
         } catch (e){
             echo "An error occured in Geom testing stage: ${e}"
         }
-    }
 }
 
 return this
