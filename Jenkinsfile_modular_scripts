@@ -282,7 +282,7 @@ pipeline {
             steps {
                 echo '==> Geom Check'
                 script{
-                    def geom_val = load 'geom_check.groovy'
+                    def geom_val = load './HGCTPGValidation/scripts/geom_check.groovy'
                     geom_val.run()
                 }
             }
