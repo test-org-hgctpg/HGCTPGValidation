@@ -274,6 +274,10 @@ pipeline {
         stage('Geom Check') {
             steps {
                 echo '==> Geom Check'
+                script{
+                    def geom_val = load 'geom_check.groovy'
+                    geom_val.run()
+                }
             }
         }
     }
