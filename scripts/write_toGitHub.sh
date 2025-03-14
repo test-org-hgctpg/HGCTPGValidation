@@ -3,16 +3,19 @@
 # 1) Generate a temporary token
 # 2) Write into the PR thread in GitHub 
 
-# Usage: ./HGCTPGValidation/scripts/write_toGitHub.sh $MESSAGE $url
+# Usage: ./HGCTPGValidation/scripts/write_toGitHub.sh $url $MESSAGE
 
 echo '===> Write into the PR thread.'
 
 # Check if there are 2 arguments supplied to the script
 if (( $# != 2 ))
 then
-  echo "Usage: ./HGCTPGValidation/scripts/write_toGitHub.sh $MESSAGE $url"
+  echo "Usage: ./HGCTPGValidation/scripts/write_toGitHub.sh $url $MESSAGE"
   exit 1
 fi
+
+url=$1
+MESSAGE=$2
 
 # Generate a token, the command "set +x" is mandatory
 set +x exec >> log_Jenkins; 
@@ -22,9 +25,6 @@ module purge; module load python/3.9.9;
 #python /data/jenkins/workspace/create_token_hgc-tpg.py > /tmp/github_token
 # For the organization test-org-hgctpg
 python /data/jenkins/workspace/create_token.py > /tmp/github_token
-
-url=$1
-MESSAGE=$2
 
 # Compose the url to be used for printing the message in the GitHub PR thread
 # In the string "url" replace "pull" with "issues" and add at the end "comments"
@@ -37,8 +37,8 @@ if [[ -z "${GITHUB_ACCESS_TOKEN}" ]]; then
 else
     curl -X POST -H "Authorization: Bearer $GITHUB_ACCESS_TOKEN " \
      -H "Accept: application/vnd.github+json" \
-     -d "{\\"body\\": \\"$MESSAGE\\" }"  \
-     $url_comments2
+     -d '{"body": "$MESSAGE" }'  \
+     "$url_comments2"
 fi
 rm -f /tmp/github_token
 
