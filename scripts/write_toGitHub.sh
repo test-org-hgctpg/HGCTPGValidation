@@ -14,8 +14,8 @@ then
   exit 1
 fi
 
-url=$1
-MESSAGE=$2
+url="$1"
+MESSAGE="$2"
 
 # Generate a token, the command "set +x" is mandatory
 set +x exec >> log_Jenkins; 
@@ -37,7 +37,7 @@ if [[ -z "${GITHUB_ACCESS_TOKEN}" ]]; then
 else
     curl -X POST -H "Authorization: Bearer $GITHUB_ACCESS_TOKEN " \
      -H "Accept: application/vnd.github+json" \
-     -d '{"body": "$MESSAGE" }'  \
+     -d '{"body": "$MESSAGE" }'hi  \
      "$url_comments2"
 fi
 rm -f /tmp/github_token
