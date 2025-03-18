@@ -35,9 +35,10 @@ GITHUB_ACCESS_TOKEN=$(cat /tmp/github_token)
 if [[ -z "${GITHUB_ACCESS_TOKEN}" ]]; then
     echo 'The github access token has not been generated.'
 else
+    echo "{\"body\": \"$MESSAGE\"}"
     curl -X POST -H "Authorization: Bearer $GITHUB_ACCESS_TOKEN " \
      -H "Accept: application/vnd.github+json" \
-     -d '{"body": "$MESSAGE" }'hi  \
+     -d "{\"body\": \"$MESSAGE\"}"  \
      "$url_comments2"
 fi
 rm -f /tmp/github_token
