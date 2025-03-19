@@ -18,10 +18,10 @@ echo $BASE_REMOTE
 export REMOTE='hgc-tpg'
 echo $REMOTE
 
-export CHANGE_BRANCH='hgc-tpg-CMSSW_14_0_0_pre1'
+export CHANGE_BRANCH='hgc-tpg-devel-CMSSW_14_0_0_pre1'
 echo $CHANGE_BRANCH
 
-export CHANGE_TARGET='hgc-tpg-CMSSW_14_0_0_pre1'
+export CHANGE_TARGET='hgc-tpg-devel-CMSSW_14_0_0_pre1'
 echo $CHANGE_TARGET
 
 CONFIG_SUBSET='default_multi_subset'
