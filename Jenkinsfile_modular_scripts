@@ -311,7 +311,7 @@ pipeline {
                 withEnv(["MESSAGE=${message}","url=${env.CHANGE_URL}"]) {
                     // Generate a token, the command "set +x" is mandatory
                     sh '''
-                        ./HGCTPGValidation/scripts/write_toGitHub.sh $MESSAGE $url
+                        ./HGCTPGValidation/scripts/write_toGitHub.sh "$url" "$MESSAGE"
                     '''
                 }
             }
