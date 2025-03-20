@@ -167,6 +167,7 @@ pipeline {
                                 env.REF_RELEASE = sh(returnStdout: true, script: 'set +x exec >> log_Jenkins; source ./HGCTPGValidation/scripts/extractReleaseName.sh ${CHANGE_TARGET}').trim()
                                 env.SCRAM_ARCH = sh(returnStdout: true, script: 'set +x exec >> log_Jenkins; source ./HGCTPGValidation/scripts/getScramArch.sh ${REF_RELEASE}').trim()
                                 
+                                // Checks if the CHANGE_BRANCH comes from the BASE_REMMOTE or from the FORK
                                 if (env.CHANGE_FORK){
                                     env.REMOTE = env.CHANGE_FORK
                                 }
