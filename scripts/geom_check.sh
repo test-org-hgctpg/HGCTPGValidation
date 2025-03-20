@@ -6,7 +6,7 @@ echo '===> Geometry checking.'
 # Check if there are 2 arguments supplied to the script
 if (( $# != 2 ))
 then
-  echo "Usage: ./HGCTPGValidation/scripts/geom_check.sh ${TEST_RELEASE} ${LABEL_TEST}"
+  echo "Usage: ./HGCTPGValidation/scripts/geom_check.sh TEST_RELEASE LABEL_TEST"
   exit 1
 fi
 
