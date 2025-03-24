@@ -291,9 +291,6 @@ pipeline {
             }
         }
         stage('Geom Check') {
-            when{
-                environment name: 'JOB_FLAG', value: '0'
-            }
             steps {
                 echo '==> Geom Check'
                 script{
