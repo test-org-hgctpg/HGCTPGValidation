@@ -223,7 +223,7 @@ pipeline {
                                 BASE_REMOTE: env.BASE_REMOTE
                             ])
                             println("The environment variables are:")
-                            println("env.JOB_FLAG")
+                            println(env.JOB_FLAG)
                             println(env.REF_BRANCH)
                             println(env.REF_RELEASE)
                             println(env.TEST_RELEASE)
