@@ -222,8 +222,20 @@ pipeline {
                                 CHANGE_FORK: env.CHANGE_FORK,
                                 BASE_REMOTE: env.BASE_REMOTE
                             ])
+                            println("The environment variables are:")
+                            println("env.JOB_FLAG")
+                            println(env.REF_BRANCH)
+                            println(env.REF_RELEASE)
+                            println(env.TEST_RELEASE)
+                            println(env.SCRAM_ARCH)
+                            println(env.BASE_REMOTE)
+                            println(env.REMOTE)
                             
                             echo "The variables are:"
+                            echo "JOB_FLAG: ${JOB_FLAG}"
+                            echo "REF_BRANCH: ${REF_BRANCH}"
+                            echo "CHANGE_BRANCH: ${CHANGE_BRANCH}"
+                            echo "CHANGE_TARGET: ${CHANGE_TARGET}"
                             echo "REF_RELEASE: ${REF_RELEASE}"
                             echo "TEST_RELEASE: ${TEST_RELEASE}"
                             echo "SCRAM_ARCH: ${SCRAM_ARCH}"
