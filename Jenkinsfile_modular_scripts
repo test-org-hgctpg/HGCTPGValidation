@@ -172,13 +172,6 @@ pipeline {
                                 echo "Error during loading or execution: ${e}"
                             }
                             println("The environment variables are:")
-                            println(env.JOB_FLAG)
-                            println(env.REF_BRANCH)
-                            println(env.REF_RELEASE)
-                            println(env.TEST_RELEASE)
-                            println(env.SCRAM_ARCH)
-                            println(env.BASE_REMOTE)
-                            println(env.REMOTE)
                             
                             echo "The variables are:"
                             echo "JOB_FLAG: ${JOB_FLAG}"
