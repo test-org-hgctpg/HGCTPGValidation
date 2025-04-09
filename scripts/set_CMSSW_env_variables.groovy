@@ -22,7 +22,7 @@ def run(String JOB_FLAG, String CHANGE_FORK, String BASE_REMOTE) {
             println(env.SCRAM_ARCH)
             println(env.TEST_RELEASE)
             println(env.REMOTE)
-        } 
+    }
     else {
             env.REF_BRANCH = sh(returnStdout: true, script: 'set +x exec >> log_Jenkins; module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/; module purge; module load python/3.9.9; python ./HGCTPGValidation/scripts/get_cmsswRefBranch.py').trim()
             env.REF_RELEASE = sh(returnStdout: true, script: 'set +x exec >> log_Jenkins; source ./HGCTPGValidation/scripts/extractReleaseName.sh ${REF_BRANCH}').trim()
@@ -41,7 +41,7 @@ def run(String JOB_FLAG, String CHANGE_FORK, String BASE_REMOTE) {
             println(env.CHANGE_BRANCH)
             println(env.CHANGE_TARGET)
             println(env.REMOTE)
-        }
     }
+}
 
 return this
