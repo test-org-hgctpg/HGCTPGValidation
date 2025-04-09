@@ -1,6 +1,7 @@
 // stage 'Set CMSSW environment variables'
 
 def run(String JOB_FLAG, String CHANGE_FORK, String BASE_REMOTE) {
+    println("In the run function”)
     println(${JOB_FLAG})
     println(${CHANGE_FORK})
     println(${BASE_REMOTE})
