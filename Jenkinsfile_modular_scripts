@@ -216,8 +216,12 @@ pipeline {
                 stage('Set CMSSW environment variables - script'){
                     steps{
                         script{
-                            def set_var = load './HGCTPGValidation/scipts/set_CMSSW_env_variables.groovy'
-                            set_var.run(env.JOB_FLAG, env.CHANGE_FORK, env.BASE_REMOTE)
+                            try {
+                                def set_var = load './HGCTPGValidation/scipts/set_CMSSW_env_variables.groovy'
+                                set_var.run(env.JOB_FLAG, env.CHANGE_FORK, env.BASE_REMOTE)
+                            } catch (e) {
+                                echo "Error during loading or execution: ${e}"
+                            }
                             println("The environment variables are:")
                             println(env.JOB_FLAG)
                             println(env.REF_BRANCH)
