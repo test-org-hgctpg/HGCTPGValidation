@@ -175,7 +175,6 @@ pipeline {
                             
                             echo "The variables are:"
                             echo "JOB_FLAG: ${JOB_FLAG}"
-                            echo "REF_BRANCH: ${REF_BRANCH}"
                             echo "CHANGE_BRANCH: ${CHANGE_BRANCH}"
                             echo "CHANGE_TARGET: ${CHANGE_TARGET}"
                             echo "REF_RELEASE: ${REF_RELEASE}"
