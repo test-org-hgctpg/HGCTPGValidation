@@ -78,7 +78,7 @@ while true; do
         
         if [ -z "${RSS}" ] ; then
             echo "WARNING: The RSS memory has not been found." 1>&2 &&
-            exit 0;
+            break;
         elif [ -n "${RSS}" ] && [ "${RSS}" -gt "${RSS_limit}" ] ; then
             echo "ERROR: RSS memory $(( ${RSS} / 1000 )) MB > RSS limit $(( ${RSS_limit} / 1000 )) MB"  1>&2 &&
             kill -9 $PID &&
