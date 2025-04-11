@@ -207,45 +207,80 @@ pipeline {
                 }
             }
         }
-        stage('Build CMSSW Test release'){
+        stage('Install CMSSW Test release'){
+            steps {
+                sh '''
+                set +x
+                echo '==> Build CMSSW Test ========================='
+                echo '===> InstallCMSSW Test Step'
+                exec >> log_Jenkins
+                echo '==> Build CMSSW Test ========================='
+                echo '===> InstallCMSSW Test Step'
+                pwd
+                cd test_dir
+                ../HGCTPGValidation/scripts/installCMSSW.sh $SCRAM_ARCH $REF_RELEASE $REMOTE $BASE_REMOTE $CHANGE_BRANCH $CHANGE_TARGET ${LABEL_TEST}
+                echo '     '
+                '''
+            }
+        }
+        stage('Quality Checks'){
+            steps{
+                sh '''
+                set +x
+                echo '===> Quality checks'
+                exec >> log_Jenkins
+                echo '===> Quality checks'
+                source /cvmfs/cms.cern.ch/cmsset_default.sh
+                cd test_dir/${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src
+                scram build code-checks
+                scram build code-format
+                GIT_STATUS=`git status --porcelain`
+                if [ ! -z "$GIT_STATUS" ]; then
+                    echo "Code-checks or code-format failed."
+                    exit 1;
+                fi
+                echo '    '
+                '''
+            }
+        }
+        stage('Compare with CMSSW Ref Release'){
             stages{
-                stage('Install'){
+                stage('Install Ref Release'){
                     steps {
                         sh '''
                         set +x
-                        echo '==> Build CMSSW Test ========================='
-                        echo '===> InstallCMSSW Test Step'
+                        echo '==> Build CMSSW Reference ======================='
+                        echo '===> InstallCMSSW Ref'
                         exec >> log_Jenkins
-                        echo '==> Build CMSSW Test ========================='
-                        echo '===> InstallCMSSW Test Step'
+                        echo '==> Build CMSSW Reference ======================='
+                        echo '===> InstallCMSSW Ref'
                         pwd
                         cd test_dir
-                        ../HGCTPGValidation/scripts/installCMSSW.sh $SCRAM_ARCH $REF_RELEASE $REMOTE $BASE_REMOTE $CHANGE_BRANCH $CHANGE_TARGET ${LABEL_TEST}
-                        echo '     '
+                        ../HGCTPGValidation/scripts/installCMSSW.sh $SCRAM_ARCH $REF_RELEASE $BASE_REMOTE $BASE_REMOTE $CHANGE_TARGET $CHANGE_TARGET ${LABEL_REF}
+                        echo '      '
                         '''
                     }
-                }
-                stage('Quality Checks'){
-                    steps{
+                }           
+                stage('Produce Ref'){
+                    steps {
                         sh '''
                         set +x
-                        echo '===> Quality checks'
+                        echo '===> Produce reference data.'
                         exec >> log_Jenkins
-                        echo '===> Quality checks'
-                        source /cvmfs/cms.cern.ch/cmsset_default.sh
-                        cd test_dir/${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src
-                        scram build code-checks
-                        scram build code-format
-                        GIT_STATUS=`git status --porcelain`
-                        if [ ! -z "$GIT_STATUS" ]; then
-                            echo "Code-checks or code-format failed."
-                            exit 1;
-                        fi
-                        echo '    '
+                        echo '===> Produce reference data.'
+                        pwd
+                        cd test_dir/${REF_RELEASE}_HGCalTPGValidation_${LABEL_REF}/src
+                        module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/
+                        module purge
+                        module load python/3.9.9
+                        python --version
+                        echo ' CONFIG_SUBSET = ' ${CONFIG_SUBSET}
+                        python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_REF}
+                        echo '      '
                         '''
                     }
                 }
-                stage('Produce'){
+                stage('Produce Test'){
                     steps {
                         sh '''
                         set +x
@@ -266,60 +301,21 @@ pipeline {
                         '''
                     }
                 }
-            }
-        }
-        stage('Build CMSSW Ref release'){
-            stages{
-                stage('Install'){
+                stage('Display') {
                     steps {
                         sh '''
                         set +x
-                        echo '==> Build CMSSW Reference ======================='
-                        echo '===> InstallCMSSW Ref'
+                        echo '==> Display ======================='
                         exec >> log_Jenkins
-                        echo '==> Build CMSSW Reference ======================='
-                        echo '===> InstallCMSSW Ref'
-                        pwd
+                        echo '==> Display ======================='
                         cd test_dir
-                        ../HGCTPGValidation/scripts/installCMSSW.sh $SCRAM_ARCH $REF_RELEASE $BASE_REMOTE $BASE_REMOTE $CHANGE_TARGET $CHANGE_TARGET ${LABEL_REF}
-                        echo '      '
-                        '''
-                    }
-                }           
-                stage('Produce'){
-                    steps {
-                        sh '''
-                        set +x
-                        echo '===> Produce reference data.'
-                        exec >> log_Jenkins
-                        echo '===> Produce reference data.'
-                        pwd
-                        cd test_dir/${REF_RELEASE}_HGCalTPGValidation_${LABEL_REF}/src
-                        module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/
-                        module purge
-                        module load python/3.9.9
-                        python --version
-                        echo ' CONFIG_SUBSET = ' ${CONFIG_SUBSET}
-                        python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_REF}
+                        source ../HGCTPGValidation/env_install.sh
+                        echo $PWD
+                        python ../HGCTPGValidation/scripts/displayHistos.py --subsetconfig ${CONFIG_SUBSET} --refdir ${REF_RELEASE}_HGCalTPGValidation_${LABEL_REF}/src --testdir ${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src --datadir ${DATA_DIR} --prnumber $CHANGE_ID --prtitle "$CHANGE_TITLE (from $CHANGE_AUTHOR, $CHANGE_URL)"
                         echo '      '
                         '''
                     }
                 }
-            }
-        }
-        stage('Display') {
-            steps {
-                sh '''
-                set +x
-                echo '==> Display ======================='
-                exec >> log_Jenkins
-                echo '==> Display ======================='
-                cd test_dir
-                source ../HGCTPGValidation/env_install.sh
-                echo $PWD
-                python ../HGCTPGValidation/scripts/displayHistos.py --subsetconfig ${CONFIG_SUBSET} --refdir ${REF_RELEASE}_HGCalTPGValidation_${LABEL_REF}/src --testdir ${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src --datadir ${DATA_DIR} --prnumber $CHANGE_ID --prtitle "$CHANGE_TITLE (from $CHANGE_AUTHOR, $CHANGE_URL)"
-                echo '      '
-                '''
             }
         }
     }
