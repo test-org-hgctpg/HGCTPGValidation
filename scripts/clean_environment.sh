@@ -16,13 +16,6 @@ echo '==> Clean the working environment. ============================'
 exec >> log_Jenkins
 echo '==> Clean the working environment. ============================'
 
-pwd
-# Remove the validation package local repository
-if [ -d "./HGCTPGValidation" ]
-then
-    rm -rf HGCTPGValidation
-fi
-
 # Remove the test_dir that contains the ROOT files from the CMSSW test and ref simulations
 if [ -d "./test_dir" ]
 then
