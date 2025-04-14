@@ -143,7 +143,6 @@ pipeline {
                         git clone -b ${BRANCH_HGCTPGVAL} https://github.com/${REMOTE_HGCTPGVAL}/HGCTPGValidation HGCTPGValidation
                         source HGCTPGValidation/env_install.sh
                         pip install attrs
-                        mkdir test_dir
                         ls -lrt ..
                         echo '   '
                         '''
@@ -153,6 +152,7 @@ pipeline {
                     steps{
                         sh '''
                         ./HGCTPGValidation/scripts/clean_environment.sh ${DATA_DIR} PR$CHANGE_ID
+                        mkdir test_dir
                         '''
                     }
                 }
