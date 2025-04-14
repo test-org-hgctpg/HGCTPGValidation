@@ -147,10 +147,6 @@ pipeline {
                         whoami
                         pwd
                         ls -l
-                        if [ -d "./HGCTPGValidation" ] 
-                        then
-                            rm -rf HGCTPGValidation
-                        fi
                         git clone -b ${BRANCH_HGCTPGVAL} https://github.com/${REMOTE_HGCTPGVAL}/HGCTPGValidation HGCTPGValidation
                         source HGCTPGValidation/env_install.sh
                         pip install attrs
