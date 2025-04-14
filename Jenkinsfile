@@ -129,6 +129,13 @@ pipeline {
         }
         stage('Initialize'){
             stages{
+                stage('Clean the working environment'){
+                    steps{
+                        sh '''
+                        ./HGCTPGValidation/scripts/clean_environment.sh ${DATA_DIR} PR$CHANGE_ID
+                        '''
+                    }
+                }
                 stage('Install automatic validation package HGCTPGValidation') {
                     steps {
                         sh '''
@@ -155,13 +162,6 @@ pipeline {
                         mkdir test_dir
                         ls -lrt ..
                         echo '   '
-                        '''
-                    }
-                }
-                stage('Clean the working environment'){
-                    steps{
-                        sh '''
-                        ./HGCTPGValidation/scripts/clean_environment.sh ${DATA_DIR} PR$CHANGE_ID
                         '''
                     }
                 }
