@@ -143,10 +143,6 @@ pipeline {
                         echo '==> Install automatic validation package HGCTPGValidation. ============================'
                         exec >> log_Jenkins
                         echo '==> Install automatic validation package HGCTPGValidation. ============================'
-                        uname -a
-                        whoami
-                        pwd
-                        ls -l
                         git clone -b ${BRANCH_HGCTPGVAL} https://github.com/${REMOTE_HGCTPGVAL}/HGCTPGValidation HGCTPGValidation
                         source HGCTPGValidation/env_install.sh
                         pip install attrs
