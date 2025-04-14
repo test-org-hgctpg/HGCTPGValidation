@@ -17,12 +17,20 @@ exec >> log_Jenkins
 echo '==> Clean the working environment. ============================'
 
 pwd
-# Clean the validation package local repository
-if [ -d "./HGCTPGValidation" ] 
+# Remove the validation package local repository
+if [ -d "./HGCTPGValidation" ]
 then
     rm -rf HGCTPGValidation
 fi
 
+# Remove the test_dir that contains the ROOT files from the CMSSW test and ref simulations
+if [ -d "./test_dir" ]
+then
+    echo "Directory test_dir exists."
+    rm -rf test_dir
+fi
+
+# Remove the directory containing the images with histograms
 if [ -d "/data/jenkins/workspace/${DATA_DIR}/$PRCHANGE_ID" ]
 then
     echo 'Remove the old directory ' /data/jenkins/workspace/${DATA_DIR}/${PRCHANGE_ID}
