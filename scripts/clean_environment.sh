@@ -15,6 +15,14 @@ set +x
 echo '==> Clean the working environment. ============================'
 exec >> log_Jenkins
 echo '==> Clean the working environment. ============================'
+
+pwd
+# Clean the validation package local repository
+if [ -d "./HGCTPGValidation" ] 
+then
+    rm -rf HGCTPGValidation
+fi
+
 if [ -d "/data/jenkins/workspace/${DATA_DIR}/$PRCHANGE_ID" ]
 then
     echo 'Remove the old directory ' /data/jenkins/workspace/${DATA_DIR}/${PRCHANGE_ID}
