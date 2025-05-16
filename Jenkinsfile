@@ -211,6 +211,18 @@ pipeline {
                         '''
                     }
                 }
+                stage('Update the configuration'){
+                    when {
+                        expression {
+                            // Only run this stage if the build was triggered by a PR comment that contains new customise parameter
+                            def causes = currentBuild.getBuildCauses('com.adobe.jenkins.github_pr_comment_build.GitHubPullRequestCommentCause')
+                            return causes && causes[0].commentBody?.contains("customise")
+                        }
+                    }
+                    steps {
+                        echo 'Update configuration on GitHub PR comment!'
+                    }
+                }
             }
         }
         stage('Install CMSSW Test release'){
