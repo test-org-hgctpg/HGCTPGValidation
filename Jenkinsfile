@@ -211,16 +211,18 @@ pipeline {
                     steps {
                         echo 'Update configuration on GitHub PR comment!'
                         
-                        // Comments
-                        def commentCauses = currentBuild.getBuildCauses("com.adobe.jenkins.github_pr_comment_build.GitHubPullRequestCommentCause")
-                        if (commentCauses) {
-                            for (def commentCause : commentCauses) {
-                                echo("""Comment Author: ${commentCause.commentAuthor}, Body: "${commentCause.commentBody}" (${commentCause.commentUrl})""")
-                                def comment = commentCauses[0].commentBody
-                                echo "PR Comment: ${comment}"
+                        script{
+                            // Comments
+                            def commentCauses = currentBuild.getBuildCauses("com.adobe.jenkins.github_pr_comment_build.GitHubPullRequestCommentCause")
+                            if (commentCauses) {
+                                for (def commentCause : commentCauses) {
+                                    echo("""Comment Author: ${commentCause.commentAuthor}, Body: "${commentCause.commentBody}" (${commentCause.commentUrl})""")
+                                    def comment = commentCauses[0].commentBody
+                                    echo "PR Comment: ${comment}"
+                                }
+                            } else {
+                                echo("Build was not started by a PR comment")
                             }
-                        } else {
-                            echo("Build was not started by a PR comment")
                         }
                     }
                 }
