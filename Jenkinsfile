@@ -218,11 +218,15 @@ pipeline {
                                 for (def commentCause : commentCauses) {
                                     echo("""Comment Author: ${commentCause.commentAuthor}, Body: "${commentCause.commentBody}" (${commentCause.commentUrl})""")
                                     def comment = commentCauses[0].commentBody
+                                    env.COMMENT=comment
                                     echo "PR Comment: ${comment}"
                                 }
                             } else {
                                 echo("Build was not started by a PR comment")
                             }
+                            sh '''
+                            echo 'comment=' $COMMENT
+                            '''
                         }
                     }
                 }
