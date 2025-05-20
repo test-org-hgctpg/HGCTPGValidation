@@ -204,7 +204,7 @@ pipeline {
                     when {
                         expression {
                             // Only run this stage if the build was triggered by a PR comment that contains new customise parameter
-                            def causes = currentBuild.getBuildCauses('com.adobe.jenkins.github_pr_comment_build.GitHubPullRequestCommentCause')
+                            def commentCauses = currentBuild.getBuildCauses('com.adobe.jenkins.github_pr_comment_build.GitHubPullRequestCommentCause')
                             return causes && (causes[0].commentBody?.contains("customise") || causes[0].commentBody?.contains("customise_commands"))
                         }
                     }
@@ -213,7 +213,6 @@ pipeline {
                         
                         script{
                             // Comments
-                            def commentCauses = currentBuild.getBuildCauses("com.adobe.jenkins.github_pr_comment_build.GitHubPullRequestCommentCause")
                             if (commentCauses) {
                                 for (def commentCause : commentCauses) {
                                     echo("""Comment Author: ${commentCause.commentAuthor}, Body: "${commentCause.commentBody}" (${commentCause.commentUrl})""")
