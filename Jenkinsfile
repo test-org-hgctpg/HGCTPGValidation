@@ -227,7 +227,6 @@ pipeline {
                             sh '''
                             echo 'comment=' $COMMENT
                             cd test_dir
-                            pip install ruamel.yaml
                             module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/
                             module purge
                             module load python/3.9.9
