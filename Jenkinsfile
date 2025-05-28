@@ -226,12 +226,13 @@ pipeline {
                             }
                             sh '''
                             echo 'comment=' $COMMENT
+                            echo '${COMMENT}' > config.tmp
                             cd test_dir
                             source ../../myenvPython399/bin/activate
                             module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/
                             module purge
                             module load python/3.9.9
-                            python ../HGCTPGValidation/scripts/config_from_GitHub.py --subconfig '${COMMENT}'
+                            python ../HGCTPGValidation/scripts/config_from_GitHub.py --subconfig config.tmp
                             '''
                         }
                     }
