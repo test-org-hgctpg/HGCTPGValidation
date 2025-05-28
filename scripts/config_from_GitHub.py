@@ -4,7 +4,7 @@
 
 import sys
 from ruamel.yaml import YAML
-from parse_parameters_re import parse_parameters
+#from parse_parameters_re import parse_parameters
 
 def new_yaml_config(updates):
     yaml = YAML()
