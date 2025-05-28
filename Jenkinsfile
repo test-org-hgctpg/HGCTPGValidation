@@ -227,11 +227,10 @@ pipeline {
                             sh '''
                             echo 'comment=' $COMMENT
                             cd test_dir
+                            source ../../myenvPython399/bin/activate
                             module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/
                             module purge
                             module load python/3.9.9
-                            source ../../myenvPython399/bin/activate
-                            pwd
                             python ../HGCTPGValidation/scripts/config_from_GitHub.py --subconfig $COMMENT
                             '''
                         }
