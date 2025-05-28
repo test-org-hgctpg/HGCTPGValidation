@@ -228,9 +228,10 @@ pipeline {
                             echo 'comment=' $COMMENT
                             cd test_dir
                             pip install ruamel.yaml
-                            module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el9/
+                            module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/
                             module purge
                             module load python/3.9.9
+                            source myenvPython399/bin/activate
                             pwd
                             python ./HGCTPGValidation/script/config_from_GitHub.py --subconfig $COMMENT
                             '''
