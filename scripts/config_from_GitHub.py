@@ -17,7 +17,7 @@ def new_yaml_config(updates):
     config = yaml.load(newConfig)
     fileName = f'{config["shortName"]}.yaml'
     yaml.dump(config, sys.stdout)
-    with open(../HGCTPGValidation/config/fileName, "w") as f:
+    with open("../HGCTPGValidation/config/" + fileName, "w") as f:
         yaml.dump(config, f)
 
 def main(subconfig):
