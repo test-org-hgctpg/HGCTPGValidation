@@ -232,7 +232,7 @@ pipeline {
                             module load python/3.9.9
                             source ../../myenvPython399/bin/activate
                             pwd
-                            python ./HGCTPGValidation/script/config_from_GitHub.py --subconfig $COMMENT
+                            python ../HGCTPGValidation/script/config_from_GitHub.py --subconfig $COMMENT
                             '''
                         }
                     }
