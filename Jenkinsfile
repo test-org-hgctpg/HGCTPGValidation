@@ -219,8 +219,6 @@ pipeline {
                                     echo("""Comment Author: ${commentCause.commentAuthor}, Body: "${commentCause.commentBody}" (${commentCause.commentUrl})""")
                                     def comment = commentCauses[0].commentBody
                                     env.COMMENT=comment
-                                    def config_file = new File("new_config.log")
-                                    config_file.append(comment)
                                     echo "PR Comment: ${comment}"
                                 }
                             } else {
