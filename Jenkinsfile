@@ -218,6 +218,8 @@ pipeline {
                                 for (def commentCause : commentCauses) {
                                     echo("""Comment Author: ${commentCause.commentAuthor}, Body: "${commentCause.commentBody}" (${commentCause.commentUrl})""")
                                     def comment = commentCauses[0].commentBody
+                                    def yamlConfig = comment.split(/```yaml\n([\s\S]+?)\n```/)[1].trim()
+                                    writeFile file: 'config.yaml', text: yamlConfig
                                     env.COMMENT=comment
                                     echo "PR Comment: ${comment}"
                                 }
@@ -232,7 +234,7 @@ pipeline {
                             module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/
                             module purge
                             module load python/3.9.9
-                            python ../HGCTPGValidation/scripts/config_from_GitHub.py --subconfig config.tmp
+                            python ../HGCTPGValidation/scripts/config_from_GitHub.py --subconfig ../config.yaml
                             '''
                         }
                     }
