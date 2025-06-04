@@ -218,8 +218,7 @@ pipeline {
                                 for (def commentCause : commentCauses) {
                                     echo("""Comment Author: ${commentCause.commentAuthor}, Body: "${commentCause.commentBody}" (${commentCause.commentUrl})""")
                                     def comment = commentCauses[0].commentBody
-                                    def yamlConfig = comment.split(/```yaml\n([\s\S]+?)\n```/)[1].trim()
-                                    writeFile file: 'config.yaml', text: yamlConfig
+                                    writeFile file: 'comment.tmp', text: comment
                                     env.COMMENT=comment
                                     echo "PR Comment: ${comment}"
                                 }
