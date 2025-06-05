@@ -232,7 +232,7 @@ pipeline {
                             module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/
                             module purge
                             module load python/3.9.9
-                            python ../HGCTPGValidation/scripts/config_from_GitHub.py --subconfig ../comment.tmp
+                            python ../HGCTPGValidation/scripts/read_GitHubcomment.py --file ../comment.tmp
                             '''
                         }
                     }
