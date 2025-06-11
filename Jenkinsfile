@@ -225,13 +225,19 @@ pipeline {
                             } else {
                                 echo("Build was not started by a PR comment")
                             }
-                            env.CONFIG_SUBSET = sh(returnStdout: true, script: 'set +x exec >> log_Jenkins;
-                            cd test_dir
-                            source ../../myenvPython399/bin/activate
-                            module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/
-                            module purge
-                            module load python/3.9.9; 
-                            python ../HGCTPGValidation/scripts/read_GitHubcomment.py --fileGitHub comment.tmp --fileSubset default_multi_subset.yaml').trim()
+                            env.CONFIG_SUBSET = sh(
+                            returnStdout: true,
+                            script: '''
+                                set +x exec >> log_Jenkins
+                                cd test_dir
+                                source ../../myenvPython399/bin/activate
+                                module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/
+                                module purge
+                                module load python/3.9.9; 
+                                python ../HGCTPGValidation/scripts/read_GitHubcomment.py --fileGitHub comment.tmp --fileSubset default_multi_subset.yaml
+                                '''
+                            ).trim()
+                            
                         }
                     }
                 }
