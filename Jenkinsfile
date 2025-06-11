@@ -225,7 +225,7 @@ pipeline {
                             } else {
                                 echo("Build was not started by a PR comment")
                             }
-                            env.CONFIG_SUBSET = sh(
+                            env.CONFIG_SUBSET_GITHUB = sh(
                             returnStdout: true,
                             script: '''
                                 set +x
@@ -237,7 +237,7 @@ pipeline {
                                 python ../HGCTPGValidation/scripts/read_GitHubcomment.py --fileGitHub comment.tmp --fileSubset default_multi_subset.yaml
                                 '''
                             ).trim()
-                            println(env.CONFIG_SUBSET)
+                            println(env.CONFIG_SUBSET_GITHUB)
                         }
                     }
                 }
