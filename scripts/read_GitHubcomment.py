@@ -55,6 +55,9 @@ def new_yaml_config(tmpFile, defaultSubsetFile):
             yaml.dump(defaultConfig, f)
             yaml.explicit_start = False # Needed in order to not use --- before the new set of configurations
             yaml.dump(newSubset, f)
+    
+    # Printing the new subset name will overwrite the environment variable CONFIG_SUBSET
+    print(newSubsetName)
 
 def main(tmpFile, defaultSubsetFile):
     new_yaml_config(tmpFile, defaultSubsetFile)
