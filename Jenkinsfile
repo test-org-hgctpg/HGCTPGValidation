@@ -228,7 +228,7 @@ pipeline {
                             env.CONFIG_SUBSET = sh(
                             returnStdout: true,
                             script: '''
-                                set +x exec >> log_Jenkins
+                                set +x
                                 cd test_dir
                                 source ../../myenvPython399/bin/activate
                                 module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/
