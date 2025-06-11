@@ -237,7 +237,7 @@ pipeline {
                                 python ../HGCTPGValidation/scripts/read_GitHubcomment.py --fileGitHub comment.tmp --fileSubset default_multi_subset.yaml
                                 '''
                             ).trim()
-                            
+                            println(env.CONFIG_SUBSET)
                         }
                     }
                 }
