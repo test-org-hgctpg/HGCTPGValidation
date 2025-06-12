@@ -238,6 +238,8 @@ pipeline {
                                 '''
                             ).trim()
                             println(env.CONFIG_SUBSET_GITHUB)
+                            env.CONFIG_SUBSET = env.CONFIG_SUBSET_GITHUB
+                            println(env.CONFIG_SUBSET)
                         }
                     }
                 }
@@ -251,7 +253,7 @@ pipeline {
                 echo '     '
                 '''
             }
-        }
+        }env.
         stage('Quality Checks'){
             steps{
                 sh '''
