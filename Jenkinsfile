@@ -253,7 +253,7 @@ pipeline {
                 echo '     '
                 '''
             }
-        }env.
+        }
         stage('Quality Checks'){
             steps{
                 sh '''
