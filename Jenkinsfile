@@ -8,7 +8,6 @@ pipeline {
     environment {
         LABEL_TEST='test'
         LABEL_REF='ref'
-        CONFIG_SUBSET = 'default_multi_subset'
     }
     options {
         skipDefaultCheckout()
@@ -130,6 +129,8 @@ pipeline {
                     println(env.CHANGE_URL)
                     println(env.CHANGE_FORK)
                     
+                    env.CONFIG_SUBSET = 'default_multi_subset'
+                    println(env.CONFIG_SUBSET)
                 }
             }  
         }
