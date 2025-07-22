@@ -7,6 +7,9 @@
 # when using dump function
 from ruamel.yaml import YAML
 from ruamel.yaml.comments import CommentedMap
+from ruamel.yaml.scanner import ScannerError
+from ruamel.yaml.parser import ParserError
+from ruamel.yaml.constructor import ConstructorError
 yaml = YAML()
 yaml.explicit_start = True
 yaml.preserve_quotes = True  # Optional: preserve quoting style
@@ -28,10 +31,10 @@ def update_configs(new_data, default_data):
         
     default_data['parameters'] = new_params
     
-    # Merge top-level keys (optional)
-    for key in ["shortName", "longName", "description"]:
-        if key in new_data:
-            default_data[key] = new_data[key]
+    # Merge header keys
+    default_data["shortName"] = new_data.get("shortName")
+    default_data["longName"] = new_data.get("longName", new_data.get("shortName"))
+    default_data["description"] = new_data.get("description", "Configuration provided by user")
     
     # Write the new configurations into separated files
     filename = f"{new_data['shortName']}.yaml"
@@ -42,7 +45,7 @@ def update_configs(new_data, default_data):
 def update_subsets(new_data, default_data, defaultSubsetFile):
     # Get the name of the new subset
     newSubsetName = new_data.get("subsetName")
-    newSubsetDescription = new_data.get("description")
+    newSubsetDescription = new_data.get("description", "Configuration provided by user")
     # Get the new couple of subsets
     newSubset = new_data.get("configuration")
             
@@ -79,7 +82,17 @@ def main(tmpFile, defaultSubsetFile):
     yaml_blocks = [part.strip() for part in fc.split('---') if part.strip()]
     
     # Go through all parsed blocks
-    parsed_blocks = [yaml.load(block) for block in yaml_blocks]
+    try:
+        parsed_blocks = [yaml.load(block) for block in yaml_blocks]
+    except ScannerError as e:
+        raise Exception(f"\n\n YAML ScannerError: likely caused by an invalid character or bad indentation in the PR comment. \n\n {e}")
+    except ParserError as e:
+        raise Exception(f"\n\n YAML ParserError: the configuration from the PR comment has a syntax issue (ex. different quotation marks). \n\n {e}")
+    except ConstructorError as e:
+        raise Exception(f"\n\n YAML ConstructorError: an object could not be constructed properly from the PR comment.\n\n {e}")
+    except Exception as e:
+        raise Exception(f"\n\n An unexpected error occurred while reading the PR comment. \n\n {e}")
+
     if len(parsed_blocks) > 1:
         for block in parsed_blocks[1:]: # Skip the first block that do not contain configuration 
             if "shortName" in block: # process the new configurations
