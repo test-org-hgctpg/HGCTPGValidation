@@ -13,6 +13,7 @@ from ruamel.yaml.constructor import ConstructorError
 yaml = YAML()
 yaml.explicit_start = True
 yaml.preserve_quotes = True  # Optional: preserve quoting style
+yaml.strict = True  # be strict about syntax 
 yaml.indent(mapping=4, sequence=6, offset=4)
     
 def update_configs(new_data, default_data):
