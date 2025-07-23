@@ -91,6 +91,8 @@ def main(tmpFile, defaultSubsetFile):
         raise Exception(f"\n\n YAML ParserError: the configuration from the PR comment has a syntax issue (ex. different quotation marks). \n\n {e}")
     except ConstructorError as e:
         raise Exception(f"\n\n YAML ConstructorError: an object could not be constructed properly from the PR comment.\n\n {e}")
+    except YAMLError as e:
+        raise Exception(f"\n\n General YAML Error.\n\n {e}")
     except Exception as e:
         raise Exception(f"\n\n An unexpected error occurred while reading the PR comment. \n\n {e}")
 
