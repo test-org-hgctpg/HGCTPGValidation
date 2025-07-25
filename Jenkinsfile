@@ -286,7 +286,6 @@ pipeline {
                 stage('Produce Ref'){
                     steps {
                         sh '''
-                        set +x
                         echo '===> Produce reference data.'
                         exec >> log_Jenkins
                         echo '===> Produce reference data.'
@@ -303,7 +302,6 @@ pipeline {
                 stage('Produce Test'){
                     steps {
                         sh '''
-                        set +x
                         echo '===> Produce test data.'
                         exec >> log_Jenkins
                         echo '===> Produce test data.'
