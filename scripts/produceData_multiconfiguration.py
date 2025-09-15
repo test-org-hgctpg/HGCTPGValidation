@@ -35,12 +35,15 @@ def run_cmsDriver(configdata, release):
     # else --customise {customiseUser}
     customise = f'{"" if customiseUser=="empty" else f"--customise {customiseUser}"}'
     
+    script_file = f"hgcal_tpg_validation_{configName}_{release}"
+    print("====> FILE ", script_file)
+    
     INTERVAL=int(10)
     RSS_limit=int(10000000)
     print("INTERVAL=", INTERVAL)
     print("RSS_limit=", RSS_limit)
     command = f"echo $PWD; source /cvmfs/cms.cern.ch/cmsset_default.sh; eval `scramv1 runtime -sh`; \
-    cmsDriver.py hgcal_tpg_validation_{configName}_{release} -n {str(nbEvents)} \
+    cmsDriver.py {script_file} -n {str(nbEvents)} \
     --mc --eventcontent FEVTDEBUG --datatier GEN-SIM-DIGI-RAW \
     --conditions {conditions} \
     --beamspot {beamspot} \
