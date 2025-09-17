@@ -8,6 +8,8 @@
 # 2nd argument: interval in seconds
 # 3th argument: memory limit
 
+echo "PID from Jenkins = " $1
+ 
 # Check if the PID of the last process is provided
 if [ -z "$1" ]; then
     echo "ERROR Usage: $0 PID INTERVAL RSS_LIMIT" 1>&2 &&
