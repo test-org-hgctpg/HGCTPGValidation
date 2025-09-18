@@ -81,7 +81,21 @@ def run_cmsDriver(configdata, release):
         text_file.write(command_cmsDriver_noExec)
      
     #command = f"chmod u+x ./test_cmsDriver_Exec.sh; chmod u+x ./test_cmsDriver_noExec.sh; ./test_cmsDriver_noExec.sh 2>&1 ; ../../../HGCTPGValidation/scripts/check_scripts.sh $? {script_file}_USER.py && ./test_cmsDriver_Exec.sh & ../../../HGCTPGValidation/scripts/get_rss_memory.sh $! {INTERVAL} {RSS_limit}"
-    command = f"set -x; chmod u+x ./test_cmsDriver_Exec.sh; ./test_cmsDriver_Exec.sh & ../../../HGCTPGValidation/scripts/get_rss_memory.sh $! {INTERVAL} {RSS_limit}"
+    #command = f"set -x; chmod u+x ./test_cmsDriver_Exec.sh; ./test_cmsDriver_Exec.sh & ../../../HGCTPGValidation/scripts/get_rss_memory.sh $! {INTERVAL} {RSS_limit}"
+    command = f"chmod u+x ./test_cmsDriver_noExec.sh; ./test_cmsDriver_noExec.sh 2>&1 ; ../../../HGCTPGValidation/scripts/check_scripts.sh $? {script_file}_USER.py && \
+    echo $PWD; source /cvmfs/cms.cern.ch/cmsset_default.sh; eval `scramv1 runtime -sh`; \
+    cmsDriver.py hgcal_tpg_validation_{configName}_{release} -n {str(nbEvents)} \
+    --mc --eventcontent FEVTDEBUG --datatier GEN-SIM-DIGI-RAW \
+    --conditions {conditions} \
+    --beamspot {beamspot} \
+     --step USER:Validation/HGCalValidation/hgcalRunEmulatorValidationTPG_cff.hgcalTPGRunEmulatorValidation \
+    --geometry {geometry} --era {era} \
+    --inputCommands {inputCommands} \
+    {procMod} \
+    --filein {filein} \
+    --no_output \
+    {customise} \
+    --customise_commands {customiseCommand} & ../../../HGCTPGValidation/scripts/get_rss_memory.sh $! {INTERVAL} {RSS_limit}"
 
 
     pprint.pprint(command)
