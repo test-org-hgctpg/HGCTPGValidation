@@ -13,7 +13,7 @@ sys.path.insert(0, '../../../HGCTPGValidation/scripts')
 from configFunctions import check_schema_subset, check_schema_config, read_subset, read_config, get_listOfConfigs
 
 # Run cmsDriver
-def run_cmsDriver(configdata, release):
+def run_cmsDriver(configdata, release, exec_flag):
     configName=configdata['shortName']
     nbEvents=configdata['parameters']['nbOfEvents']
     conditions=configdata['parameters']['conditions']
