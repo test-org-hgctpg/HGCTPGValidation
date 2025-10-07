@@ -42,62 +42,38 @@ def run_cmsDriver(configdata, release):
     RSS_limit=int(10000000)
     print("INTERVAL=", INTERVAL)
     print("RSS_limit=", RSS_limit)
-    # Write the cmsDriver command into a script
-    command_cmsDriver_Exec = f"echo $PWD; source /cvmfs/cms.cern.ch/cmsset_default.sh; eval `scramv1 runtime -sh`; \
-    cmsDriver.py hgcal_tpg_validation_{configName}_{release} -n {str(nbEvents)} \
-    --mc --eventcontent FEVTDEBUG --datatier GEN-SIM-DIGI-RAW \
-    --conditions {conditions} \
-    --beamspot {beamspot} \
-     --step USER:Validation/HGCalValidation/hgcalRunEmulatorValidationTPG_cff.hgcalTPGRunEmulatorValidation \
-    --geometry {geometry} --era {era} \
-    --inputCommands {inputCommands} \
-    {procMod} \
-    --filein {filein} \
-    --no_output \
-    {customise} \
-    --customise_commands {customiseCommand}"
-    
-    # Write the cmsDriver (option no_exec) command into a script
-    with open("./test_cmsDriver_Exec.sh", "w") as text_file:
-        text_file.write(command_cmsDriver_Exec)
+    if (exec_flag == 1):
+        # cmsDriver no_exec
+        command = f"echo $PWD; echo 'START cmsDriver noExec'; source /cvmfs/cms.cern.ch/cmsset_default.sh; eval `scramv1 runtime -sh`; \
+        cmsDriver.py hgcal_tpg_validation_{configName}_{release} -n {str(nbEvents)} \
+        --mc --eventcontent FEVTDEBUG --datatier GEN-SIM-DIGI-RAW \
+        --conditions {conditions} \
+        --beamspot {beamspot} \
+        --step USER:Validation/HGCalValidation/hgcalRunEmulatorValidationTPG_cff.hgcalTPGRunEmulatorValidation \
+        --geometry {geometry} --era {era} \
+        --inputCommands {inputCommands} \
+        {procMod} \
+        --filein {filein} \
+        --no_output \
+        --no_exec \
+        {customise} \
+        --customise_commands {customiseCommand}"
         
-    command_cmsDriver_noExec = f"echo $PWD; source /cvmfs/cms.cern.ch/cmsset_default.sh; eval `scramv1 runtime -sh`; \
-    cmsDriver.py hgcal_tpg_validation_{configName}_{release} -n {str(nbEvents)} \
-    --mc --eventcontent FEVTDEBUG --datatier GEN-SIM-DIGI-RAW \
-    --conditions {conditions} \
-    --beamspot {beamspot} \
-     --step USER:Validation/HGCalValidation/hgcalRunEmulatorValidationTPG_cff.hgcalTPGRunEmulatorValidation \
-    --geometry {geometry} --era {era} \
-    --inputCommands {inputCommands} \
-    {procMod} \
-    --filein {filein} \
-    --no_output \
-    --no_exec \
-    {customise} \
-    --customise_commands {customiseCommand}"
+    else:
+        command = f"set -x; echo $PID; echo $PWD; source /cvmfs/cms.cern.ch/cmsset_default.sh; eval `scramv1 runtime -sh`; \
+        cmsDriver.py hgcal_tpg_validation_{configName}_{release} -n {str(nbEvents)} \
+        --mc --eventcontent FEVTDEBUG --datatier GEN-SIM-DIGI-RAW \
+        --conditions {conditions} \
+        --beamspot {beamspot} \
+        --step USER:Validation/HGCalValidation/hgcalRunEmulatorValidationTPG_cff.hgcalTPGRunEmulatorValidation \
+        --geometry {geometry} --era {era} \
+        --inputCommands {inputCommands} \
+        {procMod} \
+        --filein {filein} \
+        --no_output \
+        {customise} \
+        --customise_commands {customiseCommand} & ../../../HGCTPGValidation/scripts/get_rss_memory.sh $! {INTERVAL} {RSS_limit}"
     
-    # Write the cmsDriver command into a script
-    with open("./test_cmsDriver_noExec.sh", "w") as text_file:
-        text_file.write(command_cmsDriver_noExec)
-     
-    #command = f"chmod u+x ./test_cmsDriver_Exec.sh; chmod u+x ./test_cmsDriver_noExec.sh; ./test_cmsDriver_noExec.sh 2>&1 ; ../../../HGCTPGValidation/scripts/check_scripts.sh $? {script_file}_USER.py && ./test_cmsDriver_Exec.sh & ../../../HGCTPGValidation/scripts/get_rss_memory.sh $! {INTERVAL} {RSS_limit}"
-    #command = f"set -x; chmod u+x ./test_cmsDriver_Exec.sh; ./test_cmsDriver_Exec.sh & ../../../HGCTPGValidation/scripts/get_rss_memory.sh $! {INTERVAL} {RSS_limit}"
-    command = f"chmod u+x ./test_cmsDriver_noExec.sh; ./test_cmsDriver_noExec.sh 2>&1 ; ../../../HGCTPGValidation/scripts/check_scripts.sh $? {script_file}_USER.py && \
-    echo $PWD; source /cvmfs/cms.cern.ch/cmsset_default.sh; eval `scramv1 runtime -sh`; \
-    cmsDriver.py hgcal_tpg_validation_{configName}_{release} -n {str(nbEvents)} \
-    --mc --eventcontent FEVTDEBUG --datatier GEN-SIM-DIGI-RAW \
-    --conditions {conditions} \
-    --beamspot {beamspot} \
-     --step USER:Validation/HGCalValidation/hgcalRunEmulatorValidationTPG_cff.hgcalTPGRunEmulatorValidation \
-    --geometry {geometry} --era {era} \
-    --inputCommands {inputCommands} \
-    {procMod} \
-    --filein {filein} \
-    --no_output \
-    {customise} \
-    --customise_commands {customiseCommand} & ../../../HGCTPGValidation/scripts/get_rss_memory.sh $! {INTERVAL} {RSS_limit}"
-
-
     pprint.pprint(command)
     return command
     
@@ -107,7 +83,7 @@ def main(subsetconfig, release):
     
     # Path to the config files
     path='../../../HGCTPGValidation/config/'
-
+    
     # read the subset_config file
     data = read_subset(path, subsetconfig)
     config = data["configuration"]
@@ -128,9 +104,19 @@ def main(subsetconfig, release):
                 print("Python file for the config ", value, ":", key, "was already created.")  
               else:
                 print("Running on config: ", key, ": ", value)
-                command = run_cmsDriver(config_data, release)
-                sourceCmd = ['bash', '-c', command]
-                sourceProc = subprocess.run(sourceCmd, check=True, text=True)
+                # Launch cmsDriver with no_exec option
+                command = run_cmsDriver(config_data, release, 1)
+                res = subprocess.run(['bash', '-c', command], text=True)
+                status=res.returncode
+                # If the satus of cmsDriver no_exec is 0 we run cmsDriver
+                # If there is a problème
+                if status == 0:
+                    command = run_cmsDriver(config_data, release, 0)
+                    subprocess.run(['bash', '-c', command], check=True, text=True)
+                else:
+                    # If the script file exists and is not empty => OK
+                    # If this not the case, the script returns the status 1
+                    subprocess.run(['bash', '-c', f'../../../HGCTPGValidation/scripts/check_scripts.sh {status} f"hgcal_tpg_validation_{confName}_{release}_USER.py"'], text=True)
             else:
               print("Go for the next configuration.")
 
