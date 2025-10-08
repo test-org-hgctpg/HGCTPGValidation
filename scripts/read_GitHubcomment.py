@@ -65,7 +65,8 @@ def update_subsets(new_data, default_data, defaultSubsetFile):
         yaml.dump(newSubset, f)
     
     # Printing the new subset name will overwrite the environment variable CONFIG_SUBSET
-    print(newSubsetName)
+    #print(newSubsetName)
+    return(newSubsetName)
     
 def main(tmpFile, defaultSubsetFile):
 
@@ -95,17 +96,19 @@ def main(tmpFile, defaultSubsetFile):
         raise Exception(f"\n\n General YAML Error.\n\n {e}")
     except Exception as e:
         raise Exception(f"\n\n An unexpected error occurred while reading the PR comment. \n\n {e}")
-
+    
+    # Default subset name is used if there is no a new subset in the GitHub comment
+    subsetName = "default_multi_subset"
     if len(parsed_blocks) > 1:
         for block in parsed_blocks[1:]: # Skip the first block that do not contain configuration 
             if "shortName" in block: # process the new configurations
                 update_configs(block, default_data)
             elif "subsetName" in block: # process the subset configuration
-                update_subsets(block, default_data, defaultSubsetFile)
+                subsetName = update_subsets(block, default_data, defaultSubsetFile)
             else:
                 raise Exception(f"\n\n The new configurations are not correct.\n Please check the spelling of the key words shortName and subsetName in the PR comment.\n\n")
-    else:
-        print("default_multi_subset")
+        
+    print(subsetName)
 
 if __name__ == "__main__":
     import optparse
