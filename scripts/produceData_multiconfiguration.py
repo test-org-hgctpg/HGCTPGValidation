@@ -60,7 +60,7 @@ def run_cmsDriver(configdata, release, exec_flag):
         --customise_commands {customiseCommand}"
         
     else:
-        command = f"set -x; echo $PID; echo $PWD; source /cvmfs/cms.cern.ch/cmsset_default.sh; eval `scramv1 runtime -sh`; \
+        command = f"echo $PID; echo $PWD; source /cvmfs/cms.cern.ch/cmsset_default.sh; eval `scramv1 runtime -sh`; \
         cmsDriver.py hgcal_tpg_validation_{configName}_{release} -n {str(nbEvents)} \
         --mc --eventcontent FEVTDEBUG --datatier GEN-SIM-DIGI-RAW \
         --conditions {conditions} \
@@ -106,8 +106,10 @@ def main(subsetconfig, release):
                 print("Running on config: ", key, ": ", value)
                 # Launch cmsDriver with no_exec option
                 command = run_cmsDriver(config_data, release, 1)
+                print("Call subprocess.run with new configuration")
                 res = subprocess.run(['bash', '-c', command], text=True)
                 status=res.returncode
+                print("status=", status)
                 # If the satus of cmsDriver no_exec is 0 we run cmsDriver
                 # If there is a problème
                 if status == 0:
@@ -116,6 +118,7 @@ def main(subsetconfig, release):
                 else:
                     # If the script file exists and is not empty => OK
                     # If this not the case, the script returns the status 1
+                    print("Call check_script.sh")
                     subprocess.run(['bash', '-c', f'../../../HGCTPGValidation/scripts/check_scripts.sh {status} f"hgcal_tpg_validation_{confName}_{release}_USER.py"'], text=True)
             else:
               print("Go for the next configuration.")
