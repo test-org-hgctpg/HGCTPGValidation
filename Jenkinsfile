@@ -287,7 +287,6 @@ pipeline {
                     steps {
                         sh '''
                         echo '===> Produce reference data.'
-                        exec >> log_Jenkins
                         echo '===> Produce reference data.'
                         pwd
                         cd test_dir/${REF_RELEASE}_HGCalTPGValidation_${LABEL_REF}/src
@@ -303,7 +302,6 @@ pipeline {
                     steps {
                         sh '''
                         echo '===> Produce test data.'
-                        exec >> log_Jenkins
                         echo '===> Produce test data.'
                         cd test_dir/${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src
                         module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/
