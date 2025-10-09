@@ -65,7 +65,6 @@ def update_subsets(new_data, default_data, defaultSubsetFile):
         yaml.dump(newSubset, f)
     
     # Printing the new subset name will overwrite the environment variable CONFIG_SUBSET
-    #print(newSubsetName)
     return(newSubsetName)
     
 def main(tmpFile, defaultSubsetFile):
