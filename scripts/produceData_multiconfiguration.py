@@ -117,20 +117,13 @@ def main(subsetconfig, release):
                     subprocess.run(['bash', '-c', command], check=True, text=True)
                 else:
                     # If the script file exists and is not empty => OK
-                    # If this not the case, the script returns the status 1
-                    print("Call check_script.sh")
-                    cmd =   f"""#!/bin/bash;
-                            if [ -s "hgcal_tpg_validation_{confName}_{release}_USER.py" ]; then
-                                echo "The script hgcal_tpg_validation_{confName}_{release}_USER.py was created.";
-                            else
-                                echo "";
-                                echo "!!!! cmsDriver failed to execute! The script hgcal_tpg_validation_{confName}_{release}_USER.py has not been created!";
-                                exit 1;
-                            fi;
-                            """
+                    # If this not the case, raise exception
+                    cmd =   f"-s 'hgcal_tpg_validation_{confName}_{release}_USER.py'"
                     result = subprocess.run(['bash', '-c', cmd], text=True)
-                    if ( result.returncode != 0 ):
-                        raise Exception(f"\n\n cmsDriver failed to execute! \n\n")
+                    if ( result.returncode == 0 ):
+                        print(f"The script hgcal_tpg_validation_{confName}_{release}_USER.py was created.")
+                    else
+                        raise Exception(f"\n\n !!!! cmsDriver failed to execute! The script hgcal_tpg_validation_{confName}_{release}_USER.py has not been created! \n\n")
             else:
               print("Go for the next configuration.")
 
