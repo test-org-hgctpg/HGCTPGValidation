@@ -122,7 +122,7 @@ def main(subsetconfig, release):
                     result = subprocess.run(['bash', '-c', cmd], text=True)
                     if ( result.returncode == 0 ):
                         print(f"The script hgcal_tpg_validation_{confName}_{release}_USER.py was created.")
-                    else
+                    else:
                         raise Exception(f"\n\n !!!! cmsDriver failed to execute! The script hgcal_tpg_validation_{confName}_{release}_USER.py has not been created! \n\n")
             else:
               print("Go for the next configuration.")
