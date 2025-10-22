@@ -88,16 +88,10 @@ def main(tmpFile, defaultSubsetFile):
         config = file.read()
     
     # Extract the yaml block from comment
-    print("=== Extract the yaml block from comment")
     yaml_block = extract_yaml_block(config)
-    print(yaml_block)
     
     # Split on '---' and filter out empty parts
     yaml_blocks = [part.strip() for part in yaml_block.split('---') if part.strip()]
-    print("Split on '---' and filter out empty parts")
-    for i, block in enumerate(yaml_blocks, start=1):
-        print(f"\n--- YAML Block {i} ---")
-        print(block)
     
     # Go through all parsed blocks
     try:
