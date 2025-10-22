@@ -4,4 +4,3 @@ description: Default set of comparisons
 configuration:
     - ref: s1fw
       test: s1fw
-
