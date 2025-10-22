@@ -67,6 +67,14 @@ def update_subsets(new_data, default_data, defaultSubsetFile):
     # The new subset name will overwrite the environment variable CONFIG_SUBSET
     return(newSubsetName)
     
+def extract_yaml_block(comment):
+    # Match text between ```yaml and ```
+    match = re.search(r"```yaml\s*(.*?)\s*```", comment, re.DOTALL)
+    if match:
+        return match.group(1).strip()
+    else:
+        raise Exception(f"No ```yaml block has been found!")
+
 def main(tmpFile, defaultSubsetFile):
 
     # Load the default.yaml
@@ -76,8 +84,11 @@ def main(tmpFile, defaultSubsetFile):
     # Read the comment from GitHub
     with open(f"../{tmpFile}", "r") as file:
         config = file.read()
-    # Remove the ``` at the end of the string
-    fc=config.strip("\n```")
+    
+    # Extract the yaml block from comment
+    print("=== Extract the yaml block from comment")
+    yaml_block = extract_yaml_block(config)
+    print(yaml_block)
     
     # Split on '---' and filter out empty parts
     yaml_blocks = [part.strip() for part in fc.split('---') if part.strip()]
