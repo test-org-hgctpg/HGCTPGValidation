@@ -15,7 +15,9 @@ yaml.explicit_start = True
 yaml.preserve_quotes = True  # Optional: preserve quoting style
 yaml.strict = True  # be strict about syntax 
 yaml.indent(mapping=4, sequence=6, offset=4)
-    
+
+import re
+
 def update_configs(new_data, default_data):
     if 'parameters' in default_data and 'parameters' in new_data:
         default_params = default_data['parameters']
@@ -49,7 +51,7 @@ def update_subsets(new_data, default_data, defaultSubsetFile):
     newSubsetDescription = new_data.get("description", "Configuration provided by user")
     # Get the new couple of subsets
     newSubset = new_data.get("configuration")
-            
+    
     # Get the configuration defined in default_multi_subset.yaml
     # and replace the subsetname and the description
     with open(f"../HGCTPGValidation/config/{defaultSubsetFile}", "r") as file:
@@ -64,9 +66,17 @@ def update_subsets(new_data, default_data, defaultSubsetFile):
         yaml.explicit_start = False # Needed in order to not use --- before the new set of configurations
         yaml.dump(newSubset, f)
     
-    # Printing the new subset name will overwrite the environment variable CONFIG_SUBSET
+    # The new subset name will overwrite the environment variable CONFIG_SUBSET
     return(newSubsetName)
     
+def extract_yaml_block(comment):
+    # Match text between ```yaml and ```
+    match = re.search(r"```yaml\s*(.*?)\s*```", comment, re.DOTALL)
+    if match:
+        return match.group(1).strip()
+    else:
+        raise Exception(f"No ```yaml block has been found!")
+
 def main(tmpFile, defaultSubsetFile):
 
     # Load the default.yaml
@@ -74,17 +84,34 @@ def main(tmpFile, defaultSubsetFile):
         default_data = yaml.load(file)
     
     # Read the comment from GitHub
+    print("Open comment.tmp file")
     with open(f"../{tmpFile}", "r") as file:
         config = file.read()
-    # Remove the ``` at the end of the string
-    fc=config.strip("\n```")
+    print(config)
+    print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
+    
+    # Extract the yaml block from comment
+    print("=== Extract the yaml block from comment")
+    yaml_block = extract_yaml_block(config)
+    print(yaml_block)
+    print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
     
     # Split on '---' and filter out empty parts
-    yaml_blocks = [part.strip() for part in fc.split('---') if part.strip()]
+    yaml_blocks = [part.strip() for part in yaml_block.split('---') if part.strip()]
+    print("Split on '---' and filter out empty parts")
+    for i, block in enumerate(yaml_blocks, start=1):
+        print(f"\n--- YAML Block {i} ---")
+        print(block)
+    print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
     
     # Go through all parsed blocks
     try:
         parsed_blocks = [yaml.load(block) for block in yaml_blocks]
+        print("Parsed blocks")
+        for i, block in enumerate(parsed_blocks):
+            print(f"\n--- YAML Block {i} ---")
+            print(block)
+        print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
     except ScannerError as e:
         raise Exception(f"\n\n YAML ScannerError: likely caused by an invalid character or bad indentation in the PR comment. \n\n {e}")
     except ParserError as e:
@@ -98,15 +125,22 @@ def main(tmpFile, defaultSubsetFile):
     
     # Default subset name is used if there is no a new subset in the GitHub comment
     subsetName = "default_multi_subset"
+    
+    # If there is more than 1 block, we check if it contains a configuration or subset configuration
+    print("If there is more than 1 block, we check if it contains a configuration or subset configuration.")
+    print("We skip the first block because it contains the order to Jenkins.")
     if len(parsed_blocks) > 1:
-        for block in parsed_blocks[1:]: # Skip the first block that do not contain configuration 
+        for block in parsed_blocks[0:]:
+            print("Processed block: ")
+            print(block)
+            print("==========")
             if "shortName" in block: # process the new configurations
                 update_configs(block, default_data)
             elif "subsetName" in block: # process the subset configuration
                 subsetName = update_subsets(block, default_data, defaultSubsetFile)
             else:
                 raise Exception(f"\n\n The new configurations are not correct.\n Please check the spelling of the key words shortName and subsetName in the PR comment.\n\n")
-        
+    
     print(subsetName)
 
 if __name__ == "__main__":
