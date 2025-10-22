@@ -114,7 +114,7 @@ def main(tmpFile, defaultSubsetFile):
     # Default subset name is used if there is no a new subset in the GitHub comment
     subsetName = "default_multi_subset"
     if len(parsed_blocks) > 1:
-        for block in parsed_blocks[1:]: # Skip the first block that do not contain configuration 
+        for block in parsed_blocks[0:]: # Skip the first block that do not contain configuration 
             if "shortName" in block: # process the new configurations
                 update_configs(block, default_data)
             elif "subsetName" in block: # process the subset configuration
