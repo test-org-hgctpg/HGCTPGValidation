@@ -52,13 +52,17 @@ def update_subsets(new_data, default_data, defaultSubsetFile):
     # Get the new couple of subsets
     newSubset = new_data.get("configuration")
     
+    # Read the subset configuration file as a string
+    with open(f"../HGCTPGValidation/config/{defaultSubsetFile}", "r") as file:
+        # Removes newlines and spaces to avoid problems when writing the new subset pairs
+        subsetConfig = file.read().strip()
+    
     # Get the configuration defined in default_multi_subset.yaml
     # and replace the subsetname and the description
-    with open(f"../HGCTPGValidation/config/{defaultSubsetFile}", "r") as file:
-        defaultConfig = yaml.load(file)
-        defaultConfig["subsetName"] = newSubsetName
-        defaultConfig["description"] = newSubsetDescription
-             
+    defaultConfig = yaml.load(subsetConfig)
+    defaultConfig["subsetName"] = newSubsetName
+    defaultConfig["description"] = newSubsetDescription
+    
     # New file name
     filename = f"{new_data['subsetName'].replace(' ', '_')}.yaml"
     with open(f"../HGCTPGValidation/config/{filename}","w") as f:
