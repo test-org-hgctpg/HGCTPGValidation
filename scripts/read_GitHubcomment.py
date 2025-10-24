@@ -79,7 +79,7 @@ def extract_yaml_block(comment):
     if match:
         return match.group(1).strip()
     else:
-        raise Exception(f"No ```yaml block has been found!")
+        print(f"No ```yaml block has been found!")
 
 def main(tmpFile, defaultSubsetFile):
 
