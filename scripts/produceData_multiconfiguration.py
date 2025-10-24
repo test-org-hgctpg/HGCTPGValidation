@@ -106,7 +106,6 @@ def main(subsetconfig, release):
                 print("Running on config: ", key, ": ", value)
                 # Launch cmsDriver with no_exec option
                 command = run_cmsDriver(config_data, release, 1)
-                print("Call subprocess.run with new configuration")
                 res = subprocess.run(['bash', '-c', command], text=True)
                 status=res.returncode
                 print("status=", status)
