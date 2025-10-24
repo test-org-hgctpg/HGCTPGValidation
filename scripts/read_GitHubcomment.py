@@ -82,7 +82,7 @@ def extract_yaml_block(comment):
         print(f"No ```yaml block has been found!")
 
 def main(tmpFile, defaultSubsetFile):
-
+    
     # Load the default.yaml
     with open(f"../HGCTPGValidation/config/default.yaml", "r") as file:
         default_data = yaml.load(file)
@@ -91,36 +91,37 @@ def main(tmpFile, defaultSubsetFile):
     with open(f"../{tmpFile}", "r") as file:
         config = file.read()
     
-    # Extract the yaml block from comment
-    yaml_block = extract_yaml_block(config)
-    
-    # Split on '---' and filter out empty parts
-    yaml_blocks = [part.strip() for part in yaml_block.split('---') if part.strip()]
-    
-    # Go through all parsed blocks
-    try:
-        parsed_blocks = [yaml.load(block) for block in yaml_blocks]
-    except ScannerError as e:
-        raise Exception(f"\n\n YAML ScannerError: likely caused by an invalid character or bad indentation in the PR comment. \n\n {e}")
-    except ParserError as e:
-        raise Exception(f"\n\n YAML ParserError: the configuration from the PR comment has a syntax issue (ex. different quotation marks). \n\n {e}")
-    except ConstructorError as e:
-        raise Exception(f"\n\n YAML ConstructorError: an object could not be constructed properly from the PR comment.\n\n {e}")
-    except YAMLError as e:
-        raise Exception(f"\n\n General YAML Error.\n\n {e}")
-    except Exception as e:
-        raise Exception(f"\n\n An unexpected error occurred while reading the PR comment. \n\n {e}")
-    
     # Default subset name is used if there is no a new subset in the GitHub comment
     subsetName = "default_multi_subset"
-    if len(parsed_blocks) > 1:
-        for block in parsed_blocks[0:]:
-            if "shortName" in block: # process the new configurations
-                update_configs(block, default_data)
-            elif "subsetName" in block: # process the subset configuration
-                subsetName = update_subsets(block, default_data, defaultSubsetFile)
-            else:
-                raise Exception(f"\n\n The new configurations are not correct.\n Please check the spelling of the key words shortName and subsetName in the PR comment.\n\n")
+    
+    # Extract the yaml block from comment
+    yaml_block = extract_yaml_block(config)
+    if (yaml_block):
+        # Split on '---' and filter out empty parts
+        yaml_blocks = [part.strip() for part in yaml_block.split('---') if part.strip()]
+        
+        # Go through all parsed blocks
+        try:
+            parsed_blocks = [yaml.load(block) for block in yaml_blocks]
+        except ScannerError as e:
+            raise Exception(f"\n\n YAML ScannerError: likely caused by an invalid character or bad indentation in the PR comment. \n\n {e}")
+        except ParserError as e:
+            raise Exception(f"\n\n YAML ParserError: the configuration from the PR comment has a syntax issue (ex. different quotation marks). \n\n {e}")
+        except ConstructorError as e:
+            raise Exception(f"\n\n YAML ConstructorError: an object could not be constructed properly from the PR comment.\n\n {e}")
+        except YAMLError as e:
+            raise Exception(f"\n\n General YAML Error.\n\n {e}")
+        except Exception as e:
+            raise Exception(f"\n\n An unexpected error occurred while reading the PR comment. \n\n {e}")
+        
+        if len(parsed_blocks) > 1:
+            for block in parsed_blocks[0:]:
+                if "shortName" in block: # process the new configurations
+                    update_configs(block, default_data)
+                elif "subsetName" in block: # process the subset configuration
+                    subsetName = update_subsets(block, default_data, defaultSubsetFile)
+                else:
+                    raise Exception(f"\n\n The new configurations are not correct.\n Please check the spelling of the key words shortName and subsetName in the PR comment.\n\n")
     
     print(subsetName)
 
