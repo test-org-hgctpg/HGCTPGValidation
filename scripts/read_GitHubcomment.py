@@ -114,7 +114,7 @@ def main(tmpFile, defaultSubsetFile):
         except Exception as e:
             raise Exception(f"\n\n An unexpected error occurred while reading the PR comment. \n\n {e}")
         
-        if len(parsed_blocks) > 1:
+        if len(parsed_blocks) >= 1:
             for block in parsed_blocks[0:]:
                 if "shortName" in block: # process the new configurations
                     update_configs(block, default_data)
