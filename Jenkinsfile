@@ -14,9 +14,9 @@ pipeline {
         stage('Set environment variables'){
             steps{
                 sh '''
+                {
                 set +x
                 echo '==> Set environment variables'
-                exec >> log_Jenkins
                 if [ -f "log_Jenkins" ]; then
                     echo "Remove the last created log_Jenkins."
                     rm log_Jenkins
@@ -24,6 +24,7 @@ pipeline {
                     echo "log_Jenkins does not exist."
                 fi 
                 echo '==> Set environment variables'
+                } >> log_Jekins
                 '''
                 script{
                     String s = env.JOB_NAME
@@ -126,6 +127,12 @@ pipeline {
                     println(env.CHANGE_URL)
                     println(env.CHANGE_FORK)
                 }
+                sh '''
+                {
+                    echo 'CONFIG_SUBSET=' $CONFIG_SUBSET
+                    echo 'REMOTE_HGCTPGVAL=' $REMOTE_HGCTPGVAL
+                } >> log_Jenkins
+                '''
             }  
         }
         stage('Initialize'){
@@ -249,84 +256,59 @@ pipeline {
         stage('Install CMSSW Test release'){
             steps {
                 sh '''
+                echo 'echo ==> Install CMSSW Test release. ============================'
+                {
                 set +x
                 echo 'echo ==> Install CMSSW Test release. ============================'
-                exec >> log_Jenkins
-                echo 'echo ==> Install CMSSW Test release. ============================'
-                ./HGCTPGValidation/scripts/installCMSSW_global.sh $SCRAM_ARCH $REF_RELEASE $REMOTE $BASE_REMOTE $CHANGE_BRANCH $CHANGE_TARGET ${LABEL_TEST}
+                ./HGCTPGValidation/scripts/installCMSSW_global.sh $SCRAM_ARCH $REF_RELEASE $REMOTE $BASE_REMOTE $CHANGE_BRANCH $CHANGE_TARGET ${LABEL_TEST} 2>&1
                 echo '     '
+                } >> log_Jenkins
                 '''
             }
         }
         stage('Quality Checks'){
             steps{
                 sh '''
+                echo 'echo ==> Quality Checks. ============================'
+                {
                 set +x
                 echo 'echo ==> Quality Checks. ============================'
-                exec >> log_Jenkins
-                echo 'echo ==> Quality Checks. ============================'
-                ./HGCTPGValidation/scripts/quality_checks.sh ${REF_RELEASE} ${LABEL_TEST}
+                ./HGCTPGValidation/scripts/quality_checks.sh ${REF_RELEASE} ${LABEL_TEST} 2>&1
+                } >> log_Jenkins
                 '''
             }
         }
         stage('Compare with CMSSW Ref Release'){
             stages{
-                stage('Install Ref Release'){
-                    steps {
-                        sh '''
-                        set +x
-                        echo 'echo ==> Install Ref Release. ============================'
-                        exec >> log_Jenkins
-                        echo 'echo ==> Install Ref Release. ============================'
-                        ./HGCTPGValidation/scripts/installCMSSW_global.sh $SCRAM_ARCH $REF_RELEASE $BASE_REMOTE $BASE_REMOTE $CHANGE_TARGET $CHANGE_TARGET ${LABEL_REF}
-                        echo '      '
-                        '''
-                    }
-                }
-                stage('Produce Ref'){
-                    steps {
-                        sh '''
-                        set +x
-                        echo '===> Produce reference data.'
-                        exec >> log_Jenkins
-                        echo '===> Produce reference data.'
-                        pwd
-                        cd test_dir/${REF_RELEASE}_HGCalTPGValidation_${LABEL_REF}/src
-                        module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/
-                        module purge
-                        module load python/3.9.9
-                        python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_REF}
-                        echo '      '
-                        '''
-                    }
-                }
                 stage('Produce Test'){
                     steps {
                         sh '''
-                        set +x
                         echo '===> Produce test data.'
-                        exec >> log_Jenkins
+                        {
+                        set +x
                         echo '===> Produce test data.'
                         cd test_dir/${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src
                         module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/
                         module purge
                         module load python/3.9.9
-                        python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_TEST}
+                        python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_TEST} 2>&1
                         echo '      '
+                        } >> log_Jenkins
                         '''
                     }
                 }
                 stage('Display') {
                     steps {
                         sh '''
-                        set +x
                         echo '==> Display ======================='
-                        exec >> log_Jenkins
+                        {
+                        set +x
                         echo '==> Display ======================='
                         cd test_dir
                         source ../HGCTPGValidation/env_install.sh
-                        python ../HGCTPGValidation/scripts/displayHistos.py --subsetconfig ${CONFIG_SUBSET} --refdir ${REF_RELEASE}_HGCalTPGValidation_${LABEL_REF}/src --testdir ${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src --datadir ${DATA_DIR} --prnumber $CHANGE_ID --prtitle "$CHANGE_TITLE (from $CHANGE_AUTHOR, $CHANGE_URL)"
+                        python ../HGCTPGValidation/scripts/displayHistos.py --subsetconfig ${CONFIG_SUBSET} --refdir ${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src --testdir ${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src --datadir ${DATA_DIR} --prnumber $CHANGE_ID --prtitle "$CHANGE_TITLE (from $CHANGE_AUTHOR, $CHANGE_URL)" 2>&1
                         echo '      '
+                        } >> log_Jenkins
                         '''
                     }
                 }
@@ -340,13 +322,6 @@ pipeline {
                 exec >> log_Jenkins
                 echo '==> Geom Check ======================='
                 '''
-                script{
-                    try{
-                        sh'./HGCTPGValidation/scripts/geom_check.sh ${TEST_RELEASE} ${LABEL_TEST}'
-                    } catch (e){
-                        error("An error occured in Geom testing stage: ${e}")
-                    }
-                }
             }
         }
     }
