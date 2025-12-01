@@ -302,8 +302,8 @@ pipeline {
                             
                             // If the process fails prints last lines of error to console output
                             if (result != 0) {
-                                echo "Command failed with the error:"
                                 sh 'tail -n 30 log_Jenkins'
+                                error("ERROR: Command failed with the above error")
                             }
                         }
                     }
