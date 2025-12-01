@@ -306,11 +306,6 @@ pipeline {
                                 sh 'tail -n 30 log_Jenkins'
                             }
                         }
-                        sh '''
-                        
-                        {
-
-                        '''
                     }
                 }
                 stage('Display') {
