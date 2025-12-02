@@ -282,15 +282,18 @@ pipeline {
             stages{
                 stage('Produce Test'){
                     steps {
+                        echo '===> Produce test data.'
                         sh '''
+                        {
                         set +x
                         echo '===> Produce test data.'
                         cd test_dir/${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src
                         module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/
                         module purge
                         module load python/3.9.9
-                        python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_TEST} >log_Jenkins 2> >(tee -a log_Jenkins >&2)
+                        python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_TEST}
                         echo '      '
+                        } >log_Jenkins 2> >(tee -a log_Jenkins >&2)
                         '''
                     }
                 }
