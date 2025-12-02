@@ -288,6 +288,7 @@ pipeline {
                             def result = sh(
                             returnStatus: true,
                             script: '''
+                            {
                                 set +x
                                 echo '===> Produce test data.'
                                 cd test_dir/${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src
