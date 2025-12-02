@@ -282,31 +282,16 @@ pipeline {
             stages{
                 stage('Produce Test'){
                     steps {
-                        script{
-                            echo '===> Produce test data.'
-                            // Capture exit code and output
-                            def result = sh(
-                            returnStatus: true,
-                            script: '''
-                            {
-                                set +x
-                                echo '===> Produce test data.'
-                                cd test_dir/${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src
-                                module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/
-                                module purge
-                                module load python/3.9.9
-                                python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_TEST} 2>&1
-                                echo '      '
-                            } >> log_Jenkins
-                            '''
-                            )
-                            
-                            // If the process fails prints last lines of error to console output
-                            if (result != 0) {
-                                sh 'tail -n 30 log_Jenkins'
-                                error("ERROR: Command failed with the above error")
-                            }
-                        }
+                        sh '''
+                        set +x
+                        echo '===> Produce test data.'
+                        cd test_dir/${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src
+                        module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/
+                        module purge
+                        module load python/3.9.9
+                        python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_TEST} >log_Jenkins 2> >(tee -a log_Jenkins >&2)
+                        echo '      '
+                        '''
                     }
                 }
                 stage('Display') {
