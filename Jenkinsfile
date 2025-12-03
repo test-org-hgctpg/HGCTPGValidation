@@ -283,7 +283,7 @@ pipeline {
                 stage('Produce Test'){
                     steps {
                         echo '===> Produce test data.'
-                        sh '''
+                        sh """
                         bash -c '
                         {
                         set +x
@@ -296,7 +296,7 @@ pipeline {
                         echo '      '
                         } >log_Jenkins 2> >(tee -a log_Jenkins >&2)
                         '
-                        '''
+                        """
                     }
                 }
                 stage('Display') {
