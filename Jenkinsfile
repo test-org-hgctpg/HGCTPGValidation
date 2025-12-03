@@ -284,6 +284,7 @@ pipeline {
                     steps {
                         echo '===> Produce test data.'
                         sh '''
+                        #!/bin/bash
                         {
                         set +x
                         echo '===> Produce test data.'
