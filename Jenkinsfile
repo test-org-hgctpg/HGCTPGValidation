@@ -282,7 +282,7 @@ pipeline {
             stages{
                 stage('Produce Test'){
                     steps {
-                        sh'''
+                        sh"""
                         #!/usr/bin/env bash
                         
                         echo "===> Produce test data."
@@ -296,7 +296,7 @@ pipeline {
                         python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_TEST}
                         echo "      "
                         } >log_Jenkins 2> >(tee -a log_Jenkins >&2)
-                        '''
+                        """
                     }
                 }
                 stage('Display') {
