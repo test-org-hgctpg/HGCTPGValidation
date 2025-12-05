@@ -282,21 +282,21 @@ pipeline {
             stages{
                 stage('Produce Test'){
                     steps {
-                        sh << EOF
+                        sh'''
                         #!/usr/bin/env bash
                         
-                        echo '===> Produce test data.'
+                        echo "===> Produce test data."
                         {
                         set +x
-                        echo '===> Produce test data.'
+                        echo "===> Produce test data."
                         cd test_dir/${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src
                         module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/
                         module purge
                         module load python/3.9.9
                         python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_TEST}
-                        echo '      '
+                        echo "      "
                         } >log_Jenkins 2> >(tee -a log_Jenkins >&2)
-                        EOF
+                        '''
                     }
                 }
                 stage('Display') {
