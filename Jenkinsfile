@@ -283,7 +283,7 @@ pipeline {
                 stage('Produce Test'){
                     steps {
                         sh(
-                        script: """#!/usr/bin/env bash
+                            script: """#!/usr/bin/env bash
                         echo '===> Produce test data.'
                         
                         set +x
