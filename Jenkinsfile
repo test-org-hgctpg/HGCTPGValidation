@@ -282,9 +282,7 @@ pipeline {
             stages{
                 stage('Produce Test'){
                     steps {
-                        sh(
-                            script: """#!/usr/bin/env bash
-                        echo '===> Produce test data.'
+                        sh(script: """#!/usr/bin/env bash
                         
                         set +x
                         echo '===> Produce test data.'
@@ -293,9 +291,8 @@ pipeline {
                         module purge
                         module load python/3.9.9
                         python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_TEST} > log_Jenkins 2> >(tee -a log_Jenkins >&2)
-                        echo "===> Done"
-                        """,
-                            shell: '/bin/bash'
+                        echo '===> Done'
+                        """
                         )
                     }
                 }
