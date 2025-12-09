@@ -283,7 +283,7 @@ pipeline {
                 stage('Produce Test'){
                     steps {
                         sh(script: """#!/usr/bin/env bash
-                        
+                        set -e
                         set +x
                         echo '===> Produce test data.'
                         cd test_dir/${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src
