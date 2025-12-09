@@ -282,25 +282,21 @@ pipeline {
             stages{
                 stage('Produce Test'){
                     steps {
-                        script{
-                            try{
-                                sh '''
-                                echo '===> Produce test data.'
-                                {
-                                set +x
-                                echo '===> Produce test data.'
-                                cd test_dir/${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src
-                                module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/
-                                module purge
-                                module load python/3.9.9
-                                python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_TEST} 2>&1
-                                echo '      '
-                                } >> log_Jenkins
-                                '''
-                            } catch (e){
-                                error("An error occured in Produce Test stage: ${e}")
-                            }
-                }
+                        sh(
+                        script: """#!/usr/bin/env bash
+                        echo '===> Produce test data.'
+                        
+                        set +x
+                        echo '===> Produce test data.'
+                        cd test_dir/${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src
+                        module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/
+                        module purge
+                        module load python/3.9.9
+                        python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_TEST} > log_Jenkins 2> >(tee -a log_Jenkins >&2)
+                        echo "===> Done"
+                        """,
+                            shell: '/bin/bash'
+                        )
                     }
                 }
                 stage('Display') {
