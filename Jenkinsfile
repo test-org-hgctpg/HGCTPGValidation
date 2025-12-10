@@ -291,7 +291,7 @@ pipeline {
                         module purge
                         module load python/3.9.9
                         python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_TEST}
-                        } > log_Jenkins 2> >(tee -a log_Jenkins >&2)
+                        } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                         """
                     }
                 }
