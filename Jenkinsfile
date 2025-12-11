@@ -13,10 +13,11 @@ pipeline {
     stages {
         stage('Set environment variables'){
             steps{
-                sh '''
+                sh '''#!/usr/bin/env bash
                 {
                 set +x
                 echo '==> Set environment variables'
+                exec >> log_Jenkins
                 if [ -f "log_Jenkins" ]; then
                     echo "Remove the last created log_Jenkins."
                     rm log_Jenkins
@@ -24,7 +25,7 @@ pipeline {
                     echo "log_Jenkins does not exist."
                 fi 
                 echo '==> Set environment variables'
-                } >> log_Jekins
+                } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                 '''
                 script{
                     String s = env.JOB_NAME
@@ -127,11 +128,18 @@ pipeline {
                     println(env.CHANGE_URL)
                     println(env.CHANGE_FORK)
                 }
-                sh '''
+                sh '''#!/usr/bin/env bash
                 {
                     echo 'CONFIG_SUBSET=' $CONFIG_SUBSET
                     echo 'REMOTE_HGCTPGVAL=' $REMOTE_HGCTPGVAL
-                } >> log_Jenkins
+                    echo 'BRANCH_HGCTPGVAL=' $BRANCH_HGCTPGVAL
+                    echo 'BASE_REMOTE=' $BASE_REMOTE
+                    echo 'DATA_DIR=' $DATA_DIR
+                    echo 'CHANGE_TARGET=' $CHANGE_TARGET
+                    echo 'CHANGE_BRANCH=' $CHANGE_BRANCH
+                    echo 'CHANGE_URL=' $CHANGE_URL
+                    echo 'CHANGE_FORK=' $CHANGE_FORK
+                } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                 '''
             }  
         }
@@ -139,7 +147,8 @@ pipeline {
             stages{
                 stage('Install automatic validation package HGCTPGValidation') {
                     steps {
-                        sh '''
+                        sh '''#!/usr/bin/env bash
+                        {
                         set +x
                         echo '==> Install automatic validation package HGCTPGValidation. ============================'
                         exec >> log_Jenkins
@@ -155,30 +164,32 @@ pipeline {
                         git clone -b ${BRANCH_HGCTPGVAL} https://github.com/${REMOTE_HGCTPGVAL}/HGCTPGValidation HGCTPGValidation
                         source HGCTPGValidation/env_install.sh
                         ls -lrt ..
-                        echo '   '
+                        } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                         '''
                     }
                 }
                 stage('Clean the working environment'){
                     steps{
-                        sh '''
+                        sh '''#!/usr/bin/env bash
+                        {
                         set +x
                         echo 'echo ==> Clean the working environment. ============================'
                         exec >> log_Jenkins
                         echo 'echo ==> Clean the working environment. ============================'
                         ./HGCTPGValidation/scripts/clean_environment.sh ${DATA_DIR} PR$CHANGE_ID
                         mkdir test_dir
+                        } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                         '''
                     }
                 }
                 stage('Set CMSSW environment variables'){
                     steps{
                         script{
-                            sh '''
+                            sh '''#!/usr/bin/env bash
+                            {
                             set +x
                             echo 'echo ==> Set CMSSW environment variables. ============================'
-                            exec >> log_Jenkins
-                            echo 'echo ==> Set CMSSW environment variables. ============================'
+                            } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                             '''
                             try {
                                 def set_var = load './HGCTPGValidation/scripts/set_CMSSW_env_variables.groovy'
@@ -188,8 +199,8 @@ pipeline {
                             }
                             println("The environment variables are:")
                             
-                            echo "The variables are:"
-                            echo "JOB_FLAG: ${JOB_FLAG}"
+                            echo "1 The variables are:"
+                            echo "1 JOB_FLAG: ${JOB_FLAG}"
                             echo "CHANGE_BRANCH: ${CHANGE_BRANCH}"
                             echo "CHANGE_TARGET: ${CHANGE_TARGET}"
                             echo "REF_RELEASE: ${REF_RELEASE}"
@@ -198,10 +209,19 @@ pipeline {
                             echo "BASE_REMOTE: ${BASE_REMOTE}"
                             echo "REMOTE: ${REMOTE}"
                         }
-                        sh '''
+                        sh '''#!/usr/bin/env bash
+                        {
                         set +x
-                        exec >> log_Jenkins
-                        echo '  '
+                        echo "The variables are:"
+                        echo "JOB_FLAG: ${JOB_FLAG}"
+                        echo "CHANGE_BRANCH: ${CHANGE_BRANCH}"
+                        echo "CHANGE_TARGET: ${CHANGE_TARGET}"
+                        echo "REF_RELEASE: ${REF_RELEASE}"
+                        echo "TEST_RELEASE: ${TEST_RELEASE}"
+                        echo "SCRAM_ARCH: ${SCRAM_ARCH}"
+                        echo "BASE_REMOTE: ${BASE_REMOTE}"
+                        echo "REMOTE: ${REMOTE}"
+                        } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                         '''
                     }
                 }
@@ -255,36 +275,71 @@ pipeline {
         }
         stage('Install CMSSW Test release'){
             steps {
-                sh '''
-                echo 'echo ==> Install CMSSW Test release. ============================'
+                sh '''#!/usr/bin/env bash
                 {
                 set +x
                 echo 'echo ==> Install CMSSW Test release. ============================'
-                ./HGCTPGValidation/scripts/installCMSSW_global.sh $SCRAM_ARCH $REF_RELEASE $REMOTE $BASE_REMOTE $CHANGE_BRANCH $CHANGE_TARGET ${LABEL_TEST} 2>&1
-                echo '     '
-                } >> log_Jenkins
+                exec >> log_Jenkins
+                echo 'echo ==> Install CMSSW Test release. ============================'
+                ./HGCTPGValidation/scripts/installCMSSW_global.sh $SCRAM_ARCH $REF_RELEASE $REMOTE $BASE_REMOTE $CHANGE_BRANCH $CHANGE_TARGET ${LABEL_TEST}
+                } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                 '''
             }
         }
         stage('Quality Checks'){
             steps{
-                sh '''
-                echo 'echo ==> Quality Checks. ============================'
+                sh '''#!/usr/bin/env bash
                 {
                 set +x
                 echo 'echo ==> Quality Checks. ============================'
-                ./HGCTPGValidation/scripts/quality_checks.sh ${REF_RELEASE} ${LABEL_TEST} 2>&1
-                } >> log_Jenkins
+                exec >> log_Jenkins
+                echo 'echo ==> Quality Checks. ============================'
+                ./HGCTPGValidation/scripts/quality_checks.sh ${REF_RELEASE} ${LABEL_TEST}
+                } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                 '''
             }
         }
         stage('Compare with CMSSW Ref Release'){
             stages{
-                stage('Produce Test'){
+                stage('Install Ref Release'){
                     steps {
-                        sh'''#!/usr/bin/env bash
+                        sh '''#!/usr/bin/env bash
                         {
                         set +x
+                        echo 'echo ==> Install Ref Release. ============================'
+                        exec >> log_Jenkins
+                        echo 'echo ==> Install Ref Release. ============================'
+                        ./HGCTPGValidation/scripts/installCMSSW_global.sh $SCRAM_ARCH $REF_RELEASE $BASE_REMOTE $BASE_REMOTE $CHANGE_TARGET $CHANGE_TARGET ${LABEL_REF}
+                        } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
+                        '''
+                    }
+                }
+                stage('Produce Ref'){
+                    steps {
+                        sh '''#!/usr/bin/env bash
+                        {
+                        set +x
+                        echo '===> Produce reference data.'
+                        exec >> log_Jenkins
+                        echo '===> Produce reference data.'
+                        pwd
+                        cd test_dir/${REF_RELEASE}_HGCalTPGValidation_${LABEL_REF}/src
+                        module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/
+                        module purge
+                        module load python/3.9.9
+                        python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_REF}
+                        echo '      '
+                        } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
+                        '''
+                    }
+                }
+                stage('Produce Test'){
+                    steps {
+                        sh '''#!/usr/bin/env bash
+                        {
+                        set +x
+                        echo '===> Produce test data.'
+                        exec >> log_Jenkins
                         echo '===> Produce test data.'
                         cd test_dir/${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src
                         module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/
@@ -297,16 +352,16 @@ pipeline {
                 }
                 stage('Display') {
                     steps {
-                        sh '''
-                        echo '==> Display ======================='
+                        sh '''#!/usr/bin/env bash
                         {
                         set +x
                         echo '==> Display ======================='
+                        exec >> log_Jenkins
+                        echo '==> Display ======================='
                         cd test_dir
                         source ../HGCTPGValidation/env_install.sh
-                        python ../HGCTPGValidation/scripts/displayHistos.py --subsetconfig ${CONFIG_SUBSET} --refdir ${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src --testdir ${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src --datadir ${DATA_DIR} --prnumber $CHANGE_ID --prtitle "$CHANGE_TITLE (from $CHANGE_AUTHOR, $CHANGE_URL)" 2>&1
-                        echo '      '
-                        } >> log_Jenkins
+                        python ../HGCTPGValidation/scripts/displayHistos.py --subsetconfig ${CONFIG_SUBSET} --refdir ${REF_RELEASE}_HGCalTPGValidation_${LABEL_REF}/src --testdir ${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src --datadir ${DATA_DIR} --prnumber $CHANGE_ID --prtitle "$CHANGE_TITLE (from $CHANGE_AUTHOR, $CHANGE_URL)"
+                        } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                         '''
                     }
                 }
@@ -314,12 +369,21 @@ pipeline {
         }
         stage('Geom Check') {
             steps {
-                sh '''
+                sh '''#!/usr/bin/env bash
+                {
                 set +x
                 echo '==> Geom Check ======================='
                 exec >> log_Jenkins
                 echo '==> Geom Check ======================='
+                } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                 '''
+                script{
+                    try{
+                        sh'./HGCTPGValidation/scripts/geom_check.sh ${TEST_RELEASE} ${LABEL_TEST}'
+                    } catch (e){
+                        error("An error occured in Geom testing stage: ${e}")
+                    }
+                }
             }
         }
     }
@@ -342,8 +406,10 @@ pipeline {
                 
                 withEnv(["MESSAGE=${message}","url=${env.CHANGE_URL}"]) {
                     // Generate a token, the command "set +x" is mandatory
-                    sh '''
+                    sh '''#!/usr/bin/env bash
+                    {
                         ./HGCTPGValidation/scripts/write_toGitHub.sh "$url" "$MESSAGE"
+                    } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                     '''
                 }
             }
