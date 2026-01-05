@@ -17,14 +17,13 @@ pipeline {
                 {
                 set +x
                 echo '==> Set environment variables'
-                exec >> log_Jenkins
+                pwd
                 if [ -f "log_Jenkins" ]; then
                     echo "Remove the last created log_Jenkins."
                     rm log_Jenkins
                 else 
                     echo "log_Jenkins does not exist."
-                fi 
-                echo '==> Set environment variables'
+                fi
                 } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                 '''
                 script{
@@ -129,7 +128,8 @@ pipeline {
                     println(env.CHANGE_FORK)
                 }
                 sh '''#!/usr/bin/env bash
-                {
+                {   pwd
+                    ls -lrt
                     echo 'CONFIG_SUBSET=' $CONFIG_SUBSET
                     echo 'REMOTE_HGCTPGVAL=' $REMOTE_HGCTPGVAL
                     echo 'BRANCH_HGCTPGVAL=' $BRANCH_HGCTPGVAL
@@ -150,8 +150,6 @@ pipeline {
                         sh '''#!/usr/bin/env bash
                         {
                         set +x
-                        echo '==> Install automatic validation package HGCTPGValidation. ============================'
-                        exec >> log_Jenkins
                         echo '==> Install automatic validation package HGCTPGValidation. ============================'
                         uname -a
                         whoami
@@ -174,10 +172,10 @@ pipeline {
                         {
                         set +x
                         echo 'echo ==> Clean the working environment. ============================'
-                        exec >> log_Jenkins
-                        echo 'echo ==> Clean the working environment. ============================'
+                        ls -lrt
                         ./HGCTPGValidation/scripts/clean_environment.sh ${DATA_DIR} PR$CHANGE_ID
                         mkdir test_dir
+                        ls -lrt
                         } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                         '''
                     }
@@ -189,6 +187,8 @@ pipeline {
                             {
                             set +x
                             echo 'echo ==> Set CMSSW environment variables. ============================'
+                            pwd
+                            ls -lrt
                             } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                             '''
                             try {
@@ -212,6 +212,8 @@ pipeline {
                         sh '''#!/usr/bin/env bash
                         {
                         set +x
+                        pwd
+                        ls -lrt
                         echo "The variables are:"
                         echo "JOB_FLAG: ${JOB_FLAG}"
                         echo "CHANGE_BRANCH: ${CHANGE_BRANCH}"
@@ -254,6 +256,8 @@ pipeline {
                             returnStdout: true,
                             script: '''
                                 set +x
+                                pwd
+                                ls -lrt
                                 cd test_dir
                                 source ../../myenvPython399/bin/activate
                                 module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/
@@ -279,8 +283,8 @@ pipeline {
                 {
                 set +x
                 echo 'echo ==> Install CMSSW Test release. ============================'
-                exec >> log_Jenkins
-                echo 'echo ==> Install CMSSW Test release. ============================'
+                pwd
+                ls -lrt
                 ./HGCTPGValidation/scripts/installCMSSW_global.sh $SCRAM_ARCH $REF_RELEASE $REMOTE $BASE_REMOTE $CHANGE_BRANCH $CHANGE_TARGET ${LABEL_TEST}
                 } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                 '''
@@ -292,8 +296,8 @@ pipeline {
                 {
                 set +x
                 echo 'echo ==> Quality Checks. ============================'
-                exec >> log_Jenkins
-                echo 'echo ==> Quality Checks. ============================'
+                pwd
+                ls -lrt
                 ./HGCTPGValidation/scripts/quality_checks.sh ${REF_RELEASE} ${LABEL_TEST}
                 } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                 '''
@@ -307,8 +311,8 @@ pipeline {
                         {
                         set +x
                         echo 'echo ==> Install Ref Release. ============================'
-                        exec >> log_Jenkins
-                        echo 'echo ==> Install Ref Release. ============================'
+                        pwd
+                        ls -lrt
                         ./HGCTPGValidation/scripts/installCMSSW_global.sh $SCRAM_ARCH $REF_RELEASE $BASE_REMOTE $BASE_REMOTE $CHANGE_TARGET $CHANGE_TARGET ${LABEL_REF}
                         } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                         '''
@@ -320,13 +324,14 @@ pipeline {
                         {
                         set +x
                         echo '===> Produce reference data.'
-                        exec >> log_Jenkins
-                        echo '===> Produce reference data.'
                         pwd
+                        ls -lrt
                         cd test_dir/${REF_RELEASE}_HGCalTPGValidation_${LABEL_REF}/src
                         module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/
                         module purge
                         module load python/3.9.9
+                        pwd
+                        ls -lrt
                         python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_REF}
                         echo '      '
                         } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
@@ -339,12 +344,14 @@ pipeline {
                         {
                         set +x
                         echo '===> Produce test data.'
-                        exec >> log_Jenkins
-                        echo '===> Produce test data.'
+                        pwd
+                        ls -lrt
                         cd test_dir/${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src
                         module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/
                         module purge
                         module load python/3.9.9
+                        pwd
+                        ls -lrt
                         python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_TEST}
                         } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                         '''
@@ -356,10 +363,12 @@ pipeline {
                         {
                         set +x
                         echo '==> Display ======================='
-                        exec >> log_Jenkins
-                        echo '==> Display ======================='
+                        pwd
+                        ls -lrt
                         cd test_dir
                         source ../HGCTPGValidation/env_install.sh
+                        pwd
+                        ls -lrt
                         python ../HGCTPGValidation/scripts/displayHistos.py --subsetconfig ${CONFIG_SUBSET} --refdir ${REF_RELEASE}_HGCalTPGValidation_${LABEL_REF}/src --testdir ${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src --datadir ${DATA_DIR} --prnumber $CHANGE_ID --prtitle "$CHANGE_TITLE (from $CHANGE_AUTHOR, $CHANGE_URL)"
                         } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                         '''
@@ -373,8 +382,8 @@ pipeline {
                 {
                 set +x
                 echo '==> Geom Check ======================='
-                exec >> log_Jenkins
-                echo '==> Geom Check ======================='
+                pwd
+                ls -lrt
                 } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                 '''
                 script{
