@@ -272,7 +272,7 @@ pipeline {
                         sh '''#!/usr/bin/env bash
                         {
                         srt +x
-                        echo "CONFIG_SUBSET is set to: ${env.CONFIG_SUBSET}"
+                        echo "CONFIG_SUBSET is set to: ${CONFIG_SUBSET}"
                         } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                         '''
                     }
