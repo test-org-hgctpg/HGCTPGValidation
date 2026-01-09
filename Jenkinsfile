@@ -232,7 +232,7 @@ pipeline {
                         {
                         srt +x
                         echo 'Update configuration on GitHub PR comment!'
-                        } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
+                        } >> log_Jenkins 2> >(tee -a log_Jenkins 1>&2)
                         '''
                         script{
                             // Comments
@@ -264,13 +264,15 @@ pipeline {
                                 error("ERROR: Required environment variable CONFIG_SUBSET is not set.")
                             }else{
                                 env.CONFIG_SUBSET = env.CONFIG_SUBSET_GITHUB
-                                echo "CONFIG_SUBSET is set to: ${env.CONFIG_SUBSET_GITHUB}"
+                                echo "CONFIG_SUBSET_GITHUB is: ${env.CONFIG_SUBSET_GITHUB}"
+                                echo "CONFIG_SUBSET is set to: ${env.CONFIG_SUBSET}"
+                                
                             }
                         }
                         sh '''#!/usr/bin/env bash
                         {
                         srt +x
-                        echo "CONFIG_SUBSET is set to: ${env.CONFIG_SUBSET_GITHUB}"
+                        echo "CONFIG_SUBSET is set to: ${env.CONFIG_SUBSET}"
                         } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                         '''
                     }
