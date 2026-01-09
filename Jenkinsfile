@@ -17,7 +17,6 @@ pipeline {
                 {
                 set +x
                 echo '==> Set environment variables'
-                pwd
                 if [ -f "log_Jenkins" ]; then
                     echo "Remove the last created log_Jenkins."
                     rm log_Jenkins
@@ -153,8 +152,6 @@ pipeline {
                         echo '==> Install automatic validation package HGCTPGValidation. ============================'
                         uname -a
                         whoami
-                        pwd
-                        ls -l
                         if [ -d "./HGCTPGValidation" ] 
                         then
                             rm -rf HGCTPGValidation
@@ -172,7 +169,6 @@ pipeline {
                         {
                         set +x
                         echo 'echo ==> Clean the working environment. ============================'
-                        ls -lrt
                         ./HGCTPGValidation/scripts/clean_environment.sh ${DATA_DIR} PR$CHANGE_ID
                         mkdir test_dir
                         ls -lrt
@@ -187,8 +183,6 @@ pipeline {
                             {
                             set +x
                             echo 'echo ==> Set CMSSW environment variables. ============================'
-                            pwd
-                            ls -lrt
                             } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                             '''
                             try {
@@ -212,8 +206,6 @@ pipeline {
                         sh '''#!/usr/bin/env bash
                         {
                         set +x
-                        pwd
-                        ls -lrt
                         echo "The variables are:"
                         echo "JOB_FLAG: ${JOB_FLAG}"
                         echo "CHANGE_BRANCH: ${CHANGE_BRANCH}"
@@ -236,8 +228,12 @@ pipeline {
                         }
                     }
                     steps {
+                        sh '''#!/usr/bin/env bash
+                        {
+                        srt +x
                         echo 'Update configuration on GitHub PR comment!'
-                        
+                        } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
+                        '''
                         script{
                             // Comments
                             def commentCauses = currentBuild.getBuildCauses('com.adobe.jenkins.github_pr_comment_build.GitHubPullRequestCommentCause')
@@ -256,8 +252,6 @@ pipeline {
                             returnStdout: true,
                             script: '''
                                 set +x
-                                pwd
-                                ls -lrt
                                 cd test_dir
                                 source ../../myenvPython399/bin/activate
                                 module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/
@@ -273,6 +267,12 @@ pipeline {
                                 echo "CONFIG_SUBSET is set to: ${env.CONFIG_SUBSET_GITHUB}"
                             }
                         }
+                        sh '''#!/usr/bin/env bash
+                        {
+                        srt +x
+                        echo "CONFIG_SUBSET is set to: ${env.CONFIG_SUBSET_GITHUB}"
+                        } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
+                        '''
                     }
                 }
             }
@@ -283,8 +283,6 @@ pipeline {
                 {
                 set +x
                 echo 'echo ==> Install CMSSW Test release. ============================'
-                pwd
-                ls -lrt
                 ./HGCTPGValidation/scripts/installCMSSW_global.sh $SCRAM_ARCH $REF_RELEASE $REMOTE $BASE_REMOTE $CHANGE_BRANCH $CHANGE_TARGET ${LABEL_TEST}
                 } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                 '''
@@ -296,8 +294,6 @@ pipeline {
                 {
                 set +x
                 echo 'echo ==> Quality Checks. ============================'
-                pwd
-                ls -lrt
                 ./HGCTPGValidation/scripts/quality_checks.sh ${REF_RELEASE} ${LABEL_TEST}
                 } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                 '''
@@ -311,8 +307,6 @@ pipeline {
                         {
                         set +x
                         echo 'echo ==> Install Ref Release. ============================'
-                        pwd
-                        ls -lrt
                         ./HGCTPGValidation/scripts/installCMSSW_global.sh $SCRAM_ARCH $REF_RELEASE $BASE_REMOTE $BASE_REMOTE $CHANGE_TARGET $CHANGE_TARGET ${LABEL_REF}
                         } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                         '''
@@ -322,16 +316,12 @@ pipeline {
                     steps {
                         sh '''#!/usr/bin/env bash
                         {
-                        set -x
+                        set +x
                         echo '===> Produce reference data.'
-                        pwd
-                        ls -lrt
                         cd test_dir/${REF_RELEASE}_HGCalTPGValidation_${LABEL_REF}/src
                         module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/
                         module purge
                         module load python/3.9.9
-                        pwd
-                        ls -lrt
                         echo 'CONFIG_SUBSET= ' ${CONFIG_SUBSET} 
                         echo 'LABEL_TEST= ' ${LABEL_REF}
                         python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_REF}
@@ -346,14 +336,10 @@ pipeline {
                         {
                         set -x
                         echo '===> Produce test data.'
-                        pwd
-                        ls -lrt
                         cd test_dir/${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src
                         module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/
                         module purge
                         module load python/3.9.9
-                        pwd
-                        ls -lrt
                         echo 'CONFIG_SUBSET= ' ${CONFIG_SUBSET} 
                         echo 'LABEL_TEST= ' ${LABEL_TEST}
                         python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_TEST}
@@ -367,12 +353,8 @@ pipeline {
                         {
                         set +x
                         echo '==> Display ======================='
-                        pwd
-                        ls -lrt
                         cd test_dir
                         source ../HGCTPGValidation/env_install.sh
-                        pwd
-                        ls -lrt
                         python ../HGCTPGValidation/scripts/displayHistos.py --subsetconfig ${CONFIG_SUBSET} --refdir ${REF_RELEASE}_HGCalTPGValidation_${LABEL_REF}/src --testdir ${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src --datadir ${DATA_DIR} --prnumber $CHANGE_ID --prtitle "$CHANGE_TITLE (from $CHANGE_AUTHOR, $CHANGE_URL)"
                         } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                         '''
@@ -386,8 +368,6 @@ pipeline {
                 {
                 set +x
                 echo '==> Geom Check ======================='
-                pwd
-                ls -lrt
                 } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                 '''
                 script{
