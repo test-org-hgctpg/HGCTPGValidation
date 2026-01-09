@@ -322,7 +322,7 @@ pipeline {
                     steps {
                         sh '''#!/usr/bin/env bash
                         {
-                        set +x
+                        set -x
                         echo '===> Produce reference data.'
                         pwd
                         ls -lrt
@@ -332,6 +332,8 @@ pipeline {
                         module load python/3.9.9
                         pwd
                         ls -lrt
+                        echo 'CONFIG_SUBSET= ' ${CONFIG_SUBSET} 
+                        echo 'LABEL_TEST= ' ${LABEL_REF}
                         python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_REF}
                         echo '      '
                         } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
@@ -342,7 +344,7 @@ pipeline {
                     steps {
                         sh '''#!/usr/bin/env bash
                         {
-                        set +x
+                        set -x
                         echo '===> Produce test data.'
                         pwd
                         ls -lrt
@@ -352,6 +354,8 @@ pipeline {
                         module load python/3.9.9
                         pwd
                         ls -lrt
+                        echo 'CONFIG_SUBSET= ' ${CONFIG_SUBSET} 
+                        echo 'LABEL_TEST= ' ${LABEL_TEST}
                         python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_TEST}
                         } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                         '''
