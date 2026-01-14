@@ -169,6 +169,12 @@ pipeline {
                         {
                         set +x
                         echo 'echo ==> Clean the working environment. ============================'
+                        } >> log_Jenkins 1>&2> >(tee -a log_Jenkins >&2)
+                        '''
+                        sh '''#!/usr/bin/env bash
+                        {
+                        set +x
+                        echo 'echo ==> Clean the working environment. ============================'
                         ./HGCTPGValidation/scripts/clean_environment.sh ${DATA_DIR} PR$CHANGE_ID
                         mkdir test_dir
                         ls -lrt
@@ -183,7 +189,7 @@ pipeline {
                             {
                             set +x
                             echo 'echo ==> Set CMSSW environment variables. ============================'
-                            } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
+                            } >> log_Jenkins 1>&2> >(tee -a log_Jenkins >&2)
                             '''
                             try {
                                 def set_var = load './HGCTPGValidation/scripts/set_CMSSW_env_variables.groovy'
@@ -231,8 +237,8 @@ pipeline {
                         sh '''#!/usr/bin/env bash
                         {
                         srt +x
-                        echo 'Update configuration on GitHub PR comment!'
-                        } >> log_Jenkins 2> >(tee -a log_Jenkins 1>&2)
+                        echo '==> Update configuration on GitHub PR comment!'
+                        } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
                         '''
                         script{
                             // Comments
@@ -283,6 +289,12 @@ pipeline {
             steps {
                 sh '''#!/usr/bin/env bash
                 {
+                srt +x
+                echo 'Install CMSSW Test release!'
+                } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
+                '''
+                sh '''#!/usr/bin/env bash
+                {
                 set +x
                 echo 'echo ==> Install CMSSW Test release. ============================'
                 ./HGCTPGValidation/scripts/installCMSSW_global.sh $SCRAM_ARCH $REF_RELEASE $REMOTE $BASE_REMOTE $CHANGE_BRANCH $CHANGE_TARGET ${LABEL_TEST}
@@ -292,6 +304,12 @@ pipeline {
         }
         stage('Quality Checks'){
             steps{
+                sh '''#!/usr/bin/env bash
+                {
+                srt +x
+                echo '==> Quality Checks'
+                } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
+                '''
                 sh '''#!/usr/bin/env bash
                 {
                 set +x
@@ -305,6 +323,12 @@ pipeline {
             stages{
                 stage('Install Ref Release'){
                     steps {
+                       sh '''#!/usr/bin/env bash
+                       {
+                        srt +x
+                        echo ' ==> Install Ref Release'
+                        } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
+                        '''
                         sh '''#!/usr/bin/env bash
                         {
                         set +x
@@ -316,6 +340,12 @@ pipeline {
                 }
                 stage('Produce Ref'){
                     steps {
+                        sh '''#!/usr/bin/env bash
+                        {
+                        srt +x
+                        echo '==> Produce reference data.'
+                        } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
+                        '''
                         sh '''#!/usr/bin/env bash
                         {
                         set +x
@@ -335,7 +365,13 @@ pipeline {
                     steps {
                         sh '''#!/usr/bin/env bash
                         {
-                        set -x
+                        srt +x
+                        echo '==> Produce test data.'
+                        } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
+                        '''
+                        sh '''#!/usr/bin/env bash
+                        {
+                        set +x
                         echo '===> Produce test data.'
                         cd test_dir/${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src
                         module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/
@@ -350,6 +386,12 @@ pipeline {
                 }
                 stage('Display') {
                     steps {
+                        sh '''#!/usr/bin/env bash
+                        {
+                        srt +x
+                        echo '==> ==> Display'
+                        } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
+                        '''
                         sh '''#!/usr/bin/env bash
                         {
                         set +x
@@ -369,7 +411,7 @@ pipeline {
                 {
                 set +x
                 echo '==> Geom Check ======================='
-                } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
+                } >> log_Jenkins 1>&2> >(tee -a log_Jenkins >&2)
                 '''
                 script{
                     try{
