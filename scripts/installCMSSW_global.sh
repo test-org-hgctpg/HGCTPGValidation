@@ -19,6 +19,7 @@ echo '==> Build CMSSW Test ========================='
 echo '===> InstallCMSSW Test Step'
 cd test_dir
 
+set +x
 set -e
 
 export SCRAM_ARCH=$1
