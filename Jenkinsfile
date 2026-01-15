@@ -336,6 +336,7 @@ pipeline {
                         set +x
                         echo 'echo ==> Install Ref Release. ============================'
                         ./HGCTPGValidation/scripts/installCMSSW_global.sh $SCRAM_ARCH $REF_RELEASE $BASE_REMOTE $BASE_REMOTE $CHANGE_TARGET $CHANGE_TARGET ${LABEL_REF}
+                        echo "    "
                         } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                         status=$?
                         exit $status
