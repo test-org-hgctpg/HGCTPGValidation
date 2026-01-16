@@ -16,7 +16,12 @@ pipeline {
                 sh '''#!/usr/bin/env bash
                 {
                 set +x
-                echo '==> Set environment variables'
+                echo 'echo ==> Set environment variables. ============================'
+                } >> log_Jenkins 1>&2> >(tee -a log_Jenkins >&2)
+                '''
+                sh '''#!/usr/bin/env bash
+                {
+                set +x
                 if [ -f "log_Jenkins" ]; then
                     echo "Remove the last created log_Jenkins."
                     rm log_Jenkins
@@ -174,7 +179,6 @@ pipeline {
                         sh '''#!/usr/bin/env bash
                         {
                         set +x
-                        echo 'echo ==> Clean the working environment. ============================'
                         ./HGCTPGValidation/scripts/clean_environment.sh ${DATA_DIR} PR$CHANGE_ID
                         mkdir test_dir
                         ls -lrt
@@ -279,7 +283,7 @@ pipeline {
                         {
                         set +x
                         echo "CONFIG_SUBSET is set to: ${CONFIG_SUBSET}"
-                        } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
+                        } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
                         '''
                     }
                 }
@@ -290,19 +294,24 @@ pipeline {
                 sh '''#!/usr/bin/env bash
                 {
                 set +x
-                echo 'Install CMSSW Test release!'
+                echo '==> Install CMSSW Test release. ============================'
                 } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
                 '''
                 sh '''#!/usr/bin/env bash
                 {
                 set +x
-                echo 'echo ==> Install CMSSW Test release. ============================'
                 ./HGCTPGValidation/scripts/installCMSSW_global.sh $SCRAM_ARCH $REF_RELEASE $REMOTE $BASE_REMOTE $CHANGE_BRANCH $CHANGE_TARGET ${LABEL_TEST}
-                echo 'statusIns11=' $?
+                statusInstallTest=$?
                 } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
-                status12=$?
-                echo 'statusIns12=' $status12
-                exit $status11
+                
+                # If the script installCMSSW_global.sh failed, the pipeline stops
+                if [ $statusInstallTest -gt 0 ];
+                then
+                    echo ' Error in stage('Install CMSSW Test release'), with status=' $statusInstallTest
+                    exit $statusInstallTest
+                else
+                    echo ' The stage 'Install CMSSW Test release' completed successufully'
+                fi
                 '''
             }
         }
@@ -311,15 +320,24 @@ pipeline {
                 sh '''#!/usr/bin/env bash
                 {
                 set +x
-                echo '==> Quality Checks'
+                echo '==> Quality Checks. ============================'
                 } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
                 '''
                 sh '''#!/usr/bin/env bash
                 {
                 set +x
-                echo 'echo ==> Quality Checks. ============================'
                 ./HGCTPGValidation/scripts/quality_checks.sh ${REF_RELEASE} ${LABEL_TEST}
+                statusQualityChecks=$?
                 } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
+                
+                # If the script quality_checks.sh failed, the pipeline stops
+                if [ $statusQualityChecks -gt 0 ];
+                then
+                    echo ' Error in stage('Quality Checks'), with status=' $statusQualityChecks
+                    exit $statusQualityChecks
+                else
+                    echo ' The stage 'Quality Checks' completed successufully'
+                fi
                 '''
             }
         }
@@ -330,20 +348,24 @@ pipeline {
                        sh '''#!/usr/bin/env bash
                        {
                         set +x
-                        echo ' ==> Install Ref Release'
+                        echo '==> Install Ref Release. ============================'
                         } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
                         '''
                         sh '''#!/usr/bin/env bash
                         {
                         set +x
-                        echo 'echo ==> Install Ref Release. ============================'
                         ./HGCTPGValidation/scripts/installCMSSW_global.sh $SCRAM_ARCH $REF_RELEASE $BASE_REMOTE $BASE_REMOTE $CHANGE_TARGET $CHANGE_TARGET ${LABEL_REF}
-                        echo 'statusIns21=' $?
-                        echo "    "
+                        statusInstallRef=$?
                         } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
-                        status22=$?
-                        echo 'statusIns22=' $status22
-                        exit $status21
+                        
+                        # If the script installCMSSW_global.sh failed, the pipeline stops
+                        if [ $statusInstallRef -gt 0 ];
+                        then
+                            echo ' Error in stage('Install CMSSW Ref release'), with status=' $statusInstallRef
+                            exit $statusInstallRef
+                        else
+                            echo ' The stage 'Install CMSSW Ref release' completed successufully'
+                        fi
                         '''
                     }
                 }
@@ -352,13 +374,12 @@ pipeline {
                         sh '''#!/usr/bin/env bash
                         {
                         set +x
-                        echo '==> Produce reference data.'
+                        echo '==> Produce reference data. ==============================='
                         } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
                         '''
                         sh '''#!/usr/bin/env bash
                         {
                         set +x
-                        echo '===> Produce reference data.'
                         cd test_dir/${REF_RELEASE}_HGCalTPGValidation_${LABEL_REF}/src
                         module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/
                         module purge
@@ -366,12 +387,17 @@ pipeline {
                         echo 'CONFIG_SUBSET= ' ${CONFIG_SUBSET} 
                         echo 'LABEL_TEST= ' ${LABEL_REF}
                         python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_REF}
-                        echo 'staus1=' $?
-                        echo "    "
-                        echo 'staus2=' $?
+                        statusProduceRef=$?
                         } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
-                        status1=$?
-                        exit $status1
+                                                
+                        # If the script produceData_multiconfiguration.py failed, the pipeline stops
+                        if [ $statusProduceRef -gt 0 ];
+                        then
+                            echo ' Error in stage('Produce Ref'), with status=' $statusProduceRef
+                            exit $statusProduceRef
+                        else
+                            echo ' The stage 'Produce Ref' completed successufully'
+                        fi
                         '''
                     }
                 }
@@ -380,13 +406,12 @@ pipeline {
                         sh '''#!/usr/bin/env bash
                         {
                         set +x
-                        echo '==> Produce test data.'
+                        echo '==> Produce test data. ========================================'
                         } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
                         '''
                         sh '''#!/usr/bin/env bash
                         {
                         set +x
-                        echo '===> Produce test data.'
                         cd test_dir/${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src
                         module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/
                         module purge
@@ -394,10 +419,17 @@ pipeline {
                         echo 'CONFIG_SUBSET= ' ${CONFIG_SUBSET} 
                         echo 'LABEL_TEST= ' ${LABEL_TEST}
                         python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_TEST}
-                        echo 'status3=' $?
+                        statusProduceTest=$?
                         } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
-                        echo 'status4=' $?
-                        exit $status3
+                        
+                        # If the script produceData_multiconfiguration.py failed, the pipeline stops
+                        if [ $statusProduceTest -gt 0 ];
+                        then
+                            echo ' Error in stage('Produce Test'), with status=' $statusProduceTest
+                            exit $statusProduceTest
+                        else
+                            echo ' The stage 'Produce Test' completed successufully'
+                        fi
                         '''
                     }
                 }
@@ -406,17 +438,26 @@ pipeline {
                         sh '''#!/usr/bin/env bash
                         {
                         set +x
-                        echo '==> ==> Display'
+                        echo '==> ==> Display ========================================'
                         } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
                         '''
                         sh '''#!/usr/bin/env bash
                         {
                         set +x
-                        echo '==> Display ======================='
                         cd test_dir
                         source ../HGCTPGValidation/env_install.sh
                         python ../HGCTPGValidation/scripts/displayHistos.py --subsetconfig ${CONFIG_SUBSET} --refdir ${REF_RELEASE}_HGCalTPGValidation_${LABEL_REF}/src --testdir ${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src --datadir ${DATA_DIR} --prnumber $CHANGE_ID --prtitle "$CHANGE_TITLE (from $CHANGE_AUTHOR, $CHANGE_URL)"
+                        statusDisplay=$?
                         } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
+                        
+                        # If the script displayHistos.py failed, the pipeline stops
+                        if [ $statusDisplay -gt 0 ];
+                        then
+                            echo ' Error in stage('Display'), with status=' $statusDisplay
+                            exit $statusDisplay
+                        else
+                            echo ' The stage 'Display' completed successufully'
+                        fi
                         '''
                     }
                 }
