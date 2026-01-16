@@ -364,6 +364,8 @@ pipeline {
                         python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_REF}
                         echo "    "
                         } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
+                        status=$?
+                        exit $status
                         '''
                     }
                 }
