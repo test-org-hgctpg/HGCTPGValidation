@@ -362,7 +362,9 @@ pipeline {
                         echo 'CONFIG_SUBSET= ' ${CONFIG_SUBSET} 
                         echo 'LABEL_TEST= ' ${LABEL_REF}
                         python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_REF}
+                        echo 'staus1=' $?
                         echo "    "
+                        echo 'staus2=' $?
                         } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                         status=$?
                         exit $status
@@ -388,7 +390,9 @@ pipeline {
                         echo 'CONFIG_SUBSET= ' ${CONFIG_SUBSET} 
                         echo 'LABEL_TEST= ' ${LABEL_TEST}
                         python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_TEST}
+                        echo 'status3=' $?
                         } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
+                        echo 'status4=' $?
                         '''
                     }
                 }
