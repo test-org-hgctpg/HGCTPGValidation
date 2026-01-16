@@ -236,7 +236,7 @@ pipeline {
                     steps {
                         sh '''#!/usr/bin/env bash
                         {
-                        srt +x
+                        set +x
                         echo '==> Update configuration on GitHub PR comment!'
                         } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
                         '''
@@ -277,7 +277,7 @@ pipeline {
                         }
                         sh '''#!/usr/bin/env bash
                         {
-                        srt +x
+                        set +x
                         echo "CONFIG_SUBSET is set to: ${CONFIG_SUBSET}"
                         } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                         '''
@@ -289,7 +289,7 @@ pipeline {
             steps {
                 sh '''#!/usr/bin/env bash
                 {
-                srt +x
+                set +x
                 echo 'Install CMSSW Test release!'
                 } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
                 '''
@@ -301,7 +301,7 @@ pipeline {
                 echo 'statusIns11=' $?
                 } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                 status12=$?
-                echo 'statusIns12=' $?
+                echo 'statusIns12=' $status12
                 exit $status11
                 '''
             }
@@ -310,7 +310,7 @@ pipeline {
             steps{
                 sh '''#!/usr/bin/env bash
                 {
-                srt +x
+                set +x
                 echo '==> Quality Checks'
                 } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
                 '''
@@ -329,7 +329,7 @@ pipeline {
                     steps {
                        sh '''#!/usr/bin/env bash
                        {
-                        srt +x
+                        set +x
                         echo ' ==> Install Ref Release'
                         } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
                         '''
@@ -342,7 +342,7 @@ pipeline {
                         echo "    "
                         } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                         status22=$?
-                        echo 'statusIns22=' $?
+                        echo 'statusIns22=' $status22
                         exit $status21
                         '''
                     }
@@ -351,7 +351,7 @@ pipeline {
                     steps {
                         sh '''#!/usr/bin/env bash
                         {
-                        srt +x
+                        set +x
                         echo '==> Produce reference data.'
                         } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
                         '''
@@ -379,7 +379,7 @@ pipeline {
                     steps {
                         sh '''#!/usr/bin/env bash
                         {
-                        srt +x
+                        set +x
                         echo '==> Produce test data.'
                         } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
                         '''
@@ -405,7 +405,7 @@ pipeline {
                     steps {
                         sh '''#!/usr/bin/env bash
                         {
-                        srt +x
+                        set +x
                         echo '==> ==> Display'
                         } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
                         '''
