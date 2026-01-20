@@ -143,7 +143,7 @@ pipeline {
                     echo 'CHANGE_BRANCH=' $CHANGE_BRANCH
                     echo 'CHANGE_URL=' $CHANGE_URL
                     echo 'CHANGE_FORK=' $CHANGE_FORK
-                } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
+                } >> log_Jenkins 1>&2> >(tee -a log_Jenkins >&2)
                 '''
             }  
         }
@@ -154,9 +154,12 @@ pipeline {
                         sh '''#!/usr/bin/env bash
                         {
                         set +x
-                        echo '==> Install automatic validation package HGCTPGValidation. ============================'
-                        uname -a
-                        whoami
+                        echo 'echo ==> ==> Install automatic validation package HGCTPGValidation. ============================'
+                        } >> log_Jenkins 1>&2> >(tee -a log_Jenkins >&2)
+                        '''
+                        sh '''#!/usr/bin/env bash
+                        {
+                        set +x
                         if [ -d "./HGCTPGValidation" ] 
                         then
                             rm -rf HGCTPGValidation
@@ -216,7 +219,7 @@ pipeline {
                         sh '''#!/usr/bin/env bash
                         {
                         set +x
-                        echo "The variables are:"
+                        echo "The environment variables are:"
                         echo "JOB_FLAG: ${JOB_FLAG}"
                         echo "CHANGE_BRANCH: ${CHANGE_BRANCH}"
                         echo "CHANGE_TARGET: ${CHANGE_TARGET}"
@@ -225,7 +228,7 @@ pipeline {
                         echo "SCRAM_ARCH: ${SCRAM_ARCH}"
                         echo "BASE_REMOTE: ${BASE_REMOTE}"
                         echo "REMOTE: ${REMOTE}"
-                        } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
+                        } >> log_Jenkins 1>&2> >(tee -a log_Jenkins >&2)
                         '''
                     }
                 }
@@ -241,7 +244,7 @@ pipeline {
                         sh '''#!/usr/bin/env bash
                         {
                         set +x
-                        echo '==> Update configuration on GitHub PR comment!'
+                        echo '==> Update configuration on GitHub PR comment! ================================='
                         } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
                         '''
                         script{
@@ -302,12 +305,15 @@ pipeline {
                 set +x
                 ./HGCTPGValidation/scripts/installCMSSW_global.sh $SCRAM_ARCH $REF_RELEASE $REMOTE $BASE_REMOTE $CHANGE_BRANCH $CHANGE_TARGET ${LABEL_TEST}
                 statusInstallTest=$?
-                } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
+                } >> log_test 2> >(tee -a log_test compile_err) # the std_err is redirected to log_test and to compile_err
                 
                 # If the script installCMSSW_global.sh failed, the pipeline stops
                 if [ $statusInstallTest -gt 0 ];
                 then
-                    echo ' Error in stage('Install CMSSW Test release'), with status=' $statusInstallTest
+                    echo 'Error in stage('Install CMSSW Test release'), with status=' $statusInstallTest
+                    # Concatenate compile_err and >&2
+                    # It is needed in order to get the error message when the compilation fails
+                    cat compile_err >&2
                     exit $statusInstallTest
                 else
                     echo ' The stage 'Install CMSSW Test release' completed successufully'
@@ -356,12 +362,15 @@ pipeline {
                         set +x
                         ./HGCTPGValidation/scripts/installCMSSW_global.sh $SCRAM_ARCH $REF_RELEASE $BASE_REMOTE $BASE_REMOTE $CHANGE_TARGET $CHANGE_TARGET ${LABEL_REF}
                         statusInstallRef=$?
-                        } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
+                        } >> log_test 2> >(tee -a log_test compile_err) # the std_err is redirected to log_test and to compile_err
                         
                         # If the script installCMSSW_global.sh failed, the pipeline stops
                         if [ $statusInstallRef -gt 0 ];
                         then
                             echo ' Error in stage('Install CMSSW Ref release'), with status=' $statusInstallRef
+                            # Concatenate compile_err and >&2
+                            # It is needed in order to get the error message when the compilation fails
+                            cat compile_err >&2
                             exit $statusInstallRef
                         else
                             echo ' The stage 'Install CMSSW Ref release' completed successufully'
@@ -469,7 +478,7 @@ pipeline {
                 {
                 set +x
                 echo '==> Geom Check ======================='
-                } >> log_Jenkins 1>&2> >(tee -a log_Jenkins >&2)
+                } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
                 '''
                 script{
                     try{
