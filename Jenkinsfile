@@ -499,13 +499,6 @@ pipeline {
                     echo ' The stage 'Display' completed successufully'
                 fi
                 '''
-                #script{
-                #    try{
-                #        sh'
-                #        ./HGCTPGValidation/scripts/geom_check.sh ${TEST_RELEASE} ${LABEL_TEST}'
-                #    } catch (e){
-                #        error("An error occured in Geom testing stage: ${e}")
-                #    }
                 }
             }
         }
