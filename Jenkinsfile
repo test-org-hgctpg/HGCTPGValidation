@@ -499,7 +499,6 @@ pipeline {
                     echo ' The stage 'Display' completed successufully'
                 fi
                 '''
-                }
             }
         }
     }
