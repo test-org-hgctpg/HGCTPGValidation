@@ -334,12 +334,13 @@ pipeline {
                 set +x
                 ./HGCTPGValidation/scripts/quality_checks.sh ${REF_RELEASE} ${LABEL_TEST}
                 statusQualityChecks=$?
-                } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
+                } >> log_test 2> >(tee -a log_test compile_err)
                 
                 # If the script quality_checks.sh failed, the pipeline stops
                 if [ $statusQualityChecks -gt 0 ];
                 then
                     echo ' Error in stage('Quality Checks'), with status=' $statusQualityChecks
+                    cat compile_err >&2
                     exit $statusQualityChecks
                 else
                     echo ' The stage 'Quality Checks' completed successufully'
@@ -397,12 +398,13 @@ pipeline {
                         echo 'LABEL_TEST= ' ${LABEL_REF}
                         python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_REF}
                         statusProduceRef=$?
-                        } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
+                        } >> log_test 2> >(tee -a log_test compile_err)
                                                 
                         # If the script produceData_multiconfiguration.py failed, the pipeline stops
                         if [ $statusProduceRef -gt 0 ];
                         then
                             echo ' Error in stage('Produce Ref'), with status=' $statusProduceRef
+                            cat compile_err >&2
                             exit $statusProduceRef
                         else
                             echo ' The stage 'Produce Ref' completed successufully'
@@ -429,12 +431,13 @@ pipeline {
                         echo 'LABEL_TEST= ' ${LABEL_TEST}
                         python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_TEST}
                         statusProduceTest=$?
-                        } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
+                        } >> log_test 2> >(tee -a log_test compile_err)
                         
                         # If the script produceData_multiconfiguration.py failed, the pipeline stops
                         if [ $statusProduceTest -gt 0 ];
                         then
                             echo ' Error in stage('Produce Test'), with status=' $statusProduceTest
+                            cat compile_err >&2
                             exit $statusProduceTest
                         else
                             echo ' The stage 'Produce Test' completed successufully'
@@ -480,12 +483,29 @@ pipeline {
                 echo '==> Geom Check ======================='
                 } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
                 '''
-                script{
-                    try{
-                        sh'./HGCTPGValidation/scripts/geom_check.sh ${TEST_RELEASE} ${LABEL_TEST}'
-                    } catch (e){
-                        error("An error occured in Geom testing stage: ${e}")
-                    }
+                sh '''#!/usr/bin/env bash
+                {
+                set +x
+                ./HGCTPGValidation/scripts/geom_check.sh ${TEST_RELEASE} ${LABEL_TEST}'
+                statusGeomCheck=$?
+                } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
+                
+                # If the script displayHistos.py failed, the pipeline stops
+                if [ $statusGeomCheck -gt 0 ];
+                then
+                    echo ' Error in stage('Geom Check'), with status=' $statusGeomCheck
+                    exit $statusDisplay
+                else
+                    echo ' The stage 'Display' completed successufully'
+                fi
+                '''
+                #script{
+                #    try{
+                #        sh'
+                #        ./HGCTPGValidation/scripts/geom_check.sh ${TEST_RELEASE} ${LABEL_TEST}'
+                #    } catch (e){
+                #        error("An error occured in Geom testing stage: ${e}")
+                #    }
                 }
             }
         }
