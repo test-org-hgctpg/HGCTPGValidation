@@ -486,7 +486,7 @@ pipeline {
                 sh '''#!/usr/bin/env bash
                 {
                 set +x
-                ./HGCTPGValidation/scripts/geom_check.sh ${TEST_RELEASE} ${LABEL_TEST}'
+                ./HGCTPGValidation/scripts/geom_check.sh ${TEST_RELEASE} ${LABEL_TEST}
                 statusGeomCheck=$?
                 } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                 
