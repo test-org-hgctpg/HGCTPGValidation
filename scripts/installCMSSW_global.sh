@@ -12,15 +12,9 @@
 # $7 label "ref" or "test"
 
 set +x
-echo '==> Build CMSSW Test ========================='
-echo '===> InstallCMSSW Test Step'
-exec >> log_Jenkins
-echo '==> Build CMSSW Test ========================='
-echo '===> InstallCMSSW Test Step'
-cd test_dir
-
-set +x
 set -e
+
+cd test_dir
 
 export SCRAM_ARCH=$1
 echo "SCRAM_ARCH: " $SCRAM_ARCH
