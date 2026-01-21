@@ -154,7 +154,7 @@ pipeline {
                         sh '''#!/usr/bin/env bash
                         {
                         set +x
-                        echo 'echo ==> ==> Install automatic validation package HGCTPGValidation. ============================'
+                        echo 'echo ==> Install automatic validation package HGCTPGValidation. ============================'
                         } >> log_Jenkins 1>&2> >(tee -a log_Jenkins >&2)
                         '''
                         sh '''#!/usr/bin/env bash
@@ -488,13 +488,14 @@ pipeline {
                 set +x
                 ./HGCTPGValidation/scripts/geom_check.sh ${TEST_RELEASE} ${LABEL_TEST}
                 statusGeomCheck=$?
-                } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
+                } >> log_test 2> >(tee -a log_test compile_err)
                 
                 # If the script displayHistos.py failed, the pipeline stops
                 if [ $statusGeomCheck -gt 0 ];
                 then
                     echo ' Error in stage('Geom Check'), with status=' $statusGeomCheck
-                    exit $statusDisplay
+                    cat compile_err >&2
+                    exit $statusGeomCheck
                 else
                     echo ' The stage 'Display' completed successufully'
                 fi
