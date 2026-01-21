@@ -166,7 +166,7 @@ pipeline {
                         fi
                         git clone -b ${BRANCH_HGCTPGVAL} https://github.com/${REMOTE_HGCTPGVAL}/HGCTPGValidation HGCTPGValidation
                         source HGCTPGValidation/env_install.sh
-                        ls -lrt ..
+                        ls -lrt
                         } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                         '''
                     }
@@ -184,7 +184,6 @@ pipeline {
                         set +x
                         ./HGCTPGValidation/scripts/clean_environment.sh ${DATA_DIR} PR$CHANGE_ID
                         mkdir test_dir
-                        ls -lrt
                         } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                         '''
                     }
@@ -195,7 +194,7 @@ pipeline {
                             sh '''#!/usr/bin/env bash
                             {
                             set +x
-                            echo 'echo ==> Set CMSSW environment variables. ============================'
+                            echo '==> Set CMSSW environment variables. ============================'
                             } >> log_Jenkins 1>&2> >(tee -a log_Jenkins >&2)
                             '''
                             try {
@@ -305,7 +304,7 @@ pipeline {
                 set +x
                 ./HGCTPGValidation/scripts/installCMSSW_global.sh $SCRAM_ARCH $REF_RELEASE $REMOTE $BASE_REMOTE $CHANGE_BRANCH $CHANGE_TARGET ${LABEL_TEST}
                 statusInstallTest=$?
-                } >> log_test 2> >(tee -a log_test compile_err) # the std_err is redirected to log_test and to compile_err
+                } >> log_Jenkins 2> >(tee -a log_Jenkins compile_err) # the std_err is redirected to log_Jenkins and to compile_err
                 
                 # If the script installCMSSW_global.sh failed, the pipeline stops
                 if [ $statusInstallTest -gt 0 ];
@@ -334,7 +333,7 @@ pipeline {
                 set +x
                 ./HGCTPGValidation/scripts/quality_checks.sh ${REF_RELEASE} ${LABEL_TEST}
                 statusQualityChecks=$?
-                } >> log_test 2> >(tee -a log_test compile_err)
+                } >> log_Jenkins 2> >(tee -a log_Jenkins compile_err)
                 
                 # If the script quality_checks.sh failed, the pipeline stops
                 if [ $statusQualityChecks -gt 0 ];
@@ -363,7 +362,7 @@ pipeline {
                         set +x
                         ./HGCTPGValidation/scripts/installCMSSW_global.sh $SCRAM_ARCH $REF_RELEASE $BASE_REMOTE $BASE_REMOTE $CHANGE_TARGET $CHANGE_TARGET ${LABEL_REF}
                         statusInstallRef=$?
-                        } >> log_test 2> >(tee -a log_test compile_err) # the std_err is redirected to log_test and to compile_err
+                        } >> log_Jenkins 2> >(tee -a log_Jenkins compile_err) # the std_err is redirected to log_Jenkins and to compile_err
                         
                         # If the script installCMSSW_global.sh failed, the pipeline stops
                         if [ $statusInstallRef -gt 0 ];
@@ -398,7 +397,7 @@ pipeline {
                         echo 'LABEL_TEST= ' ${LABEL_REF}
                         python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_REF}
                         statusProduceRef=$?
-                        } >> log_test 2> >(tee -a log_test compile_err)
+                        } >> log_Jenkins 2> >(tee -a log_Jenkins compile_err)
                                                 
                         # If the script produceData_multiconfiguration.py failed, the pipeline stops
                         if [ $statusProduceRef -gt 0 ];
@@ -431,7 +430,7 @@ pipeline {
                         echo 'LABEL_TEST= ' ${LABEL_TEST}
                         python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_TEST}
                         statusProduceTest=$?
-                        } >> log_test 2> >(tee -a log_test compile_err)
+                        } >> log_Jenkins 2> >(tee -a log_Jenkins compile_err)
                         
                         # If the script produceData_multiconfiguration.py failed, the pipeline stops
                         if [ $statusProduceTest -gt 0 ];
@@ -450,7 +449,7 @@ pipeline {
                         sh '''#!/usr/bin/env bash
                         {
                         set +x
-                        echo '==> ==> Display ========================================'
+                        echo '==> Display ========================================'
                         } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
                         '''
                         sh '''#!/usr/bin/env bash
@@ -488,7 +487,7 @@ pipeline {
                 set +x
                 ./HGCTPGValidation/scripts/geom_check.sh ${TEST_RELEASE} ${LABEL_TEST}
                 statusGeomCheck=$?
-                } >> log_test 2> >(tee -a log_test compile_err)
+                } >> log_Jenkins 2> >(tee -a log_Jenkins compile_err)
                 
                 # If the script displayHistos.py failed, the pipeline stops
                 if [ $statusGeomCheck -gt 0 ];
@@ -497,7 +496,7 @@ pipeline {
                     cat compile_err >&2
                     exit $statusGeomCheck
                 else
-                    echo ' The stage 'Display' completed successufully'
+                    echo ' The stage 'Geom Check' completed successufully'
                 fi
                 '''
             }
