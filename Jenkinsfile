@@ -14,21 +14,16 @@ pipeline {
         stage('Set environment variables'){
             steps{
                 sh '''#!/usr/bin/env bash
-                {
-                set +x
-                echo 'echo ==> Set environment variables. ============================'
-                } >> log_Jenkins 1>&2> >(tee -a log_Jenkins >&2)
-                '''
-                sh '''#!/usr/bin/env bash
-                {
                 set +x
                 if [ -f "log_Jenkins" ]; then
                     echo "Remove the last created log_Jenkins."
                     rm log_Jenkins
-                else 
+                else
                     echo "log_Jenkins does not exist."
                 fi
-                } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
+                
+                echo '==> Set environment variables. ============================'
+                } >> log_Jenkins 1>&2> >(tee -a log_Jenkins >&2)
                 '''
                 script{
                     String s = env.JOB_NAME
@@ -154,7 +149,7 @@ pipeline {
                         sh '''#!/usr/bin/env bash
                         {
                         set +x
-                        echo 'echo ==> Install automatic validation package HGCTPGValidation. ============================'
+                        echo '==> Install automatic validation package HGCTPGValidation. ============================'
                         } >> log_Jenkins 1>&2> >(tee -a log_Jenkins >&2)
                         '''
                         sh '''#!/usr/bin/env bash
@@ -176,7 +171,7 @@ pipeline {
                         sh '''#!/usr/bin/env bash
                         {
                         set +x
-                        echo 'echo ==> Clean the working environment. ============================'
+                        echo '==> Clean the working environment. ============================'
                         } >> log_Jenkins 1>&2> >(tee -a log_Jenkins >&2)
                         '''
                         sh '''#!/usr/bin/env bash
@@ -296,7 +291,16 @@ pipeline {
                 sh '''#!/usr/bin/env bash
                 {
                 set +x
+                
                 echo '==> Install CMSSW Test release. ============================'
+                
+                if [ -f "out_err" ]; then
+                    echo "Remove the last created log_Jenkins."
+                    rm out_err
+                else
+                    echo "out_err does not exist."
+                fi
+                
                 } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
                 '''
                 sh '''#!/usr/bin/env bash
@@ -304,15 +308,15 @@ pipeline {
                 set +x
                 ./HGCTPGValidation/scripts/installCMSSW_global.sh $SCRAM_ARCH $REF_RELEASE $REMOTE $BASE_REMOTE $CHANGE_BRANCH $CHANGE_TARGET ${LABEL_TEST}
                 statusInstallTest=$?
-                } >> log_Jenkins 2> >(tee -a log_Jenkins compile_err) # the std_err is redirected to log_Jenkins and to compile_err
+                } >> log_Jenkins 2> >(tee -a log_Jenkins out_err) # the std_err is redirected to log_Jenkins and to out_err
                 
                 # If the script installCMSSW_global.sh failed, the pipeline stops
                 if [ $statusInstallTest -gt 0 ];
                 then
                     echo 'Error in stage('Install CMSSW Test release'), with status=' $statusInstallTest
-                    # Concatenate compile_err and >&2
+                    # Concatenate out_err and >&2
                     # It is needed in order to get the error message when the compilation fails
-                    cat compile_err >&2
+                    cat out_err >&2
                     exit $statusInstallTest
                 else
                     echo ' The stage 'Install CMSSW Test release' completed successufully'
@@ -326,6 +330,13 @@ pipeline {
                 {
                 set +x
                 echo '==> Quality Checks. ============================'
+                
+                if [ -f "out_err" ]; then
+                    echo "Remove the last created log_Jenkins."
+                    rm out_err
+                else
+                    echo "out_err does not exist."
+                fi
                 } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
                 '''
                 sh '''#!/usr/bin/env bash
@@ -333,13 +344,13 @@ pipeline {
                 set +x
                 ./HGCTPGValidation/scripts/quality_checks.sh ${REF_RELEASE} ${LABEL_TEST}
                 statusQualityChecks=$?
-                } >> log_Jenkins 2> >(tee -a log_Jenkins compile_err)
+                } >> log_Jenkins 2> >(tee -a log_Jenkins out_err)
                 
                 # If the script quality_checks.sh failed, the pipeline stops
                 if [ $statusQualityChecks -gt 0 ];
                 then
                     echo ' Error in stage('Quality Checks'), with status=' $statusQualityChecks
-                    cat compile_err >&2
+                    cat out_err >&2
                     exit $statusQualityChecks
                 else
                     echo ' The stage 'Quality Checks' completed successufully'
@@ -355,6 +366,13 @@ pipeline {
                        {
                         set +x
                         echo '==> Install Ref Release. ============================'
+                        
+                        if [ -f "out_err" ]; then
+                            echo "Remove the last created log_Jenkins."
+                            rm out_err
+                        else
+                            echo "out_err does not exist."
+                        fi
                         } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
                         '''
                         sh '''#!/usr/bin/env bash
@@ -362,15 +380,15 @@ pipeline {
                         set +x
                         ./HGCTPGValidation/scripts/installCMSSW_global.sh $SCRAM_ARCH $REF_RELEASE $BASE_REMOTE $BASE_REMOTE $CHANGE_TARGET $CHANGE_TARGET ${LABEL_REF}
                         statusInstallRef=$?
-                        } >> log_Jenkins 2> >(tee -a log_Jenkins compile_err) # the std_err is redirected to log_Jenkins and to compile_err
+                        } >> log_Jenkins 2> >(tee -a log_Jenkins out_err) # the std_err is redirected to log_Jenkins and to out_err
                         
                         # If the script installCMSSW_global.sh failed, the pipeline stops
                         if [ $statusInstallRef -gt 0 ];
                         then
                             echo ' Error in stage('Install CMSSW Ref release'), with status=' $statusInstallRef
-                            # Concatenate compile_err and >&2
+                            # Concatenate out_err and >&2
                             # It is needed in order to get the error message when the compilation fails
-                            cat compile_err >&2
+                            cat out_err >&2
                             exit $statusInstallRef
                         else
                             echo ' The stage 'Install CMSSW Ref release' completed successufully'
@@ -384,6 +402,13 @@ pipeline {
                         {
                         set +x
                         echo '==> Produce reference data. ==============================='
+                        
+                        if [ -f "out_err" ]; then
+                            echo "Remove the last created log_Jenkins."
+                            rm out_err
+                        else
+                            echo "out_err does not exist."
+                        fi
                         } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
                         '''
                         sh '''#!/usr/bin/env bash
@@ -397,13 +422,13 @@ pipeline {
                         echo 'LABEL_TEST= ' ${LABEL_REF}
                         python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_REF}
                         statusProduceRef=$?
-                        } >> log_Jenkins 2> >(tee -a log_Jenkins compile_err)
-                                                
+                        } >> log_Jenkins 2> >(tee -a log_Jenkins out_err)
+                        
                         # If the script produceData_multiconfiguration.py failed, the pipeline stops
                         if [ $statusProduceRef -gt 0 ];
                         then
                             echo ' Error in stage('Produce Ref'), with status=' $statusProduceRef
-                            cat compile_err >&2
+                            cat out_err >&2
                             exit $statusProduceRef
                         else
                             echo ' The stage 'Produce Ref' completed successufully'
@@ -417,6 +442,13 @@ pipeline {
                         {
                         set +x
                         echo '==> Produce test data. ========================================'
+                        
+                        if [ -f "out_err" ]; then
+                            echo "Remove the last created log_Jenkins."
+                            rm out_err
+                        else
+                            echo "out_err does not exist."
+                        fi
                         } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
                         '''
                         sh '''#!/usr/bin/env bash
@@ -430,13 +462,13 @@ pipeline {
                         echo 'LABEL_TEST= ' ${LABEL_TEST}
                         python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_TEST}
                         statusProduceTest=$?
-                        } >> log_Jenkins 2> >(tee -a log_Jenkins compile_err)
+                        } >> log_Jenkins 2> >(tee -a log_Jenkins out_err)
                         
                         # If the script produceData_multiconfiguration.py failed, the pipeline stops
                         if [ $statusProduceTest -gt 0 ];
                         then
                             echo ' Error in stage('Produce Test'), with status=' $statusProduceTest
-                            cat compile_err >&2
+                            cat out_err >&2
                             exit $statusProduceTest
                         else
                             echo ' The stage 'Produce Test' completed successufully'
@@ -480,6 +512,13 @@ pipeline {
                 {
                 set +x
                 echo '==> Geom Check ======================='
+                
+                if [ -f "out_err" ]; then
+                    echo "Remove the last created log_Jenkins."
+                    rm out_err
+                else
+                    echo "out_err does not exist."
+                fi
                 } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
                 '''
                 sh '''#!/usr/bin/env bash
@@ -487,13 +526,13 @@ pipeline {
                 set +x
                 ./HGCTPGValidation/scripts/geom_check.sh ${TEST_RELEASE} ${LABEL_TEST}
                 statusGeomCheck=$?
-                } >> log_Jenkins 2> >(tee -a log_Jenkins compile_err)
+                } >> log_Jenkins 2> >(tee -a log_Jenkins out_err)
                 
                 # If the script displayHistos.py failed, the pipeline stops
                 if [ $statusGeomCheck -gt 0 ];
                 then
                     echo ' Error in stage('Geom Check'), with status=' $statusGeomCheck
-                    cat compile_err >&2
+                    cat out_err >&2
                     exit $statusGeomCheck
                 else
                     echo ' The stage 'Geom Check' completed successufully'
