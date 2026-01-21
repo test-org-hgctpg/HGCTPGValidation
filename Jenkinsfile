@@ -14,6 +14,7 @@ pipeline {
         stage('Set environment variables'){
             steps{
                 sh '''#!/usr/bin/env bash
+                {
                 set +x
                 if [ -f "log_Jenkins" ]; then
                     echo "Remove the last created log_Jenkins."
