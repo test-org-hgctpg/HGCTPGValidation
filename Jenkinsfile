@@ -193,17 +193,6 @@ pipeline {
                             } catch (e) {
                                 echo "Error during loading or execution: ${e}"
                             }
-                            println("The environment variables are:")
-                            
-                            echo "1 The variables are:"
-                            echo "1 JOB_FLAG: ${JOB_FLAG}"
-                            echo "CHANGE_BRANCH: ${CHANGE_BRANCH}"
-                            echo "CHANGE_TARGET: ${CHANGE_TARGET}"
-                            echo "REF_RELEASE: ${REF_RELEASE}"
-                            echo "TEST_RELEASE: ${TEST_RELEASE}"
-                            echo "SCRAM_ARCH: ${SCRAM_ARCH}"
-                            echo "BASE_REMOTE: ${BASE_REMOTE}"
-                            echo "REMOTE: ${REMOTE}"
                         }
                         sh '''#!/usr/bin/env bash
                         {
