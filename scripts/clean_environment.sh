@@ -16,7 +16,7 @@ set +x
 # Remove the test_dir that contains the ROOT files from the CMSSW test and ref simulations
 if [ -d "./test_dir" ]
 then
-    echo "Directory test_dir exists."
+    echo "Remove the previous test_dir directory."
     rm -rf test_dir
 fi
 
