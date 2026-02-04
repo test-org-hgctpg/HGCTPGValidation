@@ -230,11 +230,9 @@ pipeline {
                             def commentCauses = currentBuild.getBuildCauses('com.adobe.jenkins.github_pr_comment_build.GitHubPullRequestCommentCause')
                             if (commentCauses) {
                                 for (def commentCause : commentCauses) {
-                                    echo("""Comment Author: ${commentCause.commentAuthor}, Body: "${commentCause.commentBody}" (${commentCause.commentUrl})""")
+                                    env.GITHUB_COMMENT = """Comment Author: ${commentCause.commentAuthor}, Body: "${commentCause.commentBody}" (${commentCause.commentUrl})"""
                                     def comment = commentCauses[0].commentBody
                                     writeFile file: 'comment.tmp', text: comment
-                                    env.COMMENT=comment
-                                    echo "PR Comment: ${comment}"
                                 }
                             } else {
                                 echo("Build was not started by a PR comment")
@@ -263,6 +261,7 @@ pipeline {
                         sh '''#!/usr/bin/env bash
                         {
                         set +x
+                        echo "PR Comment: ${GITHUB_COMMENT}"
                         echo "CONFIG_SUBSET is set to: ${CONFIG_SUBSET}"
                         } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
                         '''
