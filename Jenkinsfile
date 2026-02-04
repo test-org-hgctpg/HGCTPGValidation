@@ -115,30 +115,22 @@ pipeline {
                         }
                     }
                     env.CONFIG_SUBSET = 'default_multi_subset'
-                    
-                    println(env.CONFIG_SUBSET)
-                    println(env.REMOTE_HGCTPGVAL)
-                    println(env.BRANCH_HGCTPGVAL)
-                    
-                    println(env.BASE_REMOTE)
-                    println(env.DATA_DIR)
-                    println(env.CHANGE_TARGET)
-                    println(env.CHANGE_BRANCH)
-                    println(env.CHANGE_URL)
-                    println(env.CHANGE_FORK)
                 }
                 sh '''#!/usr/bin/env bash
                 {   pwd
-                    ls -lrt
+                    echo 'JOB_NAME=' $JOB_NAME
+                    echo 'JOB_FLAG=' $JOB_FLAG
+                    echo 'CHANGE_URL=' $CHANGE_URL
+                    echo 'CHANGE_FORK=' $CHANGE_FORK
+                    echo 'CHANGE_BRANCH=' $CHANGE_BRANCH
+                    echo 'CHANGE_TARGET=' $CHANGE_TARGET
                     echo 'CONFIG_SUBSET=' $CONFIG_SUBSET
                     echo 'REMOTE_HGCTPGVAL=' $REMOTE_HGCTPGVAL
                     echo 'BRANCH_HGCTPGVAL=' $BRANCH_HGCTPGVAL
                     echo 'BASE_REMOTE=' $BASE_REMOTE
                     echo 'DATA_DIR=' $DATA_DIR
-                    echo 'CHANGE_TARGET=' $CHANGE_TARGET
-                    echo 'CHANGE_BRANCH=' $CHANGE_BRANCH
-                    echo 'CHANGE_URL=' $CHANGE_URL
-                    echo 'CHANGE_FORK=' $CHANGE_FORK
+                    echo 'EMAIL_TO=' $EMAIL_TO
+                    echo 'WEBPAGES_VAL=' $WEBPAGES_VAL
                 } >> log_Jenkins 1>&2> >(tee -a log_Jenkins >&2)
                 '''
             }  
@@ -160,6 +152,8 @@ pipeline {
                         then
                             rm -rf HGCTPGValidation
                         fi
+                        
+                        echo 'Cloning the branch ${BRANCH_HGCTPGVAL} from https://github.com/${REMOTE_HGCTPGVAL}/HGCTPGValidation'
                         git clone -b ${BRANCH_HGCTPGVAL} https://github.com/${REMOTE_HGCTPGVAL}/HGCTPGValidation HGCTPGValidation
                         source HGCTPGValidation/env_install.sh
                         ls -lrt
@@ -296,7 +290,7 @@ pipeline {
                 echo '==> Install CMSSW Test release. ============================'
                 
                 if [ -f "out_err" ]; then
-                    echo "Remove the last created log_Jenkins."
+                    echo "Remove the last created out_err."
                     rm out_err
                 else
                     echo "out_err does not exist."
@@ -333,7 +327,7 @@ pipeline {
                 echo '==> Quality Checks. ============================'
                 
                 if [ -f "out_err" ]; then
-                    echo "Remove the last created log_Jenkins."
+                    echo "Remove the last created out_err."
                     rm out_err
                 else
                     echo "out_err does not exist."
@@ -369,7 +363,7 @@ pipeline {
                         echo '==> Install Ref Release. ============================'
                         
                         if [ -f "out_err" ]; then
-                            echo "Remove the last created log_Jenkins."
+                            echo "Remove the last created out_err."
                             rm out_err
                         else
                             echo "out_err does not exist."
@@ -405,7 +399,7 @@ pipeline {
                         echo '==> Produce reference data. ==============================='
                         
                         if [ -f "out_err" ]; then
-                            echo "Remove the last created log_Jenkins."
+                            echo "Remove the last created out_err."
                             rm out_err
                         else
                             echo "out_err does not exist."
@@ -445,7 +439,7 @@ pipeline {
                         echo '==> Produce test data. ========================================'
                         
                         if [ -f "out_err" ]; then
-                            echo "Remove the last created log_Jenkins."
+                            echo "Remove the last created out_err."
                             rm out_err
                         else
                             echo "out_err does not exist."
