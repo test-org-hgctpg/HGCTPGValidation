@@ -472,6 +472,14 @@ pipeline {
                         set +x
                         cd test_dir
                         source ../HGCTPGValidation/env_install.sh
+                        echo 'CONFIG_SUBSET= ' ${CONFIG_SUBSET}
+                        echo 'REF_DIR= ' ${REF_RELEASE}_HGCalTPGValidation_${LABEL_REF}/src
+                        echo 'TEST_DIR= ' ${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src
+                        echo 'DATA_DIR= ' ${DATA_DIR}
+                        echo 'PR_NUMBER= ' $CHANGE_ID
+                        echo 'CHANGE_TITLE=' $CHANGE_TITLE
+                        echo 'CHANGE_AUTHOUR= ' $CHANGE_AUTHOR
+                        echo 'CHANGE_URL= ' $CHANGE_URL
                         python ../HGCTPGValidation/scripts/displayHistos.py --subsetconfig ${CONFIG_SUBSET} --refdir ${REF_RELEASE}_HGCalTPGValidation_${LABEL_REF}/src --testdir ${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src --datadir ${DATA_DIR} --prnumber $CHANGE_ID --prtitle "$CHANGE_TITLE (from $CHANGE_AUTHOR, $CHANGE_URL)"
                         statusDisplay=$?
                         } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
