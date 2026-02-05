@@ -23,7 +23,7 @@ fi
 # Remove the directory containing the images with histograms
 if [ -d "/data/jenkins/workspace/${DATA_DIR}/$PRCHANGE_ID" ]
 then
-    echo 'Remove the old directory ' /data/jenkins/workspace/${DATA_DIR}/${PRCHANGE_ID}
+    echo 'Remove the previous directory ' /data/jenkins/workspace/${DATA_DIR}/${PRCHANGE_ID}
     rm -rf /data/jenkins/workspace/${DATA_DIR}/${PRCHANGE_ID}
 fi
 echo '   '
