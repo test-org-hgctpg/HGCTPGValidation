@@ -296,7 +296,7 @@ pipeline {
                     cat out_err >&2
                     exit $statusInstallTest
                 else
-                    echo ' The stage 'Install CMSSW Test release' completed successufully'
+                    echo ' The stage 'Install CMSSW Test release' completed successufully!'
                 fi
                 '''
             }
@@ -330,7 +330,7 @@ pipeline {
                     cat out_err >&2
                     exit $statusQualityChecks
                 else
-                    echo ' The stage 'Quality Checks' completed successufully'
+                    echo ' The stage 'Quality Checks' completed successufully!'
                 fi
                 '''
             }
@@ -368,7 +368,7 @@ pipeline {
                             cat out_err >&2
                             exit $statusInstallRef
                         else
-                            echo ' The stage 'Install CMSSW Ref release' completed successufully'
+                            echo ' The stage 'Install CMSSW Ref release' completed successufully!'
                         fi
                         '''
                     }
@@ -408,7 +408,7 @@ pipeline {
                             cat out_err >&2
                             exit $statusProduceRef
                         else
-                            echo ' The stage 'Produce Ref' completed successufully'
+                            echo ' The stage 'Produce Ref' completed successufully!'
                         fi
                         '''
                     }
@@ -448,7 +448,7 @@ pipeline {
                             cat out_err >&2
                             exit $statusProduceTest
                         else
-                            echo ' The stage 'Produce Test' completed successufully'
+                            echo ' The stage 'Produce Test' completed successufully!'
                         fi
                         '''
                     }
@@ -484,7 +484,7 @@ pipeline {
                             echo ' Error in stage('Display'), with status=' $statusDisplay
                             exit $statusDisplay
                         else
-                            echo ' The stage 'Display' completed successufully'
+                            echo ' The stage 'Display' completed successufully!'
                         fi
                         '''
                     }
@@ -520,7 +520,7 @@ pipeline {
                     cat out_err >&2
                     exit $statusGeomCheck
                 else
-                    echo ' The stage 'Geom Check' completed successufully'
+                    echo ' The stage 'Geom Check' completed successufully!'
                 fi
                 '''
             }
