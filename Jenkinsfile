@@ -156,7 +156,6 @@ pipeline {
                         echo 'Cloning the branch ${BRANCH_HGCTPGVAL} from https://github.com/${REMOTE_HGCTPGVAL}/HGCTPGValidation'
                         git clone -b ${BRANCH_HGCTPGVAL} https://github.com/${REMOTE_HGCTPGVAL}/HGCTPGValidation HGCTPGValidation
                         source HGCTPGValidation/env_install.sh
-                        ls -lrt
                         } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                         '''
                     }
