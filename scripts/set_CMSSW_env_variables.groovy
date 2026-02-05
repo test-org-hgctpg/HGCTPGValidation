@@ -7,9 +7,9 @@
 
 def run(String JOB_FLAG, String CHANGE_FORK, String BASE_REMOTE) {
     println('Input variables in the run function')
-    println("${JOB_FLAG}")
-    println("${CHANGE_FORK}")
-    println("${BASE_REMOTE}")
+    println("JOB_FLAG = ${JOB_FLAG}")
+    println("CHANGE_FORK = ${CHANGE_FORK}")
+    println("BASE_REMOTE = ${BASE_REMOTE}")
     
     if ( JOB_FLAG == '0' ){
         env.REF_RELEASE = sh(returnStdout: true, script: 'set +x ; source ./HGCTPGValidation/scripts/extractReleaseName.sh ${CHANGE_TARGET}').trim()
