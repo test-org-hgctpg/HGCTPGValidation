@@ -143,6 +143,7 @@ pipeline {
                         {
                         set +x
                         echo '==> Install automatic validation package HGCTPGValidation. ============================'
+                        echo 'Cloning the branch ${BRANCH_HGCTPGVAL} from https://github.com/${REMOTE_HGCTPGVAL}/HGCTPGValidation'
                         } >> log_Jenkins 1>&2> >(tee -a log_Jenkins >&2)
                         '''
                         sh '''#!/usr/bin/env bash
@@ -153,7 +154,6 @@ pipeline {
                             rm -rf HGCTPGValidation
                         fi
                         
-                        echo 'Cloning the branch ${BRANCH_HGCTPGVAL} from https://github.com/${REMOTE_HGCTPGVAL}/HGCTPGValidation'
                         git clone -b ${BRANCH_HGCTPGVAL} https://github.com/${REMOTE_HGCTPGVAL}/HGCTPGValidation HGCTPGValidation
                         source HGCTPGValidation/env_install.sh
                         } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
@@ -166,14 +166,9 @@ pipeline {
                         {
                         set +x
                         echo '==> Clean the working environment. ============================'
-                        } >> log_Jenkins 1>&2> >(tee -a log_Jenkins >&2)
-                        '''
-                        sh '''#!/usr/bin/env bash
-                        {
-                        set +x
                         ./HGCTPGValidation/scripts/clean_environment.sh ${DATA_DIR} PR$CHANGE_ID
                         mkdir test_dir
-                        } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
+                        } >> log_Jenkins 1>&2> >(tee -a log_Jenkins >&2)
                         '''
                     }
                 }
