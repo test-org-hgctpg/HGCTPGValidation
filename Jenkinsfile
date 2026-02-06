@@ -293,7 +293,7 @@ pipeline {
                     echo 'Error in stage('Install CMSSW Test release'), with status=' $statusInstallTest
                     # Concatenate out_err and >&2
                     # It is needed in order to get the error message when the compilation fails
-                    cat out_err >&2
+                    cat ../../../out_err >&2
                     exit $statusInstallTest
                 else
                     echo ' The stage 'Install CMSSW Test release' completed successufully!'
@@ -327,7 +327,7 @@ pipeline {
                 if [ $statusQualityChecks -gt 0 ];
                 then
                     echo ' Error in stage('Quality Checks'), with status=' $statusQualityChecks
-                    cat out_err >&2
+                    cat ../../../out_err >&2
                     exit $statusQualityChecks
                 else
                     echo ' The stage 'Quality Checks' completed successufully!'
@@ -365,7 +365,7 @@ pipeline {
                             echo ' Error in stage('Install CMSSW Ref release'), with status=' $statusInstallRef
                             # Concatenate out_err and >&2
                             # It is needed in order to get the error message when the compilation fails
-                            cat out_err >&2
+                            cat ../../../out_err >&2
                             exit $statusInstallRef
                         else
                             echo ' The stage 'Install CMSSW Ref release' completed successufully!'
@@ -405,7 +405,7 @@ pipeline {
                         if [ $statusProduceRef -gt 0 ];
                         then
                             echo ' Error in stage('Produce Ref'), with status=' $statusProduceRef
-                            cat out_err >&2
+                            cat ../../../out_err >&2
                             exit $statusProduceRef
                         else
                             echo ' The stage 'Produce Ref' completed successufully!'
@@ -445,7 +445,7 @@ pipeline {
                         if [ $statusProduceTest -gt 0 ];
                         then
                             echo ' Error in stage('Produce Test'), with status=' $statusProduceTest
-                            cat out_err >&2
+                            cat ../../../out_err >&2
                             exit $statusProduceTest
                         else
                             echo ' The stage 'Produce Test' completed successufully!'
@@ -459,6 +459,13 @@ pipeline {
                         {
                         set +x
                         echo '==> Display ========================================'
+                                        
+                        if [ -f "out_err" ]; then
+                            echo "Remove the last created out_err."
+                            rm out_err
+                        else
+                            echo "out_err does not exist."
+                        fi
                         } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
                         '''
                         sh '''#!/usr/bin/env bash
@@ -476,12 +483,13 @@ pipeline {
                         echo 'CHANGE_URL= ' $CHANGE_URL
                         python ../HGCTPGValidation/scripts/displayHistos.py --subsetconfig ${CONFIG_SUBSET} --refdir ${REF_RELEASE}_HGCalTPGValidation_${LABEL_REF}/src --testdir ${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src --datadir ${DATA_DIR} --prnumber $CHANGE_ID --prtitle "$CHANGE_TITLE (from $CHANGE_AUTHOR, $CHANGE_URL)"
                         statusDisplay=$?
-                        } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
+                        } >> log_Jenkins 2> >(tee -a log_Jenkins out_err)
                         
                         # If the script displayHistos.py failed, the pipeline stops
                         if [ $statusDisplay -gt 0 ];
                         then
                             echo ' Error in stage('Display'), with status=' $statusDisplay
+                            cat ../out_err >&2
                             exit $statusDisplay
                         else
                             echo ' The stage 'Display' completed successufully!'
@@ -499,7 +507,7 @@ pipeline {
                 echo '==> Geom Check ======================='
                 
                 if [ -f "out_err" ]; then
-                    echo "Remove the last created log_Jenkins."
+                    echo "Remove the last created out_err."
                     rm out_err
                 else
                     echo "out_err does not exist."
@@ -517,7 +525,7 @@ pipeline {
                 if [ $statusGeomCheck -gt 0 ];
                 then
                     echo ' Error in stage('Geom Check'), with status=' $statusGeomCheck
-                    cat out_err >&2
+                    cat ../../../out_err >&2
                     exit $statusGeomCheck
                 else
                     echo ' The stage 'Geom Check' completed successufully!'
