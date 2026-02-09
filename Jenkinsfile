@@ -30,7 +30,6 @@ pipeline {
                     String s = env.JOB_NAME
                     String[] elements = s.split("/")
                     String job_name = elements[-2]
-                    println(job_name);
                     switch(job_name){
                        case 'HGC TPG CMSSW Validation':
                             env.EMAIL_TO=env.HGCTPG_EMAIL_TO_MAIN
@@ -143,7 +142,7 @@ pipeline {
                         {
                         set +x
                         echo '==> Install automatic validation package HGCTPGValidation. ============================'
-                        echo 'Cloning the branch ${BRANCH_HGCTPGVAL} from https://github.com/${REMOTE_HGCTPGVAL}/HGCTPGValidation'
+                        echo 'Cloning the branch ' ${BRANCH_HGCTPGVAL} ' from https://github.com/'${REMOTE_HGCTPGVAL}'/HGCTPGValidation'
                         } >> log_Jenkins 1>&2> >(tee -a log_Jenkins >&2)
                         '''
                         sh '''#!/usr/bin/env bash
