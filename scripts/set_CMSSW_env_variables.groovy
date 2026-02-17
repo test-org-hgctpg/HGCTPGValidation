@@ -19,15 +19,17 @@ def run(String JOB_FLAG, String CHANGE_FORK, String BASE_REMOTE) {
         println("SCRAM_ARCH=${SCRAM_ARCH}")
         // Checks if the CHANGE_BRANCH comes from the BASE_REMMOTE or from the FORK
         if ( CHANGE_FORK ){
+            println("CHANGE_FORK=${CHANGE_FORK}")
             env.REMOTE = ${CHANGE_FORK}
         }
         else {
+            println("BASE_REMOTE=${BASE_REMOTE}")
             env.REMOTE = ${BASE_REMOTE}
         }
-            println(env.REF_RELEASE)
-            println(env.SCRAM_ARCH)
-            println(env.TEST_RELEASE)
-            println(env.REMOTE)
+        println(env.REF_RELEASE)
+        println(env.SCRAM_ARCH)
+        println(env.TEST_RELEASE)
+        println(env.REMOTE)
     }
     else {
             env.REF_BRANCH = sh(returnStdout: true, script: 'set +x exec >> log_Jenkins; module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/; module purge; module load python/3.9.9; python ./HGCTPGValidation/scripts/get_cmsswRefBranch.py').trim()
