@@ -26,10 +26,10 @@ def run(String JOB_FLAG, String CHANGE_FORK, String BASE_REMOTE) {
             println("BASE_REMOTE=${BASE_REMOTE}")
             env.REMOTE = ${BASE_REMOTE}
         }
-        println(env.REF_RELEASE)
-        println(env.SCRAM_ARCH)
-        println(env.TEST_RELEASE)
-        println(env.REMOTE)
+        println("REF_RELEASE=${REF_RELEASE}")
+        println("SCRAM_ARCH=${SCRAM_ARCH}")
+        println("TEST_RELEASE${TEST_RELEASE}")
+        println("REMOTE=${REMOTE}")
     }
     else {
             env.REF_BRANCH = sh(returnStdout: true, script: 'set +x exec >> log_Jenkins; module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/; module purge; module load python/3.9.9; python ./HGCTPGValidation/scripts/get_cmsswRefBranch.py').trim()
@@ -41,14 +41,14 @@ def run(String JOB_FLAG, String CHANGE_FORK, String BASE_REMOTE) {
             env.REMOTE = env.BASE_REMOTE
             env.TEST_RELEASE = env.REF_RELEASE
                                 
-            println(env.REF_BRANCH)
-            println(env.REF_RELEASE)
-            println(env.TEST_RELEASE)
-            println(env.SCRAM_ARCH)
-            println(env.BASE_REMOTE)
-            println(env.CHANGE_BRANCH)
-            println(env.CHANGE_TARGET)
-            println(env.REMOTE)
+            println("${REF_BRANCH}")
+            println("${REF_RELEASE}")
+            println("${TEST_RELEASE}")
+            println("${SCRAM_ARCH}")
+            println("${BASE_REMOTE}")
+            println("${CHANGE_BRANCH}")
+            println("${CHANGE_TARGET}")
+            println("${REMOTE}")
     }
 }
 
