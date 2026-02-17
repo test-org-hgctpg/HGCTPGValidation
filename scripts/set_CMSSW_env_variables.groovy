@@ -12,10 +12,11 @@ def run(String JOB_FLAG, String CHANGE_FORK, String BASE_REMOTE) {
     println("${BASE_REMOTE}")
     println("${CHANGE_TARGET}")
     if ( JOB_FLAG == '0' ){
-        env.REF_RELEASE = sh(returnStdout: true, script: 'set +x source ./HGCTPGValidation/scripts/extractReleaseName.sh ${CHANGE_TARGET}').trim()
-        env.SCRAM_ARCH = sh(returnStdout: true, script: 'set +x source ./HGCTPGValidation/scripts/getScramArch.sh ${REF_RELEASE}').trim()
+        env.REF_RELEASE = sh(returnStdout: true, script: 'source ./HGCTPGValidation/scripts/extractReleaseName.sh ${CHANGE_TARGET}').trim()
+        env.SCRAM_ARCH = sh(returnStdout: true, script: 'source ./HGCTPGValidation/scripts/getScramArch.sh ${REF_RELEASE}').trim()
         env.TEST_RELEASE = env.REF_RELEASE
-                                
+        println("REF_RELEASE=${REF_RELEASE}")
+        println("SCRAM_ARCH=${SCRAM_ARCH}")
         // Checks if the CHANGE_BRANCH comes from the BASE_REMMOTE or from the FORK
         if ( CHANGE_FORK ){
             env.REMOTE = ${CHANGE_FORK}
