@@ -21,6 +21,7 @@ def run(String JOB_FLAG, String CHANGE_FORK, String BASE_REMOTE) {
         if ( CHANGE_FORK ){
             println("CHANGE_FORK=${CHANGE_FORK}")
             env.REMOTE = ${CHANGE_FORK}
+            println("REMOTE=${REMOTE}")
         }
         else {
             println("BASE_REMOTE=${BASE_REMOTE}")
