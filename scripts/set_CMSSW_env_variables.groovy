@@ -10,7 +10,7 @@ def run(String JOB_FLAG, String CHANGE_FORK, String BASE_REMOTE) {
     println("${JOB_FLAG}")
     println("${CHANGE_FORK}")
     println("${BASE_REMOTE}")
-    
+    println("${CHANGE_TARGET}")
     if ( JOB_FLAG == '0' ){
         env.REF_RELEASE = sh(returnStdout: true, script: 'set +x exec >> log_Jenkins; source ./HGCTPGValidation/scripts/extractReleaseName.sh ${CHANGE_TARGET}').trim()
         env.SCRAM_ARCH = sh(returnStdout: true, script: 'set +x exec >> log_Jenkins; source ./HGCTPGValidation/scripts/getScramArch.sh ${REF_RELEASE}').trim()
