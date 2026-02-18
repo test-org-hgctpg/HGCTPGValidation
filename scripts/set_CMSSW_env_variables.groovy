@@ -5,7 +5,7 @@
 // def set_var = load './HGCTPGValidation/scripts/set_CMSSW_env_variables.groovy'
 // set_var.run(env.JOB_FLAG, env.CHANGE_FORK, env.BASE_REMOTE)
 
-def run(String JOB_FLAG, String CHANGE_FORK, String BASE_REMOTE) {
+def run(String JOB_FLAG, String CHANGE_FORK, String CHANGE_TARGET, String BASE_REMOTE) {
     println('Input variables in the run function')
     println("${JOB_FLAG}")
     println("${CHANGE_FORK}")
