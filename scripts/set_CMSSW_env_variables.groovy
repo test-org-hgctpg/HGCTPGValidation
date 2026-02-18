@@ -21,7 +21,7 @@ def run(String JOB_FLAG, String CHANGE_FORK, String CHANGE_TARGET, String BASE_R
             env.REMOTE = CHANGE_FORK
         }
         else {
-            env.REMOTE = ${BASE_REMOTE}
+            env.REMOTE = BASE_REMOTE
         }
             println(env.REF_RELEASE)
             println(env.SCRAM_ARCH)
