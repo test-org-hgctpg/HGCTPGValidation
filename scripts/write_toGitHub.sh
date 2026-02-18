@@ -18,9 +18,8 @@ url="$1"
 MESSAGE="$2"
 
 # Generate a token, the command "set +x" is mandatory
-set +x exec >> log_Jenkins; 
-module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/; 
-module purge; module load python/3.9.9; 
+set +x
+
 # For the organization hgc-tpg
 python /data/jenkins/workspace/create_token_hgc-tpg.py > /tmp/github_token
 # For the organization test-org-hgctpg
