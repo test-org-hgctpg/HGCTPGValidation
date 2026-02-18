@@ -18,7 +18,7 @@ def run(String JOB_FLAG, String CHANGE_FORK, String CHANGE_TARGET, String BASE_R
                                 
         // Checks if the CHANGE_BRANCH comes from the BASE_REMMOTE or from the FORK
         if ( CHANGE_FORK ){
-            env.REMOTE = ${CHANGE_FORK}
+            env.REMOTE = CHANGE_FORK
         }
         else {
             env.REMOTE = ${BASE_REMOTE}
