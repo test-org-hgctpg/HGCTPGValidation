@@ -19,7 +19,8 @@ MESSAGE="$2"
 
 # Generate a token, the command "set +x" is mandatory
 set +x
-
+module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el9/
+module load python/latest
 # For the organization hgc-tpg
 python /data/jenkins/workspace/create_token_hgc-tpg.py > /tmp/github_token
 # For the organization test-org-hgctpg
