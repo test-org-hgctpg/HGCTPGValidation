@@ -24,5 +24,3 @@ then
     #echo 'Working at LLR in sl9 environment'
 fi
 
-uname -a
-python --version
