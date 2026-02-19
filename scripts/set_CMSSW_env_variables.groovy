@@ -26,10 +26,10 @@ def run(String JOB_FLAG, String CHANGE_FORK, String CHANGE_TARGET, String BASE_R
         }
     }
     else {
-        env.REF_BRANCH = sh(returnStdout: true, script: 'set +x; module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el9/; module purge; module load python/latest; python ./HGCTPGValidation/scripts/get_cmsswRefBranch.py').trim()
+        env.REF_BRANCH = sh(returnStdout: true, script: 'set +x; source ./HGCTPGValidation/env_install.sh; python ./HGCTPGValidation/scripts/get_cmsswRefBranch.py').trim()
         env.REF_RELEASE = sh(returnStdout: true, script: 'set +x; source ./HGCTPGValidation/scripts/extractReleaseName.sh ${REF_BRANCH}').trim()
         env.SCRAM_ARCH = sh(returnStdout: true, script: 'set +x; source ./HGCTPGValidation/scripts/getScramArch.sh ${REF_RELEASE}').trim()
-        env.BASE_REMOTE = sh(returnStdout: true, script: 'set +x; module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el9/; module purge; module load python/latest; python ./HGCTPGValidation/scripts/get_remoteParam.py').trim()
+        env.BASE_REMOTE = sh(returnStdout: true, script: 'set +x; source ./HGCTPGValidation/env_install.sh; python ./HGCTPGValidation/scripts/get_remoteParam.py').trim()
         env.CHANGE_BRANCH = env.REF_BRANCH
         env.CHANGE_TARGET = env.REF_BRANCH
         env.REMOTE = env.BASE_REMOTE
