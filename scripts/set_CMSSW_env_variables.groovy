@@ -37,14 +37,14 @@ def run(String JOB_FLAG, String CHANGE_FORK, String CHANGE_TARGET, String BASE_R
         
     }
     
-    println("REF_BRANCH=${REF_BRANCH}")
-    println("REF_RELEASE=${REF_RELEASE}")
-    println("TEST_RELEASE=${TEST_RELEASE}")
-    println("SCRAM_ARCH=${SCRAM_ARCH}")
-    println("BASE_REMOTE=${BASE_REMOTE}")
-    println("CHANGE_BRANCH=${CHANGE_BRANCH}")
-    println("CHANGE_TARGET=${CHANGE_TARGET}")
-    println("REMOTE=${REMOTE}")
+    println(env.REF_BRANCH)
+    println(env.REF_RELEASE)
+    println(env.TEST_RELEASE)
+    println(env.SCRAM_ARCH)
+    println(env.BASE_REMOTE)
+    println(env.CHANGE_BRANCH)
+    println(env.CHANGE_TARGET)
+    println(env.REMOTE)
 }
 
 return this
