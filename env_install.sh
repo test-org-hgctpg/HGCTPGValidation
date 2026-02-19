@@ -14,14 +14,14 @@ if [ $simu_env -eq 1 ]
 then
     # at CERN
     source /opt/rh/rh-python36/enable
-    echo 'Working at CERN environment'
+    #echo 'Working at CERN environment'
 elif [ $simu_env -eq 2 ]
 then
     # at LLR, working with sl7 releases
     module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el9/
     module purge
     module load python/latest
-    echo 'Working at LLR in sl9 environment'
+    #echo 'Working at LLR in sl9 environment'
 fi
 
 uname -a
