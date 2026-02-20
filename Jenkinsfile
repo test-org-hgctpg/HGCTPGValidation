@@ -289,7 +289,7 @@ pipeline {
                         echo '===> Produce reference data.'
                         pwd
                         cd test_dir/${REF_RELEASE}_HGCalTPGValidation_${LABEL_REF}/src
-                        source ../../../env_install.sh
+                        source ../../../HGCTPGValidation/env_install.sh
                         python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_REF}
                         echo '      '
                         '''
@@ -303,7 +303,7 @@ pipeline {
                         exec >> log_Jenkins
                         echo '===> Produce test data.'
                         cd test_dir/${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src
-                        source ../../../env_install.sh
+                        source ../../../HGCTPGValidation/env_install.sh
                         python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_TEST}
                         echo '      '
                         '''
