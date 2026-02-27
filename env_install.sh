@@ -17,12 +17,11 @@ then
     #echo 'Working at CERN environment'
 elif [ $simu_env -eq 2 ]
 then
-    # at LLR, working with sl7 releases
+    # at LLR, working with sl9 releases
     module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el9/
     module purge
     module load python/latest
-    module load compilers/gcc/9.x.x
-    source /opt/exp_soft/llr/root/vv6.20.06-el7-gcc9-py37/etc/init.sh
-    #echo 'Working at LLR in sl9 environment'
+    module load compilers/gcc/14.x.x
+    source /opt/exp_soft/llr/root/v6.32-el9-gcc14xx-py3918/bin/thisroot.sh
 fi
 
