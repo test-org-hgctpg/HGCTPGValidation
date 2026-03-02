@@ -18,10 +18,9 @@ then
 elif [ $simu_env -eq 2 ]
 then
     # at LLR, working with sl9 releases
-    module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el9/
-    module purge
-    module load python/latest
+    module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el9
     module load compilers/gcc/14.x.x
-    source /opt/exp_soft/llr/root/v6.32-el9-gcc14xx-py3918/bin/thisroot.sh
+    module load python/3.10.6
+    source /opt/exp_soft/llr/root/v6.32-el9-gcc14xx-py3106/bin/thisroot.sh
 fi
 
