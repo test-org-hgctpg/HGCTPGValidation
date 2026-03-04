@@ -18,11 +18,9 @@ then
 elif [ $simu_env -eq 2 ]
 then
     # at LLR, working with sl9 releases
-    #module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el9
-    #module load compilers/gcc/14.x.x
-    #module load python/3.10.6
-    #source /opt/exp_soft/llr/root/v6.32-el9-gcc14xx-py3106/bin/thisroot.sh
-    #Testing with LCG environment
-    source /cvmfs/sft.cern.ch/lcg/views/setupViews.sh LCG_108_geant4ext20250725 x86_64-el9-gcc11-opt
+    module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el9
+    module load compilers/gcc/14.x.x
+    module load python/3.10.6
+    source /opt/exp_soft/llr/root/v6.32-el9-gcc14xx-py3106/bin/thisroot.sh
 fi
 
