@@ -34,7 +34,7 @@ def main(releaseName):
             # Write the new configurations into separated files
             filename = f"{block['shortName']}.yaml"
             print(filename)
-            with open(f"../HGCTPGValidation/config/{filename}_new", "w") as file:
+            with open(f"../HGCTPGValidation/config/{filename}", "w") as file:
                 yaml.explicit_start = True
                 yaml.dump(block, file)
     
