@@ -16,7 +16,7 @@ import re
 def main(releaseName):
     print(releaseName)
     # Load the default.yaml
-    with open(f"./HGCTPGValidation/config/{releaseName}.yaml", "r") as file:
+    with open(f"../HGCTPGValidation/config/{releaseName}.yaml", "r") as file:
         #configs = yaml.load(file)
         configs = file.read()
         
@@ -34,7 +34,7 @@ def main(releaseName):
             # Write the new configurations into separated files
             filename = f"{block['shortName']}.yaml"
             print(filename)
-            with open(f"./HGCTPGValidation/config/{filename}_new", "w") as file:
+            with open(f"../HGCTPGValidation/config/{filename}_new", "w") as file:
                 yaml.explicit_start = True
                 yaml.dump(block, file)
     
