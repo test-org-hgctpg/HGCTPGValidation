@@ -295,16 +295,41 @@ pipeline {
                 }
                 stage('Produce Ref'){
                     steps {
-                        sh '''
+                        sh '''#!/usr/bin/env bash
+                        {
                         set +x
-                        echo '===> Produce reference data.'
-                        exec >> log_Jenkins
-                        echo '===> Produce reference data.'
-                        pwd
+                        echo '==> Produce reference data. ==============================='
+                        
+                        if [ -f "out_err" ]; then
+                            echo "Remove the last created out_err."
+                            rm out_err
+                        else
+                            echo "out_err does not exist."
+                        fi
+                        } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
+                        '''
+                        sh '''#!/usr/bin/env bash
+                        {
+                        set +x
                         cd test_dir/${REF_RELEASE}_HGCalTPGValidation_${LABEL_REF}/src
-                        source ../../../HGCTPGValidation/env_install.sh
+                        module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/
+                        module purge
+                        module load python/3.9.9
+                        echo 'CONFIG_SUBSET= ' ${CONFIG_SUBSET} 
+                        echo 'LABEL_TEST= ' ${LABEL_REF}
                         python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_REF}
-                        echo '      '
+                        statusProduceRef=$?
+                        } >> log_Jenkins 2> >(tee -a log_Jenkins out_err)
+                        
+                        # If the script produceData_multiconfiguration.py failed, the pipeline stops
+                        if [ $statusProduceRef -gt 0 ];
+                        then
+                            echo ' Error in stage('Produce Ref'), with status=' $statusProduceRef
+                            cat ../../../out_err >&2
+                            exit $statusProduceRef
+                        else
+                            echo ' The stage 'Produce Ref' completed successufully!'
+                        fi
                         '''
                     }
                 }
