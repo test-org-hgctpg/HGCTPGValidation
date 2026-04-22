@@ -13,18 +13,17 @@ pipeline {
     stages {
         stage('Set environment variables'){
             steps{
-                sh '''#!/usr/bin/env bash
-                {
+                sh '''
                 set +x
+                echo '==> Set environment variables'
+                exec >> log_Jenkins
                 if [ -f "log_Jenkins" ]; then
                     echo "Remove the last created log_Jenkins."
                     rm log_Jenkins
-                else
+                else 
                     echo "log_Jenkins does not exist."
-                fi
-                
-                echo '==> Set environment variables. ============================'
-                } >> log_Jenkins 1>&2> >(tee -a log_Jenkins >&2)
+                fi 
+                echo '==> Set environment variables'
                 '''
                 script{
                     String s = env.JOB_NAME
@@ -96,8 +95,7 @@ pipeline {
                             env.DATA_DIR=env.HGCTPG_DATA_DIR_EB
                             env.BRANCH_HGCTPGVAL='Jenkins-feature-modularJenkinsfile'
                             env.WEBPAGES_VAL=env.HGCTPG_WEBPAGES_VAL_CMSSW_TEST_EB
-                            env.JOB_FLAG=0
-                            break
+                            env.JOB_FLAG=0    
                         default: 
                             println("The job name is unknown"); 
                             break
@@ -116,128 +114,100 @@ pipeline {
                         }
                     }
                     env.CONFIG_SUBSET = 'default_multi_subset'
+                    
+                    println(env.CONFIG_SUBSET)
+                    println(env.REMOTE_HGCTPGVAL)
+                    println(env.BRANCH_HGCTPGVAL)
+                    
+                    println(env.BASE_REMOTE)
+                    println(env.DATA_DIR)
+                    println(env.CHANGE_TARGET)
+                    println(env.CHANGE_BRANCH)
+                    println(env.CHANGE_URL)
+                    println(env.CHANGE_FORK)
                 }
-                sh '''#!/usr/bin/env bash
-                {   pwd
-                    echo 'JOB_NAME=' $JOB_NAME
-                    echo 'JOB_FLAG=' $JOB_FLAG
-                    echo 'CHANGE_URL=' $CHANGE_URL
-                    echo 'CHANGE_FORK=' $CHANGE_FORK
-                    echo 'CHANGE_BRANCH=' $CHANGE_BRANCH
-                    echo 'CHANGE_TARGET=' $CHANGE_TARGET
-                    echo 'CONFIG_SUBSET=' $CONFIG_SUBSET
-                    echo 'REMOTE_HGCTPGVAL=' $REMOTE_HGCTPGVAL
-                    echo 'BRANCH_HGCTPGVAL=' $BRANCH_HGCTPGVAL
-                    echo 'BASE_REMOTE=' $BASE_REMOTE
-                    echo 'DATA_DIR=' $DATA_DIR
-                    echo 'EMAIL_TO=' $EMAIL_TO
-                    echo 'WEBPAGES_VAL=' $WEBPAGES_VAL
-                } >> log_Jenkins 1>&2> >(tee -a log_Jenkins >&2)
-                '''
             }  
         }
         stage('Initialize'){
             stages{
                 stage('Install automatic validation package HGCTPGValidation') {
                     steps {
-                        sh '''#!/usr/bin/env bash
-                        {
+                        sh '''
                         set +x
                         echo '==> Install automatic validation package HGCTPGValidation. ============================'
-                        echo 'Cloning the branch ' ${BRANCH_HGCTPGVAL} ' from https://github.com/'${REMOTE_HGCTPGVAL}'/HGCTPGValidation'
-                        } >> log_Jenkins 1>&2> >(tee -a log_Jenkins >&2)
-                        '''
-                        sh '''#!/usr/bin/env bash
-                        {
-                        set +x
+                        exec >> log_Jenkins
+                        echo '==> Install automatic validation package HGCTPGValidation. ============================'
+                        uname -a
+                        whoami
+                        pwd
+                        ls -l
                         if [ -d "./HGCTPGValidation" ] 
                         then
                             rm -rf HGCTPGValidation
                         fi
-                        
                         git clone -b ${BRANCH_HGCTPGVAL} https://github.com/${REMOTE_HGCTPGVAL}/HGCTPGValidation HGCTPGValidation
                         source HGCTPGValidation/env_install.sh
-                        } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
+                        ls -lrt ..
+                        echo '   '
                         '''
                     }
                 }
                 stage('Clean the working environment'){
                     steps{
-                        sh '''#!/usr/bin/env bash
-                        {
+                        sh '''
                         set +x
-                        echo '==> Clean the working environment. ============================'
+                        echo 'echo ==> Clean the working environment. ============================'
+                        exec >> log_Jenkins
+                        echo 'echo ==> Clean the working environment. ============================'
                         ./HGCTPGValidation/scripts/clean_environment.sh ${DATA_DIR} PR$CHANGE_ID
                         mkdir test_dir
-                        } >> log_Jenkins 1>&2> >(tee -a log_Jenkins >&2)
                         '''
                     }
                 }
                 stage('Set CMSSW environment variables'){
                     steps{
                         script{
-                            sh '''#!/usr/bin/env bash
-                            {
+                            sh '''
                             set +x
-                            echo '==> Set CMSSW environment variables. ============================'
-                            } >> log_Jenkins 1>&2> >(tee -a log_Jenkins >&2)
+                            echo 'echo ==> Set CMSSW environment variables. ============================'
+                            exec >> log_Jenkins
+                            echo 'echo ==> Set CMSSW environment variables. ============================'
                             '''
                             try {
                                 def set_var = load './HGCTPGValidation/scripts/set_CMSSW_env_variables.groovy'
-                                set_var.run(env.JOB_FLAG, env.CHANGE_FORK, env.BASE_REMOTE)
+                                set_var.run(env.JOB_FLAG, env.CHANGE_FORK, env.CHANGE_TARGET, env.BASE_REMOTE)
                             } catch (e) {
                                 echo "Error during loading or execution: ${e}"
                             }
+                            println("The environment variables are:")
+                            
+                            echo "The variables are:"
+                            echo "JOB_FLAG: ${JOB_FLAG}"
+                            echo "CHANGE_BRANCH: ${CHANGE_BRANCH}"
+                            echo "CHANGE_TARGET: ${CHANGE_TARGET}"
+                            echo "REF_RELEASE: ${REF_RELEASE}"
+                            echo "TEST_RELEASE: ${TEST_RELEASE}"
+                            echo "SCRAM_ARCH: ${SCRAM_ARCH}"
+                            echo "BASE_REMOTE: ${BASE_REMOTE}"
+                            echo "REMOTE: ${REMOTE}"
                         }
-                        sh '''#!/usr/bin/env bash
-                        {
+                        sh '''
                         set +x
-                        echo "The environment variables are:"
-                        echo "JOB_FLAG: ${JOB_FLAG}"
-                        echo "CHANGE_BRANCH: ${CHANGE_BRANCH}"
-                        echo "CHANGE_TARGET: ${CHANGE_TARGET}"
-                        echo "REF_RELEASE: ${REF_RELEASE}"
-                        echo "TEST_RELEASE: ${TEST_RELEASE}"
-                        echo "SCRAM_ARCH: ${SCRAM_ARCH}"
-                        echo "BASE_REMOTE: ${BASE_REMOTE}"
-                        echo "REMOTE: ${REMOTE}"
-                        } >> log_Jenkins 1>&2> >(tee -a log_Jenkins >&2)
+                        exec >> log_Jenkins
+                        echo '  '
                         '''
                     }
                 }
                 stage('Set config files for specific release'){
                     steps{
-                    sh '''#!/usr/bin/env bash
-                    {
+                    sh '''
                     set +x
-                    echo '==> Set config files for specific release. ============================'
-                    
-                    if [ -f "out_err" ]; then
-                        echo "Remove the last created out_err."
-                        rm out_err
-                    else
-                        echo "out_err does not exist."
-                    fi
-                    } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
-                    '''
-                    sh '''#!/usr/bin/env bash
-                    {
-                    set +x
+                    echo '===> Set config files for specific release.'
+                    exec >> log_Jenkins
+                    echo '===> Set config files for specific release.'
                     cd test_dir
                     source ../HGCTPGValidation/env_install.sh
                     python ../HGCTPGValidation/scripts/split_configFiles.py --releaseName ${REF_RELEASE}
-                    statusSetSpecificRel=$?
-                    } >> log_Jenkins 2> >(tee -a log_Jenkins out_err)
-                    
-                    # If the script split_configFiles.py failed, the pipeline stops
-                    if [ $statusSetSpecificRel -gt 0 ];
-                    then
-                        echo ' Error in stage('Set config files for specific release'), with status=' $statusSetSpecificRel
-                        cat ../../../out_err >&2
-                        exit $statusSetSpecificRel
-                    else
-                        echo ' The stage 'Set config files for specific release' completed successufully!'
-                    fi
                     '''
                     }
                 }
@@ -250,12 +220,8 @@ pipeline {
                         }
                     }
                     steps {
-                        sh '''#!/usr/bin/env bash
-                        {
-                        set +x
-                        echo '==> Update configuration on GitHub PR comment! ================================='
-                        } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
-                        '''
+                        echo 'Update configuration on GitHub PR comment!'
+                        
                         script{
                             // Comments
                             def commentCauses = currentBuild.getBuildCauses('com.adobe.jenkins.github_pr_comment_build.GitHubPullRequestCommentCause')
@@ -283,90 +249,33 @@ pipeline {
                                 error("ERROR: Required environment variable CONFIG_SUBSET is not set.")
                             }else{
                                 env.CONFIG_SUBSET = env.CONFIG_SUBSET_GITHUB
-                                echo "CONFIG_SUBSET_GITHUB is: ${env.CONFIG_SUBSET_GITHUB}"
-                                echo "CONFIG_SUBSET is set to: ${env.CONFIG_SUBSET}"
+                                echo "CONFIG_SUBSET is set to: ${env.CONFIG_SUBSET_GITHUB}"
                             }
                         }
-                        sh '''#!/usr/bin/env bash
-                        {
-                        set +x
-                        echo "PR Comment: ${GITHUB_COMMENT}"
-                        echo "CONFIG_SUBSET is set to: ${CONFIG_SUBSET}"
-                        } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
-                        '''
                     }
                 }
             }
         }
         stage('Install CMSSW Test release'){
             steps {
-                sh '''#!/usr/bin/env bash
-                {
+                sh '''
                 set +x
-                
-                echo '==> Install CMSSW Test release. ============================'
-                
-                if [ -f "out_err" ]; then
-                    echo "Remove the last created out_err."
-                    rm out_err
-                else
-                    echo "out_err does not exist."
-                fi
-                
-                } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
-                '''
-                sh '''#!/usr/bin/env bash
-                {
-                set +x
+                echo 'echo ==> Install CMSSW Test release. ============================'
+                exec >> log_Jenkins
+                echo 'echo ==> Install CMSSW Test release. ============================'
                 ./HGCTPGValidation/scripts/installCMSSW_global.sh $SCRAM_ARCH $REF_RELEASE $REMOTE $BASE_REMOTE $CHANGE_BRANCH $CHANGE_TARGET ${LABEL_TEST}
-                statusInstallTest=$?
-                } >> log_Jenkins 2> >(tee -a log_Jenkins out_err) # the std_err is redirected to log_Jenkins and to out_err
-                
-                # If the script installCMSSW_global.sh failed, the pipeline stops
-                if [ $statusInstallTest -gt 0 ];
-                then
-                    echo 'Error in stage('Install CMSSW Test release'), with status=' $statusInstallTest
-                    # Concatenate out_err and >&2
-                    # It is needed in order to get the error message when the compilation fails
-                    cat ../../../out_err >&2
-                    exit $statusInstallTest
-                else
-                    echo ' The stage 'Install CMSSW Test release' completed successufully!'
-                fi
+                echo '     '
                 '''
             }
         }
         stage('Quality Checks'){
             steps{
-                sh '''#!/usr/bin/env bash
-                {
+                sh '''
                 set +x
-                echo '==> Quality Checks. ============================'
-                
-                if [ -f "out_err" ]; then
-                    echo "Remove the last created out_err."
-                    rm out_err
-                else
-                    echo "out_err does not exist."
-                fi
-                } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
-                '''
-                sh '''#!/usr/bin/env bash
-                {
-                set +x
+                echo 'echo ==> Quality Checks. ============================'
+                exec >> log_Jenkins
+                echo 'echo ==> Quality Checks. ============================'
                 ./HGCTPGValidation/scripts/quality_checks.sh ${REF_RELEASE} ${LABEL_TEST}
-                statusQualityChecks=$?
-                } >> log_Jenkins 2> >(tee -a log_Jenkins out_err)
-                
-                # If the script quality_checks.sh failed, the pipeline stops
-                if [ $statusQualityChecks -gt 0 ];
-                then
-                    echo ' Error in stage('Quality Checks'), with status=' $statusQualityChecks
-                    cat ../../../out_err >&2
-                    exit $statusQualityChecks
-                else
-                    echo ' The stage 'Quality Checks' completed successufully!'
-                fi
                 '''
             }
         }
@@ -374,145 +283,56 @@ pipeline {
             stages{
                 stage('Install Ref Release'){
                     steps {
-                       sh '''#!/usr/bin/env bash
-                       {
+                        sh '''
                         set +x
-                        echo '==> Install Ref Release. ============================'
-                        
-                        if [ -f "out_err" ]; then
-                            echo "Remove the last created out_err."
-                            rm out_err
-                        else
-                            echo "out_err does not exist."
-                        fi
-                        } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
-                        '''
-                        sh '''#!/usr/bin/env bash
-                        {
-                        set +x
+                        echo 'echo ==> Install Ref Release. ============================'
+                        exec >> log_Jenkins
+                        echo 'echo ==> Install Ref Release. ============================'
                         ./HGCTPGValidation/scripts/installCMSSW_global.sh $SCRAM_ARCH $REF_RELEASE $BASE_REMOTE $BASE_REMOTE $CHANGE_TARGET $CHANGE_TARGET ${LABEL_REF}
-                        statusInstallRef=$?
-                        } >> log_Jenkins 2> >(tee -a log_Jenkins out_err) # the std_err is redirected to log_Jenkins and to out_err
-                        
-                        # If the script installCMSSW_global.sh failed, the pipeline stops
-                        if [ $statusInstallRef -gt 0 ];
-                        then
-                            echo ' Error in stage('Install CMSSW Ref release'), with status=' $statusInstallRef
-                            # Concatenate out_err and >&2
-                            # It is needed in order to get the error message when the compilation fails
-                            cat ../../../out_err >&2
-                            exit $statusInstallRef
-                        else
-                            echo ' The stage 'Install CMSSW Ref release' completed successufully!'
-                        fi
+                        echo '      '
                         '''
                     }
                 }
                 stage('Produce Ref'){
                     steps {
-                        sh '''#!/usr/bin/env bash
-                        {
+                        sh '''
                         set +x
-                        echo '==> Produce reference data. ==============================='
-                        
-                        if [ -f "out_err" ]; then
-                            echo "Remove the last created out_err."
-                            rm out_err
-                        else
-                            echo "out_err does not exist."
-                        fi
-                        } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
-                        '''
-                        sh '''#!/usr/bin/env bash
-                        {
-                        set +x
+                        echo '===> Produce reference data.'
+                        exec >> log_Jenkins
+                        echo '===> Produce reference data.'
+                        pwd
                         cd test_dir/${REF_RELEASE}_HGCalTPGValidation_${LABEL_REF}/src
                         source ../../../HGCTPGValidation/env_install.sh
                         python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_REF}
-                        statusProduceRef=$?
-                        } >> log_Jenkins 2> >(tee -a log_Jenkins out_err)
-                        
-                        # If the script produceData_multiconfiguration.py failed, the pipeline stops
-                        if [ $statusProduceRef -gt 0 ];
-                        then
-                            echo ' Error in stage('Produce Ref'), with status=' $statusProduceRef
-                            cat ../../../out_err >&2
-                            exit $statusProduceRef
-                        else
-                            echo ' The stage 'Produce Ref' completed successufully!'
-                        fi
+                        echo '      '
                         '''
                     }
                 }
                 stage('Produce Test'){
                     steps {
-                        sh '''#!/usr/bin/env bash
-                        {
+                        sh '''
                         set +x
-                        echo '==> Produce test data. ========================================'
-                        
-                        if [ -f "out_err" ]; then
-                            echo "Remove the last created out_err."
-                            rm out_err
-                        else
-                            echo "out_err does not exist."
-                        fi
-                        } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
-                        '''
-                        sh '''#!/usr/bin/env bash
-                        {
-                        set +x
+                        echo '===> Produce test data.'
+                        exec >> log_Jenkins
+                        echo '===> Produce test data.'
                         cd test_dir/${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src
                         source ../../../HGCTPGValidation/env_install.sh
                         python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_TEST}
-                        statusProduceTest=$?
-                        } >> log_Jenkins 2> >(tee -a log_Jenkins out_err)
-                        
-                        # If the script produceData_multiconfiguration.py failed, the pipeline stops
-                        if [ $statusProduceTest -gt 0 ];
-                        then
-                            echo ' Error in stage('Produce Test'), with status=' $statusProduceTest
-                            cat ../../../out_err >&2
-                            exit $statusProduceTest
-                        else
-                            echo ' The stage 'Produce Test' completed successufully!'
-                        fi
+                        echo '      '
                         '''
                     }
                 }
                 stage('Display') {
                     steps {
-                        sh '''#!/usr/bin/env bash
-                        {
+                        sh '''
                         set +x
-                        echo '==> Display ========================================'
-                        
-                        if [ -f "out_err" ]; then
-                            echo "Remove the last created out_err."
-                            rm out_err
-                        else
-                            echo "out_err does not exist."
-                        fi
-                        } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
-                        '''
-                        sh '''#!/usr/bin/env bash
-                        {
-                        set +x
+                        echo '==> Display ======================='
+                        exec >> log_Jenkins
+                        echo '==> Display ======================='
                         cd test_dir
                         source ../HGCTPGValidation/env_install.sh
                         python ../HGCTPGValidation/scripts/displayHistos.py --subsetconfig ${CONFIG_SUBSET} --refdir ${REF_RELEASE}_HGCalTPGValidation_${LABEL_REF}/src --testdir ${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src --datadir ${DATA_DIR} --prnumber $CHANGE_ID --prtitle "$CHANGE_TITLE (from $CHANGE_AUTHOR, $CHANGE_URL)"
-                        statusDisplay=$?
-                        } >> log_Jenkins 2> >(tee -a log_Jenkins out_err)
-                        
-                        # If the script displayHistos.py failed, the pipeline stops
-                        if [ $statusDisplay -gt 0 ];
-                        then
-                            echo ' Error in stage('Display'), with status=' $statusDisplay
-                            cat ../out_err >&2
-                            exit $statusDisplay
-                        else
-                            echo ' The stage 'Display' completed successufully!'
-                        fi
+                        echo '      '
                         '''
                     }
                 }
@@ -520,37 +340,19 @@ pipeline {
         }
         stage('Geom Check') {
             steps {
-                sh '''#!/usr/bin/env bash
-                {
+                sh '''
                 set +x
                 echo '==> Geom Check ======================='
-                
-                if [ -f "out_err" ]; then
-                    echo "Remove the last created out_err."
-                    rm out_err
-                else
-                    echo "out_err does not exist."
-                fi
-                } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
+                exec >> log_Jenkins
+                echo '==> Geom Check ======================='
                 '''
-                
-                sh '''#!/usr/bin/env bash
-                {
-                set +x
-                ./HGCTPGValidation/scripts/geom_check.sh ${TEST_RELEASE} ${LABEL_TEST}
-                statusGeomCheck=$?
-                } >> log_Jenkins 2> >(tee -a log_Jenkins out_err)
-                
-                # If the script displayHistos.py failed, the pipeline stops
-                if [ $statusGeomCheck -gt 0 ];
-                then
-                    echo ' Error in stage('Geom Check'), with status=' $statusGeomCheck
-                    cat ../../../out_err >&2
-                    exit $statusGeomCheck
-                else
-                    echo ' The stage 'Geom Check' completed successufully!'
-                fi
-                '''
+                script{
+                    try{
+                        sh'./HGCTPGValidation/scripts/geom_check.sh ${TEST_RELEASE} ${LABEL_TEST}'
+                    } catch (e){
+                        error("An error occured in Geom testing stage: ${e}")
+                    }
+                }
             }
         }
     }
@@ -573,10 +375,8 @@ pipeline {
                 
                 withEnv(["MESSAGE=${message}","url=${env.CHANGE_URL}"]) {
                     // Generate a token, the command "set +x" is mandatory
-                    sh '''#!/usr/bin/env bash
-                    {
+                    sh '''
                         ./HGCTPGValidation/scripts/write_toGitHub.sh "$url" "$MESSAGE"
-                    } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                     '''
                 }
             }
