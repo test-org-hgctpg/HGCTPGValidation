@@ -1,6 +1,10 @@
 #! /usr/bin/env python
 #-*-coding: utf-8 -*-
 
+# This module includes code originally written by Arnaud Chiron (version 2018).
+# Modifications and integration by E. Becheva for the HGCal Trigger Primitive validation.
+# Used with permission.
+
 import os,sys,subprocess
 import urllib
 # python3
@@ -12,6 +16,7 @@ from datetime import datetime
 from sys import argv
 argv.append( '-b-' )
 import ROOT
+from ROOT import kWhite, kBlue, kBlack, kRed, gStyle, TCanvas, gPad 
 ROOT.gROOT.SetBatch(True)
 ROOT.gErrorIgnoreLevel = ROOT.kWarning # remove info like : Info in <TCanvas::Print>: gif file gifs/h_ele_vertexPhi.gif has been created
 argv.remove( '-b-' )
@@ -30,8 +35,6 @@ def getHisto(file, path):
 
 def RenderHisto(histo, canvas):
 
-    if ("ELE_LOGY" in histo.GetOption() and histo.GetMaximum() > 0):
-        canvas.SetLogy(1)
     histo_name_flag = 1 ; # use 0 to switch off
     if ( histo.InheritsFrom("TH2") ):
         gStyle.SetPalette(1)
@@ -41,44 +44,50 @@ def RenderHisto(histo, canvas):
     else: # TH1
         gStyle.SetOptStat(111110+histo_name_flag)
 
+# new Root Style for el9
 def initRootStyle():
-    eleStyle = ROOT.TStyle("eleStyle","Style for electron validation")
-    eleStyle.SetCanvasBorderMode(0)
-    eleStyle.SetCanvasColor(ROOT.kWhite)
-    eleStyle.SetCanvasDefH(600)
-    eleStyle.SetCanvasDefW(800)
-    eleStyle.SetCanvasDefX(0)
-    eleStyle.SetCanvasDefY(0)
-    eleStyle.SetPadBorderMode(0)
-    eleStyle.SetPadColor(ROOT.kWhite)
-    eleStyle.SetPadGridX(False)
-    eleStyle.SetPadGridY(False)
-    eleStyle.SetGridColor(0)
-    eleStyle.SetGridStyle(3)
-    eleStyle.SetGridWidth(1)
-    eleStyle.SetOptStat(1)
-    eleStyle.SetPadTickX(1)
-    eleStyle.SetPadTickY(1)
-    eleStyle.SetHistLineColor(1)
-    eleStyle.SetHistLineStyle(0)
-    eleStyle.SetHistLineWidth(2)
-    eleStyle.SetEndErrorSize(2)
-    eleStyle.SetErrorX(0.)
-    eleStyle.SetTitleColor(1, "XYZ")
-    eleStyle.SetTitleFont(42, "XYZ")
-    eleStyle.SetTitleXOffset(1.0)
-    eleStyle.SetTitleYOffset(1.0)
-    eleStyle.SetLabelOffset(0.005, "XYZ") # numeric label
-    eleStyle.SetTitleSize(0.05, "XYZ")
-    eleStyle.SetTitleFont(22,"X")
-    eleStyle.SetTitleFont(22,"Y")
-    eleStyle.SetPadBottomMargin(0.13)
-    eleStyle.SetPadLeftMargin(0.15)
-    eleStyle.SetPadRightMargin(0.2) 
-    eleStyle.SetMarkerStyle(21)
-    eleStyle.SetMarkerSize(0.8)
-    eleStyle.cd()
-    ROOT.gROOT.ForceStyle()
+    gStyle.SetCanvasBorderMode(1)
+    gStyle.SetCanvasColor(kWhite)
+    gStyle.SetCanvasDefH(600)
+    gStyle.SetCanvasDefW(800)
+    gStyle.SetCanvasDefX(0)
+    gStyle.SetCanvasDefY(0)
+    gStyle.SetPadBorderMode(1)
+    gStyle.SetPadColor(kWhite)
+    gStyle.SetPadGridX(False)
+    gStyle.SetPadGridY(False)
+    gStyle.SetGridColor(0)
+    gStyle.SetGridStyle(3)
+    gStyle.SetGridWidth(1)
+    gStyle.SetOptStat(1)
+    gStyle.SetPadTickX(1)
+    gStyle.SetPadTickY(1)
+    gStyle.SetHistLineColor(1)
+    gStyle.SetHistLineStyle(0)
+    gStyle.SetHistLineWidth(2)
+    gStyle.SetEndErrorSize(2)
+    gStyle.SetErrorX(0.)
+    gStyle.SetTitleColor(1, "XYZ")
+    gStyle.SetTitleFont(32, "XYZ")
+    gStyle.SetTitleX(0)
+    gStyle.SetTextAlign(13)
+    gStyle.SetTitleAlign(13)
+    gStyle.SetTitleStyle(3002)
+    gStyle.SetTitleFillColor(18)
+    gStyle.SetTitleXOffset(1.0)
+    gStyle.SetTitleYOffset(1.0)
+    gStyle.SetLabelOffset(0.1, "XYZ")
+    gStyle.SetTitleSize(0.002, "XYZ")
+    gStyle.SetTitleFont(22,"X")
+    gStyle.SetTitleFont(22,"Y")
+    gStyle.SetTitleBorderSize(2)
+    gStyle.SetPadBottomMargin(0.13)
+    gStyle.SetPadLeftMargin(0.15)
+    gStyle.SetMarkerStyle(21)
+    gStyle.SetMarkerSize(0.8)
+    gStyle.SetOptTitle(2)
+    gStyle.SetPadRightMargin(0.20)
+    gStyle.cd()
 
 def createPicture2(histo1, histo2, scaled, err, filename, cnv, axisFormat):
     nbins1 = histo1.GetNbinsX()
@@ -91,8 +100,6 @@ def createPicture2(histo1, histo2, scaled, err, filename, cnv, axisFormat):
         histo2.Scale(rescale_factor)
     if (histo2.GetMaximum() > histo1.GetMaximum()):
         histo1.SetMaximum(histo2.GetMaximum() * 1.1)
-    if (filename == "h_ele_charge"):
-       n_ele_charge = histo1.GetEntries()
        
     cnv.SetCanvasSize(960, 900)
     cnv.Clear()
@@ -141,7 +148,7 @@ def createPicture2(histo1, histo2, scaled, err, filename, cnv, axisFormat):
     # Define the ratio plot between histo1 and histo2
     pad2 = ROOT.TPad("pad2", "pad2", 0, 0.05, 1, 0.25)
     pad2.SetTopMargin(0.025)
-    pad2.SetBottomMargin(0.2)
+    pad2.SetBottomMargin(0.4)
     pad2.SetGridy()
     pad2.Draw()
     pad2.cd()
@@ -179,7 +186,7 @@ def createPicture2(histo1, histo2, scaled, err, filename, cnv, axisFormat):
     # X axis ratio plot settings
     histo3.GetXaxis().SetTitleSize(20)
     histo3.GetXaxis().SetTitleFont(43)
-    histo3.GetXaxis().SetTitleOffset(4.)
+    histo3.GetXaxis().SetTitleOffset(1.)
     histo3.GetXaxis().SetLabelFont(43) # Absolute font size in pixel (precision 3)
     histo3.GetXaxis().SetLabelSize(15)
    
@@ -275,12 +282,6 @@ def createWebPageLite(refconfigname, testconfigname, refdir, testdir, imgdir):
         wp.write("<h3><p><font color='blue'> Ref: " + refconfigname + "</h3>" )
         wp.write("<p>" + ref_description )
         wp.write("<p><font color='black'>=====================")
-    #    wp.write("<p>In all plots below " + test_configname)
-    #    wp.write(", the <b><font color='red'> " + CMP_RED_FILE + " </font></b> histograms are in red") # new release red in OvalFile
-    #    wp.write(", and the <b><font color='blue'> " + CMP_BLUE_FILE + " </font></b> histograms are in blue.") # ref release blue in OvalFile
-    #wp.write(" Some more details") # 
-    #wp.write(", <a href=\"" + CMP_CONFIG + "\">specification</a> of histograms") # histos list .txt file
-    #wp.write(", <a href=\"gifs/\">images</a> of histograms" + "." )
     wp.write("</p>\n")
 
     # filling the title array & dict
@@ -329,13 +330,7 @@ def createWebPageLite(refconfigname, testconfigname, refdir, testdir, imgdir):
             histo_name = short_histo_names[0].strip().replace('\n', ' ').replace('\r', '')
             print('!!!!! histo_name = ',histo_name)
             short_histo_name = histo_name.replace("h_", "")
-            if "ele_" in short_histo_name:
-                short_histo_name = short_histo_name.replace("ele_", "")
-            if "scl_" in short_histo_name:
-                short_histo_name = short_histo_name.replace("scl_", "")
-            if "bcl_" in short_histo_name:
-                short_histo_name = short_histo_name.replace("bcl_", "")
-                   
+            
             otherTextToWrite += "<a href=\"#" + short_histo_name + "\"><font color=\'blue\'>" + short_histo_name + "</font></a>" + "&nbsp;\n"
                     
             otherTextToWrite += "<br>"
@@ -446,70 +441,15 @@ def createWebPageLite(refconfigname, testconfigname, refdir, testdir, imgdir):
                 gif_name = imgdir + '/' + histo_name + ".gif"
                 gif_name_index = histo_name + ".gif"
                 createPicture2(histo_1, histo_2, "1", "1", gif_name, cnv, "lin")
-                # Make histo in log
-                #if (histo_1.GetMaximum() > 0 and histo_1.GetMinimum() >= 0):
-                #    gif_name_log = imgdir + '/' + histo_name + "_log.gif"
-                #    gif_name_log_index = histo_name + "_log.gif"
-                #    createPicture2(histo_1, histo_2, "1", "1", gif_name_log, cnv, "log")
-
+                
                 wp.write( "\n<td><a href=\"#TOP\"><img width=\"18\" height=\"18\" border=\"0\" align=\"middle\" src=" + image_up + " alt=\"Top\"/></a></td>\n" )
                 wp.write( "<td>" )
                 wp.write( "<a id=\"" + short_histo_name + "\" name=\"" + short_histo_name + "\"></a>" )
                 wp.write( "<a href=\"" + gif_name_index + "\"><img border=\"0\" class=\"image\" width=\"440\" src=\"" + gif_name_index + "\"></a>" )
-                # For histo in log
-                #if (histo_1.GetMaximum() > 0 and histo_1.GetMinimum() >= 0):
-                #    wp.write( "</td><td><a href=\"" + gif_name_log_index + "\"><img border=\"0\" class=\"image\" width=\"440\" src=\"" + gif_name_log_index + "\"></a>" )
                 wp.write( "</td></tr><tr valign=\"top\">\n" )
     
     wp.write( "</tr></table>\n" )
     wp.close()
-        
+    
     return
-    
-def testExtension(histoName, histoPrevious):
-    after = "" # $histoName
-    common = ""
-    
-    if '_' in histoName:
-        afters = histoName.split('_')
-        before = afters[0]
-        nMax = len(afters)
-        
-        if ( afters[nMax - 1] == "endcaps" ):
-            after = "endcaps"
-            for i in range(1, nMax-1):
-                before += "_" + afters[i]
-        elif ( afters[nMax - 1] == "barrel" ):
-            after = "barrel"
-            for i in range(1, nMax-1):
-                before += "_" + afters[i]
-        else:
-            if ( histoPrevious == "" ):
-                before = histoName
-                after = "" 
-                common = histoName
-            else:
-                avant =  afters[0]
-                after = ""
-                for i in range(1, nMax-1):
-                    avant += "_" + afters[i]
-                    if avant == histoPrevious:
-                        before = avant
-                        common = histoPrevious
-                        break
-                for j in range(nMax-1, nMax):
-                    after += "_" + afters[j]
-                after = after[1:]
-                
-    else: # no _ in histoName
-        before = histoName
-        common = histoName
-    
-    return [after, before, common]
-
-def checkRecompInName(name):
-    if re.search('recomp', name):
-        return True
-    else:
-        return False
 
