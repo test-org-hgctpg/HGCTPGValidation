@@ -13,17 +13,18 @@ pipeline {
     stages {
         stage('Set environment variables'){
             steps{
-                sh '''
+                sh '''#!/usr/bin/env bash
+                {
                 set +x
-                echo '==> Set environment variables'
-                exec >> log_Jenkins
                 if [ -f "log_Jenkins" ]; then
                     echo "Remove the last created log_Jenkins."
                     rm log_Jenkins
-                else 
+                else
                     echo "log_Jenkins does not exist."
-                fi 
-                echo '==> Set environment variables'
+                fi
+                
+                echo '==> Set environment variables. ============================'
+                } >> log_Jenkins 1>&2> >(tee -a log_Jenkins >&2)
                 '''
                 script{
                     String s = env.JOB_NAME
@@ -95,7 +96,8 @@ pipeline {
                             env.DATA_DIR=env.HGCTPG_DATA_DIR_EB
                             env.BRANCH_HGCTPGVAL='Jenkins-feature-modularJenkinsfile'
                             env.WEBPAGES_VAL=env.HGCTPG_WEBPAGES_VAL_CMSSW_TEST_EB
-                            env.JOB_FLAG=0    
+                            env.JOB_FLAG=0
+                            break
                         default: 
                             println("The job name is unknown"); 
                             break
@@ -114,18 +116,24 @@ pipeline {
                         }
                     }
                     env.CONFIG_SUBSET = 'default_multi_subset'
-                    
-                    println(env.CONFIG_SUBSET)
-                    println(env.REMOTE_HGCTPGVAL)
-                    println(env.BRANCH_HGCTPGVAL)
-                    
-                    println(env.BASE_REMOTE)
-                    println(env.DATA_DIR)
-                    println(env.CHANGE_TARGET)
-                    println(env.CHANGE_BRANCH)
-                    println(env.CHANGE_URL)
-                    println(env.CHANGE_FORK)
                 }
+                sh '''#!/usr/bin/env bash
+                {   pwd
+                    echo 'JOB_NAME=' $JOB_NAME
+                    echo 'JOB_FLAG=' $JOB_FLAG
+                    echo 'CHANGE_URL=' $CHANGE_URL
+                    echo 'CHANGE_FORK=' $CHANGE_FORK
+                    echo 'CHANGE_BRANCH=' $CHANGE_BRANCH
+                    echo 'CHANGE_TARGET=' $CHANGE_TARGET
+                    echo 'CONFIG_SUBSET=' $CONFIG_SUBSET
+                    echo 'REMOTE_HGCTPGVAL=' $REMOTE_HGCTPGVAL
+                    echo 'BRANCH_HGCTPGVAL=' $BRANCH_HGCTPGVAL
+                    echo 'BASE_REMOTE=' $BASE_REMOTE
+                    echo 'DATA_DIR=' $DATA_DIR
+                    echo 'EMAIL_TO=' $EMAIL_TO
+                    echo 'WEBPAGES_VAL=' $WEBPAGES_VAL
+                } >> log_Jenkins 1>&2> >(tee -a log_Jenkins >&2)
+                '''
             }  
         }
         stage('Initialize'){
