@@ -311,7 +311,7 @@ pipeline {
                 sh '''#!/usr/bin/env bash
                 {
                 set +x
-                echo 'echo ==> Quality Checks. ============================'
+                echo '==> Quality Checks. ============================'
                 
                 ./HGCTPGValidation/scripts/remove_outerr.sh
                 
@@ -336,7 +336,7 @@ pipeline {
                         sh '''#!/usr/bin/env bash
                         {
                         set +x
-                        echo 'echo ==> Install Ref Release. ============================'
+                        echo '==> Install Ref Release. ============================'
                         
                         ./HGCTPGValidation/scripts/remove_outerr.sh
                         
@@ -351,36 +351,56 @@ pipeline {
                         
                         # If the script installCMSSW_global.sh fails, the pipeline stops
                         ../HGCTPGValidation/scripts/check_command_status.sh $statusInstallRef $STAGE_NAME
-                        
                         '''
                     }
                 }
                 stage('Produce Ref'){
                     steps {
-                        sh '''
+                        sh '''#!/usr/bin/env bash
+                        {
                         set +x
                         echo '===> Produce reference data.'
-                        exec >> log_Jenkins
-                        echo '===> Produce reference data.'
-                        pwd
+                        
+                        ./HGCTPGValidation/scripts/remove_outerr.sh
+                        
+                        } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
+                        '''
+                        sh '''#!/usr/bin/env bash
+                        {
+                        set +x
                         cd test_dir/${REF_RELEASE}_HGCalTPGValidation_${LABEL_REF}/src
                         source ../../../HGCTPGValidation/env_install.sh
                         python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_REF}
-                        echo '      '
+                        statusProduceRef=$?
+                        } >> log_Jenkins 2> >(tee -a log_Jenkins out_err)
+                        
+                        # If the script produceData_multiconfiguration.py fails, the pipeline stops
+                        ../HGCTPGValidation/scripts/check_command_status.sh $statusProduceRef $STAGE_NAME
                         '''
                     }
                 }
                 stage('Produce Test'){
                     steps {
-                        sh '''
+                        sh '''#!/usr/bin/env bash
+                        {
                         set +x
                         echo '===> Produce test data.'
-                        exec >> log_Jenkins
-                        echo '===> Produce test data.'
+                        
+                        ./HGCTPGValidation/scripts/remove_outerr.sh
+                        
+                        } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
+                        '''
+                        sh '''#!/usr/bin/env bash
+                        {
+                        set +x
                         cd test_dir/${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src
                         source ../../../HGCTPGValidation/env_install.sh
                         python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_TEST}
-                        echo '      '
+                        statusProduceTest=$?
+                        } >> log_Jenkins 2> >(tee -a log_Jenkins out_err)
+                        
+                        # If the script produceData_multiconfiguration.py fails, the pipeline stops
+                        ../HGCTPGValidation/scripts/check_command_status.sh $statusProduceTest $STAGE_NAME
                         '''
                     }
                 }
