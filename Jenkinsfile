@@ -162,24 +162,22 @@ pipeline {
                 }
                 stage('Clean the working environment'){
                     steps{
-                        sh '''
+                        sh '''#!/usr/bin/env bash
                         set +x
-                        echo 'echo ==> Clean the working environment. ============================'
-                        exec >> log_Jenkins
                         echo 'echo ==> Clean the working environment. ============================'
                         ./HGCTPGValidation/scripts/clean_environment.sh ${DATA_DIR} PR$CHANGE_ID
                         mkdir test_dir
+                        } >> log_Jenkins 1>&2> >(tee -a log_Jenkins >&2)
                         '''
                     }
                 }
                 stage('Set CMSSW environment variables'){
                     steps{
                         script{
-                            sh '''
+                            sh '''#!/usr/bin/env bash
                             set +x
                             echo 'echo ==> Set CMSSW environment variables. ============================'
-                            exec >> log_Jenkins
-                            echo 'echo ==> Set CMSSW environment variables. ============================'
+                            } >> log_Jenkins 1>&2> >(tee -a log_Jenkins >&2)
                             '''
                             try {
                                 def set_var = load './HGCTPGValidation/scripts/set_CMSSW_env_variables.groovy'
@@ -187,22 +185,20 @@ pipeline {
                             } catch (e) {
                                 echo "Error during loading or execution: ${e}"
                             }
-                            println("The environment variables are:")
-                            
-                            echo "The variables are:"
-                            echo "JOB_FLAG: ${JOB_FLAG}"
-                            echo "CHANGE_BRANCH: ${CHANGE_BRANCH}"
-                            echo "CHANGE_TARGET: ${CHANGE_TARGET}"
-                            echo "REF_RELEASE: ${REF_RELEASE}"
-                            echo "TEST_RELEASE: ${TEST_RELEASE}"
-                            echo "SCRAM_ARCH: ${SCRAM_ARCH}"
-                            echo "BASE_REMOTE: ${BASE_REMOTE}"
-                            echo "REMOTE: ${REMOTE}"
                         }
-                        sh '''
+                        sh '''#!/usr/bin/env bash
+                        {
                         set +x
-                        exec >> log_Jenkins
-                        echo '  '
+                        echo "The environment variables are:"
+                        echo "JOB_FLAG: ${JOB_FLAG}"
+                        echo "CHANGE_BRANCH: ${CHANGE_BRANCH}"
+                        echo "CHANGE_TARGET: ${CHANGE_TARGET}"
+                        echo "REF_RELEASE: ${REF_RELEASE}"
+                        echo "TEST_RELEASE: ${TEST_RELEASE}"
+                        echo "SCRAM_ARCH: ${SCRAM_ARCH}"
+                        echo "BASE_REMOTE: ${BASE_REMOTE}"
+                        echo "REMOTE: ${REMOTE}"
+                        } >> log_Jenkins 1>&2> >(tee -a log_Jenkins >&2)
                         '''
                     }
                 }
