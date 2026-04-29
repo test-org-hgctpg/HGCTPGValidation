@@ -12,11 +12,7 @@
 # $7 label "ref" or "test"
 
 set +x
-echo '==> Build CMSSW Test ========================='
-echo '===> InstallCMSSW Test Step'
-exec >> log_Jenkins
-echo '==> Build CMSSW Test ========================='
-echo '===> InstallCMSSW Test Step'
+
 cd test_dir
 
 set -e
