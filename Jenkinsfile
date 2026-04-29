@@ -204,14 +204,26 @@ pipeline {
                 }
                 stage('Set config files for specific release'){
                     steps{
-                    sh '''
+                    sh '''#!/usr/bin/env bash
+                    {
                     set +x
                     echo '===> Set config files for specific release.'
-                    exec >> log_Jenkins
-                    echo '===> Set config files for specific release.'
+                    
+                    ./HGCTPGValidation/scripts/remove_outerr.sh
+                    
+                    } >> log_Jenkins 1>&2> >(tee -a log_Jenkins >&2)
+                    '''
+                    sh '''#!/usr/bin/env bash
+                    {
+                    set +x
                     cd test_dir
                     source ../HGCTPGValidation/env_install.sh
                     python ../HGCTPGValidation/scripts/split_configFiles.py --releaseName ${REF_RELEASE}
+                    statusSplitConfigFiles=$?
+                    } >> log_Jenkins 2> >(tee -a log_Jenkins out_err)
+                    
+                    # If the script split_configFiles.py fails, the pipeline stops
+                     ../HGCTPGValidation/scripts/check_command_status.sh $statusSplitConfigFiles $STAGE_NAME
                     '''
                     }
                 }
