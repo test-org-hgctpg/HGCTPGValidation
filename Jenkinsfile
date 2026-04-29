@@ -308,12 +308,24 @@ pipeline {
         }
         stage('Quality Checks'){
             steps{
-                sh '''
+                sh '''#!/usr/bin/env bash
+                {
                 set +x
                 echo 'echo ==> Quality Checks. ============================'
-                exec >> log_Jenkins
-                echo 'echo ==> Quality Checks. ============================'
+                
+                ./HGCTPGValidation/scripts/remove_outerr.sh
+                
+                } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
+                '''
+                sh '''#!/usr/bin/env bash
+                {
+                set +x
                 ./HGCTPGValidation/scripts/quality_checks.sh ${REF_RELEASE} ${LABEL_TEST}
+                statusQualityChecks=$?
+                } >> log_Jenkins 2> >(tee -a log_Jenkins out_err)
+                
+                # If the script quality_checks.sh fails, the pipeline stops
+                ../HGCTPGValidation/scripts/check_command_status.sh $statusQualityChecks $STAGE_NAME
                 '''
             }
         }
