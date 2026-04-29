@@ -433,19 +433,24 @@ pipeline {
         }
         stage('Geom Check') {
             steps {
-                sh '''
+                sh '''#!/usr/bin/env bash
+                {
                 set +x
                 echo '==> Geom Check ======================='
-                exec >> log_Jenkins
-                echo '==> Geom Check ======================='
+                
+                ./HGCTPGValidation/scripts/remove_outerr.sh
+                
+                } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
                 '''
-                script{
-                    try{
-                        sh'./HGCTPGValidation/scripts/geom_check.sh ${TEST_RELEASE} ${LABEL_TEST}'
-                    } catch (e){
-                        error("An error occured in Geom testing stage: ${e}")
-                    }
-                }
+                sh '''#!/usr/bin/env bash
+                {
+                set +x
+                ./HGCTPGValidation/scripts/geom_check.sh ${TEST_RELEASE} ${LABEL_TEST}
+                statusGeomCheck=$?
+                } >> log_Jenkins 2> >(tee -a log_Jenkins out_err)
+                
+                # If the script displayHistos.py fails, the pipeline stops
+                ../HGCTPGValidation/scripts/check_command_status.sh $statusGeomCheck $STAGE_NAME
             }
         }
     }
