@@ -406,15 +406,26 @@ pipeline {
                 }
                 stage('Display') {
                     steps {
-                        sh '''
+                        sh '''#!/usr/bin/env bash
+                        {
                         set +x
                         echo '==> Display ======================='
-                        exec >> log_Jenkins
-                        echo '==> Display ======================='
+                        
+                        ./HGCTPGValidation/scripts/remove_outerr.sh
+                        
+                        } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
+                        '''
+                        sh '''#!/usr/bin/env bash
+                        {
+                        set +x
                         cd test_dir
                         source ../HGCTPGValidation/env_install.sh
                         python ../HGCTPGValidation/scripts/displayHistos.py --subsetconfig ${CONFIG_SUBSET} --refdir ${REF_RELEASE}_HGCalTPGValidation_${LABEL_REF}/src --testdir ${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src --datadir ${DATA_DIR} --prnumber $CHANGE_ID --prtitle "$CHANGE_TITLE (from $CHANGE_AUTHOR, $CHANGE_URL)"
-                        echo '      '
+                        statusDisplay=$?
+                        } >> log_Jenkins 2> >(tee -a log_Jenkins out_err)
+                        
+                        # If the script displayHistos.py fails, the pipeline stops
+                        ../HGCTPGValidation/scripts/check_command_status.sh $statusDisplay $STAGE_NAME
                         '''
                     }
                 }
