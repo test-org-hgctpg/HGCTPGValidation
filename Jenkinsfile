@@ -236,8 +236,12 @@ pipeline {
                         }
                     }
                     steps {
-                        echo 'Update configuration on GitHub PR comment!'
-                        
+                        sh '''#!/usr/bin/env bash
+                        {
+                        set +x
+                        echo '==> Update configuration on GitHub PR comment! ================================='
+                        } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
+                        '''
                         script{
                             // Comments
                             def commentCauses = currentBuild.getBuildCauses('com.adobe.jenkins.github_pr_comment_build.GitHubPullRequestCommentCause')
@@ -268,6 +272,13 @@ pipeline {
                                 echo "CONFIG_SUBSET is set to: ${env.CONFIG_SUBSET_GITHUB}"
                             }
                         }
+                        sh '''#!/usr/bin/env bash
+                        {
+                        set +x
+                        echo "PR Comment: ${GITHUB_COMMENT}"
+                        echo "CONFIG_SUBSET is set to: ${CONFIG_SUBSET}"
+                        } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
+                        '''
                     }
                 }
             }
