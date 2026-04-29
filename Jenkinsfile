@@ -285,13 +285,24 @@ pipeline {
         }
         stage('Install CMSSW Test release'){
             steps {
-                sh '''
+                sh '''#!/usr/bin/env bash
+                {
                 set +x
-                echo 'echo ==> Install CMSSW Test release. ============================'
-                exec >> log_Jenkins
-                echo 'echo ==> Install CMSSW Test release. ============================'
+                echo '==> Install CMSSW Test release. ============================'
+                
+                ./HGCTPGValidation/scripts/remove_outerr.sh
+                
+                } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
+                '''
+                sh '''#!/usr/bin/env bash
+                {
+                set +x
                 ./HGCTPGValidation/scripts/installCMSSW_global.sh $SCRAM_ARCH $REF_RELEASE $REMOTE $BASE_REMOTE $CHANGE_BRANCH $CHANGE_TARGET ${LABEL_TEST}
-                echo '     '
+                statusInstallTest=$?
+                } >> log_Jenkins 2> >(tee -a log_Jenkins out_err) # the std_err is redirected to log_Jenkins and to out_err
+                
+                # If the script installCMSSW_global.sh fails, the pipeline stops
+                ../HGCTPGValidation/scripts/check_command_status.sh $statusInstallTest $STAGE_NAME
                 '''
             }
         }
