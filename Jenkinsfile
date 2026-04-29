@@ -473,8 +473,10 @@ pipeline {
                 
                 withEnv(["MESSAGE=${message}","url=${env.CHANGE_URL}"]) {
                     // Generate a token, the command "set +x" is mandatory
-                    sh '''
+                    sh '''#!/usr/bin/env bash
+                    {
                         ./HGCTPGValidation/scripts/write_toGitHub.sh "$url" "$MESSAGE"
+                    } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                     '''
                 }
             }
