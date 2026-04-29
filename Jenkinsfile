@@ -140,23 +140,23 @@ pipeline {
             stages{
                 stage('Install automatic validation package HGCTPGValidation') {
                     steps {
-                        sh '''
+                        sh '''#!/usr/bin/env bash
+                        {
                         set +x
                         echo '==> Install automatic validation package HGCTPGValidation. ============================'
-                        exec >> log_Jenkins
-                        echo '==> Install automatic validation package HGCTPGValidation. ============================'
-                        uname -a
-                        whoami
-                        pwd
-                        ls -l
+                        echo 'Cloning the branch ' ${BRANCH_HGCTPGVAL} ' from https://github.com/'${REMOTE_HGCTPGVAL}'/HGCTPGValidation'
+                        } >> log_Jenkins 1>&2> >(tee -a log_Jenkins >&2)
+                        '''
+                        sh '''#!/usr/bin/env bash
+                        {
+                        set +x
                         if [ -d "./HGCTPGValidation" ] 
                         then
                             rm -rf HGCTPGValidation
                         fi
                         git clone -b ${BRANCH_HGCTPGVAL} https://github.com/${REMOTE_HGCTPGVAL}/HGCTPGValidation HGCTPGValidation
                         source HGCTPGValidation/env_install.sh
-                        ls -lrt ..
-                        echo '   '
+                        } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                         '''
                     }
                 }
