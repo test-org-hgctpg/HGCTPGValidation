@@ -164,7 +164,7 @@ pipeline {
                     steps{
                         sh '''#!/usr/bin/env bash
                         set +x
-                        echo 'echo ==> Clean the working environment. ============================'
+                        echo '==> Clean the working environment. ============================'
                         ./HGCTPGValidation/scripts/clean_environment.sh ${DATA_DIR} PR$CHANGE_ID
                         mkdir test_dir
                         } >> log_Jenkins 1>&2> >(tee -a log_Jenkins >&2)
@@ -176,7 +176,7 @@ pipeline {
                         script{
                             sh '''#!/usr/bin/env bash
                             set +x
-                            echo 'echo ==> Set CMSSW environment variables. ============================'
+                            echo '==> Set CMSSW environment variables. ============================'
                             } >> log_Jenkins 1>&2> >(tee -a log_Jenkins >&2)
                             '''
                             try {
