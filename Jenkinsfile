@@ -304,7 +304,7 @@ pipeline {
                 } >> log_Jenkins 2> >(tee -a log_Jenkins out_err) # the std_err is redirected to log_Jenkins and to out_err
                 
                 # If the script installCMSSW_global.sh fails, the pipeline stops
-                ../HGCTPGValidation/scripts/check_command_status.sh $statusInstallTest $STAGE_NAME
+                ./HGCTPGValidation/scripts/check_command_status.sh $statusInstallTest $STAGE_NAME
                 '''
             }
         }
@@ -327,7 +327,7 @@ pipeline {
                 } >> log_Jenkins 2> >(tee -a log_Jenkins out_err)
                 
                 # If the script quality_checks.sh fails, the pipeline stops
-                ../HGCTPGValidation/scripts/check_command_status.sh $statusQualityChecks $STAGE_NAME
+                ./HGCTPGValidation/scripts/check_command_status.sh $statusQualityChecks $STAGE_NAME
                 '''
             }
         }
@@ -352,7 +352,7 @@ pipeline {
                         } >> log_Jenkins 2> >(tee -a log_Jenkins out_err) # the std_err is redirected to log_Jenkins and to out_err
                         
                         # If the script installCMSSW_global.sh fails, the pipeline stops
-                        ../HGCTPGValidation/scripts/check_command_status.sh $statusInstallRef $STAGE_NAME
+                        ./HGCTPGValidation/scripts/check_command_status.sh $statusInstallRef $STAGE_NAME
                         '''
                     }
                 }
