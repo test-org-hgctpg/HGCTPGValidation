@@ -176,6 +176,7 @@ pipeline {
                     steps{
                         script{
                             sh '''#!/usr/bin/env bash
+                            {
                             set +x
                             echo '==> Set CMSSW environment variables. ============================'
                             } >> log_Jenkins 1>&2> >(tee -a log_Jenkins >&2)
