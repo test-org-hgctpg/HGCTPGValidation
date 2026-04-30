@@ -163,6 +163,7 @@ pipeline {
                 stage('Clean the working environment'){
                     steps{
                         sh '''#!/usr/bin/env bash
+                        {
                         set +x
                         echo '==> Clean the working environment. ============================'
                         ./HGCTPGValidation/scripts/clean_environment.sh ${DATA_DIR} PR$CHANGE_ID
