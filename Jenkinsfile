@@ -377,7 +377,7 @@ pipeline {
                         } >> log_Jenkins 2> >(tee -a log_Jenkins out_err)
                         
                         # If the script produceData_multiconfiguration.py fails, the pipeline stops
-                        ../HGCTPGValidation/scripts/check_command_status.sh $statusProduceRef $STAGE_NAME
+                        ../../../HGCTPGValidation/scripts/check_command_status.sh $statusProduceRef $STAGE_NAME
                         '''
                     }
                 }
@@ -402,7 +402,7 @@ pipeline {
                         } >> log_Jenkins 2> >(tee -a log_Jenkins out_err)
                         
                         # If the script produceData_multiconfiguration.py fails, the pipeline stops
-                        ../HGCTPGValidation/scripts/check_command_status.sh $statusProduceTest $STAGE_NAME
+                        ../../../HGCTPGValidation/scripts/check_command_status.sh $statusProduceTest $STAGE_NAME
                         '''
                     }
                 }
@@ -452,7 +452,7 @@ pipeline {
                 } >> log_Jenkins 2> >(tee -a log_Jenkins out_err)
                 
                 # If the script displayHistos.py fails, the pipeline stops
-                ../HGCTPGValidation/scripts/check_command_status.sh $statusGeomCheck $STAGE_NAME
+                ./HGCTPGValidation/scripts/check_command_status.sh $statusGeomCheck $STAGE_NAME
                 '''
             }
         }
