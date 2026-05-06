@@ -23,7 +23,7 @@ pipeline {
                     echo "log_Jenkins does not exist."
                 fi
                 
-                echo '==> Set environment variables. ============================'
+                echo '\n==> Set environment variables ============================'
                 } >> log_Jenkins 1>&2> >(tee -a log_Jenkins >&2)
                 '''
                 script{
@@ -143,7 +143,7 @@ pipeline {
                         sh '''#!/usr/bin/env bash
                         {
                         set +x
-                        echo '==> Install automatic validation package HGCTPGValidation. ============================'
+                        echo '\n==> Install automatic validation package HGCTPGValidation. ============================'
                         echo 'Cloning the branch ' ${BRANCH_HGCTPGVAL} ' from https://github.com/'${REMOTE_HGCTPGVAL}'/HGCTPGValidation'
                         } >> log_Jenkins 1>&2> >(tee -a log_Jenkins >&2)
                         '''
@@ -165,7 +165,7 @@ pipeline {
                         sh '''#!/usr/bin/env bash
                         {
                         set +x
-                        echo '==> Clean the working environment. ============================'
+                        echo '\n==> Clean the working environment ============================'
                         ./HGCTPGValidation/scripts/clean_environment.sh ${DATA_DIR} PR$CHANGE_ID
                         mkdir test_dir
                         } >> log_Jenkins 1>&2> >(tee -a log_Jenkins >&2)
@@ -178,7 +178,7 @@ pipeline {
                             sh '''#!/usr/bin/env bash
                             {
                             set +x
-                            echo '==> Set CMSSW environment variables. ============================'
+                            echo '\n==> Set CMSSW environment variables. ============================'
                             } >> log_Jenkins 1>&2> >(tee -a log_Jenkins >&2)
                             '''
                             try {
@@ -209,7 +209,7 @@ pipeline {
                     sh '''#!/usr/bin/env bash
                     {
                     set +x
-                    echo '===> Set config files for specific release.'
+                    echo '\n==> Set config files for specific release ======================='
                     
                     ./HGCTPGValidation/scripts/remove_outerr.sh
                     
@@ -241,7 +241,7 @@ pipeline {
                         sh '''#!/usr/bin/env bash
                         {
                         set +x
-                        echo '==> Update configuration on GitHub PR comment! ================================='
+                        echo '\n==> Update configuration on GitHub PR comment! ================================='
                         } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
                         '''
                         script{
@@ -290,7 +290,7 @@ pipeline {
                 sh '''#!/usr/bin/env bash
                 {
                 set +x
-                echo '==> Install CMSSW Test release. ============================'
+                echo '\n==> Install CMSSW Test release ============================'
                 
                 ./HGCTPGValidation/scripts/remove_outerr.sh
                 
@@ -313,7 +313,7 @@ pipeline {
                 sh '''#!/usr/bin/env bash
                 {
                 set +x
-                echo '==> Quality Checks. ============================'
+                echo '\n==> Quality Checks ============================'
                 
                 ./HGCTPGValidation/scripts/remove_outerr.sh
                 
@@ -338,7 +338,7 @@ pipeline {
                         sh '''#!/usr/bin/env bash
                         {
                         set +x
-                        echo '==> Install Ref Release. ============================'
+                        echo '==> Install Ref Release ============================'
                         
                         ./HGCTPGValidation/scripts/remove_outerr.sh
                         
@@ -361,7 +361,7 @@ pipeline {
                         sh '''#!/usr/bin/env bash
                         {
                         set +x
-                        echo '===> Produce reference data.'
+                        echo '\n==> Produce reference data ======================='
                         
                         ./HGCTPGValidation/scripts/remove_outerr.sh
                         
@@ -386,7 +386,7 @@ pipeline {
                         sh '''#!/usr/bin/env bash
                         {
                         set +x
-                        echo '===> Produce test data.'
+                        echo '\n==> Produce test data ======================='
                         
                         ./HGCTPGValidation/scripts/remove_outerr.sh
                         
@@ -411,7 +411,7 @@ pipeline {
                         sh '''#!/usr/bin/env bash
                         {
                         set +x
-                        echo '==> Display ======================='
+                        echo '\n==> Display ======================='
                         
                         ./HGCTPGValidation/scripts/remove_outerr.sh
                         
@@ -438,7 +438,7 @@ pipeline {
                 sh '''#!/usr/bin/env bash
                 {
                 set +x
-                echo '==> Geom Check ======================='
+                echo '\n==> Geom Check ======================='
                 
                 ./HGCTPGValidation/scripts/remove_outerr.sh
                 
