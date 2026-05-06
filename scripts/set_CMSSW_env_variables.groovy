@@ -6,13 +6,13 @@
 // set_var.run(env.JOB_FLAG, env.CHANGE_FORK, env.CHANGE_TARGET, env.BASE_REMOTE)
 
 def run(String JOB_FLAG, String CHANGE_FORK, String CHANGE_TARGET, String BASE_REMOTE) {
-    println('Input variables in the run function')
-    println("JOB_FLAG=${JOB_FLAG}")
-    println("CHANGE_FORK=${CHANGE_FORK}")
-    println("CHANGE_TARGET=${CHANGE_TARGET}")
-    println("BASE_REMOTE=${BASE_REMOTE}")
     
     if ( JOB_FLAG == '0' ){
+        println('Validation of the CMSSW. The CMSSW variables will be set using the following information:')
+        println("JOB_FLAG=${JOB_FLAG}")
+        println("CHANGE_FORK=${CHANGE_FORK}")
+        println("CHANGE_TARGET=${CHANGE_TARGET}")
+        println("BASE_REMOTE=${BASE_REMOTE}")
         env.REF_RELEASE = sh(returnStdout: true, script: 'set +x; source ./HGCTPGValidation/scripts/extractReleaseName.sh ${CHANGE_TARGET}').trim()
         env.SCRAM_ARCH = sh(returnStdout: true, script: 'set +x; source ./HGCTPGValidation/scripts/getScramArch.sh ${REF_RELEASE}').trim()
         env.TEST_RELEASE = env.REF_RELEASE
@@ -26,6 +26,7 @@ def run(String JOB_FLAG, String CHANGE_FORK, String CHANGE_TARGET, String BASE_R
         }
     }
     else {
+            println('Validation of the validation code. The CMSSW variables will be get from the configuration file job_val_params.yaml.')
             env.REF_BRANCH = sh(returnStdout: true, script: 'set +x; source ./HGCTPGValidation/env_install.sh; python ./HGCTPGValidation/scripts/get_cmsswRefBranch.py').trim()
             env.REF_RELEASE = sh(returnStdout: true, script: 'set +x; source ./HGCTPGValidation/scripts/extractReleaseName.sh ${REF_BRANCH}').trim()
             env.SCRAM_ARCH = sh(returnStdout: true, script: 'set +x; source ./HGCTPGValidation/scripts/getScramArch.sh ${REF_RELEASE}').trim()
@@ -35,14 +36,6 @@ def run(String JOB_FLAG, String CHANGE_FORK, String CHANGE_TARGET, String BASE_R
             env.REMOTE = env.BASE_REMOTE
             env.TEST_RELEASE = env.REF_RELEASE
     }
-    println(env.REF_BRANCH)
-    println(env.REF_RELEASE)
-    println(env.TEST_RELEASE)
-    println(env.SCRAM_ARCH)
-    println(env.BASE_REMOTE)
-    println(env.CHANGE_BRANCH)
-    println(env.CHANGE_TARGET)
-    println(env.REMOTE)
 }
 
 return this
