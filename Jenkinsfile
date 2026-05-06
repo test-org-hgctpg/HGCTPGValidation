@@ -372,6 +372,9 @@ pipeline {
                         set +x
                         cd test_dir/${REF_RELEASE}_HGCalTPGValidation_${LABEL_REF}/src
                         source ../../../HGCTPGValidation/env_install.sh
+                        
+                        echo "CONFIG_SUBSET=" ${CONFIG_SUBSET}
+                        echo "label=" ${LABEL_REF}
                         python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_REF}
                         statusProduceRef=$?
                         } >> log_Jenkins 2> >(tee -a log_Jenkins out_err)
@@ -397,6 +400,9 @@ pipeline {
                         set +x
                         cd test_dir/${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src
                         source ../../../HGCTPGValidation/env_install.sh
+                        
+                        echo "CONFIG_SUBSET=" ${CONFIG_SUBSET}
+                        echo "label=" ${LABEL_TEST}
                         python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_TEST}
                         statusProduceTest=$?
                         } >> log_Jenkins 2> >(tee -a log_Jenkins out_err)
@@ -422,6 +428,13 @@ pipeline {
                         set +x
                         cd test_dir
                         source ../HGCTPGValidation/env_install.sh
+                        
+                        echo "CONFIG_SUBSET=" ${CONFIG_SUBSET}
+                        echo "REF_DIR" ${REF_RELEASE}_HGCalTPGValidation_${LABEL_REF}/src
+                        echo "TEST_DIR" ${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src
+                        echo "DATA_DIR" ${DATA_DIR}
+                        echo "PR_NUMBER" $CHANGE_ID
+                        echo "PR_TITLE" "$CHANGE_TITLE (from $CHANGE_AUTHOR, $CHANGE_URL)"
                         python ../HGCTPGValidation/scripts/displayHistos.py --subsetconfig ${CONFIG_SUBSET} --refdir ${REF_RELEASE}_HGCalTPGValidation_${LABEL_REF}/src --testdir ${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src --datadir ${DATA_DIR} --prnumber $CHANGE_ID --prtitle "$CHANGE_TITLE (from $CHANGE_AUTHOR, $CHANGE_URL)"
                         statusDisplay=$?
                         } >> log_Jenkins 2> >(tee -a log_Jenkins out_err)
