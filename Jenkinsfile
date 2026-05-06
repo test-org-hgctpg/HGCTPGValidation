@@ -11,7 +11,7 @@ pipeline {
         buildDiscarder logRotator(artifactDaysToKeepStr: '7', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '')
     }
     stages {
-        stage('Set environment variables'){
+        stage('Set_environment_variables'){
             steps{
                 sh '''#!/usr/bin/env bash
                 {
@@ -138,7 +138,7 @@ pipeline {
         }
         stage('Initialize'){
             stages{
-                stage('Install automatic validation package HGCTPGValidation') {
+                stage('Install_automatic_validation_package_HGCTPGValidation') {
                     steps {
                         sh '''#!/usr/bin/env bash
                         {
@@ -160,7 +160,7 @@ pipeline {
                         '''
                     }
                 }
-                stage('Clean the working environment'){
+                stage('Clean_the_working_environment'){
                     steps{
                         sh '''#!/usr/bin/env bash
                         {
@@ -172,7 +172,7 @@ pipeline {
                         '''
                     }
                 }
-                stage('Set CMSSW environment variables'){
+                stage('Set_CMSSW_environment_variables'){
                     steps{
                         script{
                             sh '''#!/usr/bin/env bash
@@ -204,7 +204,7 @@ pipeline {
                         '''
                     }
                 }
-                stage('Set config files for specific release'){
+                stage('Set_config_files_for_specific_release'){
                     steps{
                     sh '''#!/usr/bin/env bash
                     {
@@ -229,7 +229,7 @@ pipeline {
                     '''
                     }
                 }
-                stage('Update the configuration'){
+                stage('Update_the_configuration'){
                     when {
                         expression {
                             // Only run this stage if the build was triggered by a PR comment that contains new customise parameter
@@ -285,7 +285,7 @@ pipeline {
                 }
             }
         }
-        stage('Install CMSSW Test release'){
+        stage('Install_CMSSW_Test_release'){
             steps {
                 sh '''#!/usr/bin/env bash
                 {
@@ -308,7 +308,7 @@ pipeline {
                 '''
             }
         }
-        stage('Quality Checks'){
+        stage('Quality_Checks'){
             steps{
                 sh '''#!/usr/bin/env bash
                 {
@@ -331,7 +331,7 @@ pipeline {
                 '''
             }
         }
-        stage('Compare with CMSSW Ref Release'){
+        stage('Compare_with_CMSSW_Ref_Release'){
             stages{
                 stage('Install Ref Release'){
                     steps {
@@ -356,7 +356,7 @@ pipeline {
                         '''
                     }
                 }
-                stage('Produce Ref'){
+                stage('Produce_Ref'){
                     steps {
                         sh '''#!/usr/bin/env bash
                         {
@@ -381,7 +381,7 @@ pipeline {
                         '''
                     }
                 }
-                stage('Produce Test'){
+                stage('Produce_Test'){
                     steps {
                         sh '''#!/usr/bin/env bash
                         {
@@ -433,7 +433,7 @@ pipeline {
                 }
             }
         }
-        stage('Geom Check') {
+        stage('Geom_Check') {
             steps {
                 sh '''#!/usr/bin/env bash
                 {
