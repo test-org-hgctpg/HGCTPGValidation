@@ -14,7 +14,7 @@ PRCHANGE_ID=$2
 # Remove the test_dir that contains the ROOT files from the CMSSW test and ref simulations
 if [ -d "./test_dir" ]
 then
-    echo "Directory test_dir exists."
+    echo "Remove previous directory test_dir."
     rm -rf test_dir
 fi
 
