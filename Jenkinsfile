@@ -306,7 +306,7 @@ pipeline {
                 # If the script installCMSSW_global.sh fails, the pipeline stops
                 {
                 ./HGCTPGValidation/scripts/check_command_status.sh $statusInstallTest $STAGE_NAME
-                } >> log_Jenkins
+                } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
                 '''
             }
         }
