@@ -329,7 +329,9 @@ pipeline {
                 } >> log_Jenkins 2> >(tee -a log_Jenkins out_err)
                 
                 # If the script quality_checks.sh fails, the pipeline stops
+                {
                 ./HGCTPGValidation/scripts/check_command_status.sh $statusQualityChecks $STAGE_NAME
+                } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
                 '''
             }
         }
@@ -354,7 +356,9 @@ pipeline {
                         } >> log_Jenkins 2> >(tee -a log_Jenkins out_err) # the std_err is redirected to log_Jenkins and to out_err
                         
                         # If the script installCMSSW_global.sh fails, the pipeline stops
+                        {
                         ./HGCTPGValidation/scripts/check_command_status.sh $statusInstallRef $STAGE_NAME
+                        } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
                         '''
                     }
                 }
@@ -382,7 +386,9 @@ pipeline {
                         } >> log_Jenkins 2> >(tee -a log_Jenkins out_err)
                         
                         # If the script produceData_multiconfiguration.py fails, the pipeline stops
+                        {
                         ../../../HGCTPGValidation/scripts/check_command_status.sh $statusProduceRef $STAGE_NAME
+                        } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
                         '''
                     }
                 }
@@ -410,7 +416,9 @@ pipeline {
                         } >> log_Jenkins 2> >(tee -a log_Jenkins out_err)
                         
                         # If the script produceData_multiconfiguration.py fails, the pipeline stops
+                        {
                         ../../../HGCTPGValidation/scripts/check_command_status.sh $statusProduceTest $STAGE_NAME
+                        } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
                         '''
                     }
                 }
@@ -442,7 +450,9 @@ pipeline {
                         } >> log_Jenkins 2> >(tee -a log_Jenkins out_err)
                         
                         # If the script displayHistos.py fails, the pipeline stops
+                        {
                         ../HGCTPGValidation/scripts/check_command_status.sh $statusDisplay $STAGE_NAME
+                        } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
                         '''
                     }
                 }
@@ -467,7 +477,9 @@ pipeline {
                 } >> log_Jenkins 2> >(tee -a log_Jenkins out_err)
                 
                 # If the script displayHistos.py fails, the pipeline stops
+                {
                 ./HGCTPGValidation/scripts/check_command_status.sh $statusGeomCheck $STAGE_NAME
+                } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
                 '''
             }
         }
