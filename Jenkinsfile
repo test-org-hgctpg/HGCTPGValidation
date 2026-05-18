@@ -304,7 +304,9 @@ pipeline {
                 } >> log_Jenkins 2> >(tee -a log_Jenkins out_err) # the std_err is redirected to log_Jenkins and to out_err
                 
                 # If the script installCMSSW_global.sh fails, the pipeline stops
+                {
                 ./HGCTPGValidation/scripts/check_command_status.sh $statusInstallTest $STAGE_NAME
+                } >> log_Jenkins
                 '''
             }
         }
