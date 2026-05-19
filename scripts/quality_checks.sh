@@ -19,7 +19,7 @@ scram build code-checks
 scram build code-format
 GIT_STATUS=`git status --porcelain`
 if [ ! -z "$GIT_STATUS" ]; then
-    echo "Code-checks or code-format failed." 1>&2
+    echo "Code-checks or code-format failed." >&2
     exit 1;
 fi
 echo '    '
