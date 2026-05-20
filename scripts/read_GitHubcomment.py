@@ -19,6 +19,7 @@ yaml.indent(mapping=4, sequence=6, offset=4)
 import re
 
 def update_configs(new_data, default_data):
+    print("==> Writing new configution from GitHub PR comment.")
     if 'parameters' in default_data and 'parameters' in new_data:
         default_params = default_data['parameters']
         override_params = new_data['parameters']
