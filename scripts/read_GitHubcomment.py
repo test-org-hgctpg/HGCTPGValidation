@@ -118,10 +118,8 @@ def main(tmpFile, defaultSubsetFile):
             for block in parsed_blocks[0:]:
                 if "shortName" in block: # process the new configurations
                     update_configs(block, default_data)
-                    print(f"==> Writing new configuration from GitHub PR comment.")
                 elif "subsetName" in block: # process the subset configuration
                     subsetName = update_subsets(block, default_data, defaultSubsetFile)
-                    print(f"==> Writing new subset name from GitHub PR comment.")
                 else:
                     raise Exception(f"\n\n The new configurations are not correct.\n Please check the spelling of the key words shortName and subsetName in the PR comment.\n\n")
     
