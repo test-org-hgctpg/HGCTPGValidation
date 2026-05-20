@@ -19,7 +19,6 @@ yaml.indent(mapping=4, sequence=6, offset=4)
 import re
 
 def update_configs(new_data, default_data):
-    print("==> Writing new configution from GitHub PR comment.")
     if 'parameters' in default_data and 'parameters' in new_data:
         default_params = default_data['parameters']
         override_params = new_data['parameters']
@@ -119,8 +118,10 @@ def main(tmpFile, defaultSubsetFile):
             for block in parsed_blocks[0:]:
                 if "shortName" in block: # process the new configurations
                     update_configs(block, default_data)
+                    print(f"==> Writing new configuration from GitHub PR comment.")
                 elif "subsetName" in block: # process the subset configuration
                     subsetName = update_subsets(block, default_data, defaultSubsetFile)
+                    print(f"==> Writing new subset name from GitHub PR comment.")
                 else:
                     raise Exception(f"\n\n The new configurations are not correct.\n Please check the spelling of the key words shortName and subsetName in the PR comment.\n\n")
     
