@@ -7,7 +7,7 @@
 if [ $1 -gt 0 ];
 then
     echo ' Error in stage ' $2 ', with status=' $1
-    cat ./out_err >&2
+    cat ../../../out_err >&2
     exit $1
 else
     echo ' The stage ' $2 ' completed successufully!'
