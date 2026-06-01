@@ -224,8 +224,13 @@ pipeline {
                     statusSplitConfigFiles=$?
                     } >> log_Jenkins 2> >(tee -a log_Jenkins out_err)
                     
+                    # Move to the top directory
+                    cd ..
+                    
+                    {
                     # If the script split_configFiles.py fails, the pipeline stops
                      ../HGCTPGValidation/scripts/check_command_status.sh $statusSplitConfigFiles $STAGE_NAME
+                    } >> log_Jenkins 2> >(tee -a log_Jenkins 1>&2)
                     '''
                     }
                 }
@@ -385,9 +390,11 @@ pipeline {
                         statusProduceRef=$?
                         } >> log_Jenkins 2> >(tee -a log_Jenkins out_err)
                         
+                        # Move to the top directory
+                        cd ../../../
+                        
                         # If the script produceData_multiconfiguration.py fails, the pipeline stops
                         {
-                        cd ../../../
                         ./HGCTPGValidation/scripts/check_command_status.sh $statusProduceRef $STAGE_NAME
                         } >> log_Jenkins 2> >(tee -a log_Jenkins 1>&2)
                         '''
@@ -416,9 +423,11 @@ pipeline {
                         statusProduceTest=$?
                         } >> log_Jenkins 2> >(tee -a log_Jenkins out_err)
                         
+                        # Move to the top directory
+                        cd ../../../
+                        
                         # If the script produceData_multiconfiguration.py fails, the pipeline stops
                         {
-                        cd ../../../
                         ./HGCTPGValidation/scripts/check_command_status.sh $statusProduceTest $STAGE_NAME
                         } >> log_Jenkins 2> >(tee -a log_Jenkins 1>&2)
                         '''
@@ -451,9 +460,11 @@ pipeline {
                         statusDisplay=$?
                         } >> log_Jenkins 2> >(tee -a log_Jenkins out_err)
                         
+                        # Move to the top directory
+                        cd ..
+                        
                         # If the script displayHistos.py fails, the pipeline stops
                         {
-                        cd ..
                         ./HGCTPGValidation/scripts/check_command_status.sh $statusDisplay $STAGE_NAME
                         } >> log_Jenkins 2> >(tee -a log_Jenkins 1>&2)
                         '''
