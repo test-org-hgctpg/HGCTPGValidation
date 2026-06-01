@@ -229,7 +229,7 @@ pipeline {
                     
                     {
                     # If the script split_configFiles.py fails, the pipeline stops
-                     ../HGCTPGValidation/scripts/check_command_status.sh $statusSplitConfigFiles $STAGE_NAME
+                    ./HGCTPGValidation/scripts/check_command_status.sh $statusSplitConfigFiles $STAGE_NAME
                     } >> log_Jenkins 2> >(tee -a log_Jenkins 1>&2)
                     '''
                     }
