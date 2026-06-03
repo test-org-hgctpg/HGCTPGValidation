@@ -3,5 +3,5 @@ description:
     These parameters are used by the Jenkins job
     validating the new development in the validation code
 parameters:
-    cmsswRemote: test-org-hgctpg
+    cmsswRemote: hgc-tpg
     cmsswBranch: hgc-tpg-devel-CMSSW_16_1_0_pre2
