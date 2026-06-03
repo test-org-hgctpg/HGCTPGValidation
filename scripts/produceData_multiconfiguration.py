@@ -39,8 +39,7 @@ def run_cmsDriver(configdata, release, exec_flag):
     print("====> FILE ", script_file)
     
     INTERVAL=int(10)
-    #RSS_limit=int(10000000)
-    RSS_limit=int(10000)
+    RSS_limit=int(10000000)
     print("INTERVAL=", INTERVAL)
     print("RSS_limit=", RSS_limit)
     
