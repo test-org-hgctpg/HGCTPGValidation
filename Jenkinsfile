@@ -488,7 +488,7 @@ pipeline {
                 set +x
                 ./HGCTPGValidation/scripts/geom_check.sh ${TEST_RELEASE} ${LABEL_TEST}
                 statusGeomCheck=$?
-                } >> log_Jenkins 2> >(tee -a log_Jenkins out_err)
+                } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                 
                 # If the script displayHistos.py fails, the pipeline stops
                 {
