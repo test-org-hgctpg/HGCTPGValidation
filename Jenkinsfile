@@ -210,9 +210,6 @@ pipeline {
                     {
                     set +x
                     echo '\n==> Set config files for specific release ======================='
-                    
-                    ./HGCTPGValidation/scripts/remove_outerr.sh
-                    
                     } >> log_Jenkins 1>&2> >(tee -a log_Jenkins >&2)
                     '''
                     sh '''#!/usr/bin/env bash
@@ -222,7 +219,7 @@ pipeline {
                     source ../HGCTPGValidation/env_install.sh
                     python ../HGCTPGValidation/scripts/split_configFiles.py --releaseName ${REF_RELEASE}
                     statusSplitConfigFiles=$?
-                    } >> log_Jenkins 2> >(tee -a log_Jenkins out_err)
+                    } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                     
                     # Move to the top directory
                     cd ..
@@ -296,9 +293,6 @@ pipeline {
                 {
                 set +x
                 echo '\n==> Install CMSSW Test release ============================'
-                
-                ./HGCTPGValidation/scripts/remove_outerr.sh
-                
                 } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
                 '''
                 sh '''#!/usr/bin/env bash
@@ -306,7 +300,7 @@ pipeline {
                 set +x
                 ./HGCTPGValidation/scripts/installCMSSW_global.sh $SCRAM_ARCH $REF_RELEASE $REMOTE $BASE_REMOTE $CHANGE_BRANCH $CHANGE_TARGET ${LABEL_TEST}
                 statusInstallTest=$?
-                } >> log_Jenkins 2> >(tee -a log_Jenkins out_err) # the std_err is redirected to log_Jenkins and to out_err
+                } >> log_Jenkins 2> >(tee -a log_Jenkins >&2) # the stderr is redirected to log_Jenkins and to stderr
                 
                 # If the script installCMSSW_global.sh fails, the pipeline stops
                 {
@@ -321,9 +315,6 @@ pipeline {
                 {
                 set +x
                 echo '\n==> Quality Checks ============================'
-                
-                ./HGCTPGValidation/scripts/remove_outerr.sh
-                
                 } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
                 '''
                 sh '''#!/usr/bin/env bash
@@ -331,7 +322,7 @@ pipeline {
                 set +x
                 ./HGCTPGValidation/scripts/quality_checks.sh ${REF_RELEASE} ${LABEL_TEST}
                 statusQualityChecks=$?
-                } >> log_Jenkins 2> >(tee -a log_Jenkins out_err)
+                } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                 
                 # If the script quality_checks.sh fails, the pipeline stops
                 {
@@ -348,9 +339,6 @@ pipeline {
                         {
                         set +x
                         echo '==> Install Ref Release ============================'
-                        
-                        ./HGCTPGValidation/scripts/remove_outerr.sh
-                        
                         } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
                         '''
                         sh '''#!/usr/bin/env bash
@@ -358,7 +346,7 @@ pipeline {
                         set +x
                         ./HGCTPGValidation/scripts/installCMSSW_global.sh $SCRAM_ARCH $REF_RELEASE $BASE_REMOTE $BASE_REMOTE $CHANGE_TARGET $CHANGE_TARGET ${LABEL_REF}
                         statusInstallRef=$?
-                        } >> log_Jenkins 2> >(tee -a log_Jenkins out_err) # the std_err is redirected to log_Jenkins and to out_err
+                        } >> log_Jenkins 2> >(tee -a log_Jenkins >&2) # the stderr is redirected to log_Jenkins and to stderr
                         
                         # If the script installCMSSW_global.sh fails, the pipeline stops
                         {
@@ -373,9 +361,6 @@ pipeline {
                         {
                         set +x
                         echo '\n==> Produce reference data ======================='
-                        
-                        ./HGCTPGValidation/scripts/remove_outerr.sh
-                        
                         } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
                         '''
                         sh '''#!/usr/bin/env bash
@@ -388,7 +373,7 @@ pipeline {
                         echo "label=" ${LABEL_REF}
                         python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_REF}
                         statusProduceRef=$?
-                        } >> log_Jenkins 2> >(tee -a log_Jenkins out_err)
+                        } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                         
                         # Move to the top directory
                         cd ../../../
@@ -406,9 +391,6 @@ pipeline {
                         {
                         set +x
                         echo '\n==> Produce test data ======================='
-                        
-                        ./HGCTPGValidation/scripts/remove_outerr.sh
-                        
                         } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
                         '''
                         sh '''#!/usr/bin/env bash
@@ -421,7 +403,7 @@ pipeline {
                         echo "label=" ${LABEL_TEST}
                         python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_TEST}
                         statusProduceTest=$?
-                        } >> log_Jenkins 2> >(tee -a log_Jenkins out_err)
+                        } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                         
                         # Move to the top directory
                         cd ../../../
@@ -439,9 +421,6 @@ pipeline {
                         {
                         set +x
                         echo '\n==> Display ======================='
-                        
-                        ./HGCTPGValidation/scripts/remove_outerr.sh
-                        
                         } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
                         '''
                         sh '''#!/usr/bin/env bash
@@ -458,7 +437,7 @@ pipeline {
                         echo "PR_TITLE" "$CHANGE_TITLE (from $CHANGE_AUTHOR, $CHANGE_URL)"
                         python ../HGCTPGValidation/scripts/displayHistos.py --subsetconfig ${CONFIG_SUBSET} --refdir ${REF_RELEASE}_HGCalTPGValidation_${LABEL_REF}/src --testdir ${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src --datadir ${DATA_DIR} --prnumber $CHANGE_ID --prtitle "$CHANGE_TITLE (from $CHANGE_AUTHOR, $CHANGE_URL)"
                         statusDisplay=$?
-                        } >> log_Jenkins 2> >(tee -a log_Jenkins out_err)
+                        } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                         
                         # Move to the top directory
                         cd ..
@@ -478,9 +457,6 @@ pipeline {
                 {
                 set +x
                 echo '\n==> Geom Check ======================='
-                
-                ./HGCTPGValidation/scripts/remove_outerr.sh
-                
                 } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
                 '''
                 sh '''#!/usr/bin/env bash
