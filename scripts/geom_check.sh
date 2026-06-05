@@ -21,7 +21,7 @@ if [ -f test_triggergeom.root ];
 then
     echo "The ROOT file test_triggergeom.root was created successfully."
 else
-    echo "The ROOT file was not created."
+    echo "The ROOT file was not created." >&2
     exit 1;
 fi
 echo '    '
