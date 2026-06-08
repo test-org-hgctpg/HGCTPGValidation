@@ -432,7 +432,14 @@ def createWebPageLite(refconfigname, testconfigname, refdir, testdir, imgdir):
                     short_histo_name = short_histo_name.replace("bcl_", "")
                 
                 histo_2 = h2.Get(histo_name)
+                # Check if it's a histogram (TH1 or derived class)
+                if not histo_2 or not isinstance(histo_2, ROOT.TH1):
+                    raise KeyError(f"Histogram '{histo_name}' from '{input_ref_file}' not found or not a valid histogram")
+                
                 histo_1 = h1.Get(histo_name)
+                # Check if it's a histogram (TH1 or derived class)
+                if not histo_1 or not isinstance(histo_1, ROOT.TH1):
+                    raise KeyError(f"Histogram '{histo_name}' from '{input_test_file}' not found or not a valid histogram")
                 
                 # Change the name of the histograms
                 histo_2.SetName(histo_name + " - ref")
