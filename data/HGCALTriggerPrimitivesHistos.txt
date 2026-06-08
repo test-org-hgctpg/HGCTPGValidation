@@ -15,7 +15,7 @@ tc_layer
 Histogram cl related
 
 cl_n
-cl_mipPt
+cl_mipPt_test
 cl_pt 
 cl_energy 
 cl_eta
@@ -84,7 +84,7 @@ tower_iPhi
 
 Histogram Time Memory
 
-h_VFE
+h_VFE_test
 h_Conc
 h_BackendL1
 h_BackendL2
