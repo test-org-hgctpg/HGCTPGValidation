@@ -87,6 +87,8 @@ def main(subsetconfig, release):
               # the config_type=1 is set for reading parameters for running CMSSW HGCal TPG code
               config_data=read_config(path, value, 1)
               confName=config_data['shortName']
+              origin=config_data['origin']
+              print(f"This is a {origin} configuration")
               # Generate and run the python configuration file with cmsDriver.py only if the file doesn't exist
               if os.path.exists(f"hgcal_tpg_validation_{confName}_{release}_USER.py"):
                 print("Python file for the config ", value, ":", key, "was already created.")  

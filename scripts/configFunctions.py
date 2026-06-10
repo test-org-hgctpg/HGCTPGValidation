@@ -31,7 +31,8 @@ def check_schema_config(config, filename):
         "shortName": str,
         "longName": str,
         "description": str,
-        "parameters": {
+        "origin": str,
+        "parameters", default='default': str,
             "nbOfEvents": int,
             "conditions": str,
             "beamspot": str,
