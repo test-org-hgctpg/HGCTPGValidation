@@ -15,7 +15,7 @@ tc_layer
 Histogram cl related
 
 cl_n
-cl_mipPt_test
+cl_mipPt
 cl_pt 
 cl_energy 
 cl_eta
