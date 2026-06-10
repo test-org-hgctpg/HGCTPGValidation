@@ -152,6 +152,7 @@ pipeline {
                         set +x
                         if [ -d "./HGCTPGValidation" ] 
                         then
+                            echo "Remove previsous HGCTPGValidation package."
                             rm -rf HGCTPGValidation
                         fi
                         git clone -b ${BRANCH_HGCTPGVAL} https://github.com/${REMOTE_HGCTPGVAL}/HGCTPGValidation HGCTPGValidation
