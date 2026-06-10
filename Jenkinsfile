@@ -155,8 +155,10 @@ pipeline {
                             echo "Remove previsous HGCTPGValidation package."
                             rm -rf HGCTPGValidation
                         fi
+                        ls -lrt
                         pwd
                         git clone -b ${BRANCH_HGCTPGVAL} https://github.com/${REMOTE_HGCTPGVAL}/HGCTPGValidation HGCTPGValidation
+                        ls -lrt
                         source HGCTPGValidation/env_install.sh
                         } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                         '''
