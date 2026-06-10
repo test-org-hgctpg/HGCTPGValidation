@@ -44,6 +44,20 @@ def RenderHisto(histo, canvas):
     else: # TH1
         gStyle.SetOptStat(111110+histo_name_flag)
 
+def validate_histogram(histo, histo_name):
+    """Check if histogram exists, is TH1, and not empty"""
+    
+    if not histo or not isinstance(histo, ROOT.TH1):
+        raise KeyError(f"Histogram '{histo_name}' not found or not a TH1 histogram")
+
+    if not hasattr(histo, 'GetEntries'):
+        raise KeyError(f"Histogram '{histo_name}' has no GetEntries method")
+
+    if histo.GetEntries() == 0:
+        raise ValueError(f"Histogram '{histo_name}' is empty (has zero entries)")
+    
+    return True
+
 # new Root Style for el9
 def initRootStyle():
     gStyle.SetCanvasBorderMode(1)
@@ -433,17 +447,29 @@ def createWebPageLite(refconfigname, testconfigname, refdir, testdir, imgdir):
                 
                 histo_2 = h2.Get(histo_name)
                 # Check if it's a histogram (TH1 or derived class)
-                if not histo_2 or not isinstance(histo_2, ROOT.TH1):
-                    raise KeyError(f"Histogram '{histo_name}' from '{input_ref_file}' not found or not a valid histogram")
+                #if not histo_2 or not isinstance(histo_2, ROOT.TH1):
+                #    raise KeyError(f"Histogram '{histo_name}' from '{input_ref_file}' not found or not a valid histogram")
                 
                 histo_1 = h1.Get(histo_name)
                 # Check if it's a histogram (TH1 or derived class)
-                if not histo_1 or not isinstance(histo_1, ROOT.TH1):
-                    raise KeyError(f"Histogram '{histo_name}' from '{input_test_file}' not found or not a valid histogram")
+                #if not histo_1 or not isinstance(histo_1, ROOT.TH1):
+                #    raise KeyError(f"Histogram '{histo_name}' from '{input_test_file}' not found or not a valid histogram")
                 
-                # Change the name of the histograms
-                histo_2.SetName(histo_name + " - ref")
-                histo_1.SetName(histo_name + " - test")
+                try:
+                    validate_histogram(histo_1, histo_name)
+                    # Change the name of the histogram
+                    histo_1.SetName(histo_name + " - test")
+                except (KeyError, ValueError) as e:
+                    print(f"Error with {histo_name}: {e}")
+                    raise
+                
+                try:
+                    validate_histogram(histo_2, histo_name)
+                    # Change the name of the histogram
+                    histo_2.SetName(histo_name + " - ref")
+                except (KeyError, ValueError) as e:
+                    print(f"Error with {histo_name}: {e}")
+                    raise
                 
                 gif_name = imgdir + '/' + histo_name + ".gif"
                 gif_name_index = histo_name + ".gif"
