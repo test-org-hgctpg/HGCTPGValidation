@@ -84,7 +84,7 @@ tower_iPhi
 
 Histogram Time Memory
 
-h_VFE
+h_VFE_test
 h_Conc
 h_BackendL1
 h_BackendL2
