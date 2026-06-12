@@ -105,13 +105,13 @@ def main(tmpFile, defaultSubsetFile):
         try:
             parsed_blocks = [yaml.load(block) for block in yaml_blocks]
         except ScannerError as e:
-            raise Exception(f"\n\n YAML ScannerError: likely caused by an invalid character or bad indentation in the PR comment. \n\n {e}")
+            raise Exception(f"\n\n YAML ScannerError in configuration coming from GitHub comment: likely caused by an invalid character or bad indentation in the PR comment. \n\n {e}")
         except ParserError as e:
-            raise Exception(f"\n\n YAML ParserError: the configuration from the PR comment has a syntax issue (ex. different quotation marks). \n\n {e}")
+            raise Exception(f"\n\n YAML ParserError in configuration coming from GitHub comment: the configuration from the PR comment has a syntax issue (ex. different quotation marks). \n\n {e}")
         except ConstructorError as e:
-            raise Exception(f"\n\n YAML ConstructorError: The YAML parser could not create a Python representation from the YAML element (scalar, list, mapping, or tagged object).\n\n {e}")
+            raise Exception(f"\n\n YAML ConstructorError in configuration coming from GitHub comment: The YAML parser could not create a Python representation from the YAML element (scalar, list, mapping, or tagged object).\n\n {e}")
         except YAMLError as e:
-            raise Exception(f"\n\n General YAML Error.\n\n {e}")
+            raise Exception(f"\n\n General YAML Error in configuration coming from GitHub comment.\n\n {e}")
         except Exception as e:
             raise Exception(f"\n\n An unexpected error occurred while reading the PR comment. \n\n {e}")
         
