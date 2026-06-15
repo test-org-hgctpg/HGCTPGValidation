@@ -270,7 +270,7 @@ pipeline {
                                 set +x
                                 cd test_dir
                                 source ../HGCTPGValidation/env_install.sh
-                                python ../HGCTPGValidation/scripts/read_GitHubcomment.py --fileGitHub comment.tmp --fileSubset default_multi_subset.yaml
+                                python ../HGCTPGValidation/scripts/read_GitHubcomment.py --fileGitHub comment.tmp --fileSubset default_multi_subset.yaml  > >(tee -a ../log_Jenkins) 2> >(tee -a ../log_Jenkins >&2)
                                 '''
                             ).trim()
                             if (!env.CONFIG_SUBSET_GITHUB) {
