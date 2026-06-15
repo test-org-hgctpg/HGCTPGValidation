@@ -65,7 +65,7 @@ def update_subsets(new_data, default_data, defaultSubsetFile):
     defaultConfig["description"] = newSubsetDescription
     
     # New file name
-    filename = f"{new_data['subsetName']}.yaml"
+    filename = f"{newSubsetName}.yaml"
     with open(f"../HGCTPGValidation/config/{filename}","w") as f:
         yaml.dump(defaultConfig, f)
         yaml.explicit_start = False # Needed in order to not use --- before the new set of configurations
