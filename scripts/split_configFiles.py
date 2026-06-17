@@ -15,30 +15,30 @@ import os
 import re
 
 def main(releaseName):
-    print(releaseName)
+    print(f"The default configuration files are rewritten with the configurations specific for the release {releaseName}")
     fileName = f"../HGCTPGValidation/config/config_{releaseName}.yaml"
     # Load the default.yaml
     if os.path.exists(fileName):
-	    with open(fileName, "r") as file:
-	        configs = file.read()
-	        
-	    # Split on '---' and filter out empty parts
-	    yaml_blocks = [part.strip() for part in configs.split('---') if part.strip()]
-	        
-	    # Go through all parsed blocks
-	    try:
-	        parsed_blocks = [yaml.load(block) for block in yaml_blocks]
-	    except Exception as e:
-	        raise Exception(f"\n\n An unexpected error occurred while reading the configurations. \n\n {e}")
-	    
-	    if len(parsed_blocks) >= 1:
-	        for block in parsed_blocks[0:]:
-	            # Write the new configurations into separated files
-	            filename = f"{block['shortName']}.yaml"
-	            print(filename)
-	            with open(f"../HGCTPGValidation/config/{filename}", "w") as file:
-	                yaml.explicit_start = True
-	                yaml.dump(block, file)
+        with open(fileName, "r") as file:
+            configs = file.read()
+            
+        # Split on '---' and filter out empty parts
+        yaml_blocks = [part.strip() for part in configs.split('---') if part.strip()]
+            
+        # Go through all parsed blocks
+        try:
+            parsed_blocks = [yaml.load(block) for block in yaml_blocks]
+        except Exception as e:
+            raise Exception(f"\n\n An unexpected error occurred while reading the configurations. \n\n {e}")
+        
+        if len(parsed_blocks) >= 1:
+            for block in parsed_blocks[0:]:
+                # Write the new configurations into separated files
+                filename = f"{block['shortName']}.yaml"
+                print(filename)
+                with open(f"../HGCTPGValidation/config/{filename}", "w") as file:
+                    yaml.explicit_start = True
+                    yaml.dump(block, file)
     else:
         print(f"WARNING: The global configuration {fileName} doesn't exist. The default configurations files will be used.")
 
