@@ -44,6 +44,20 @@ def RenderHisto(histo, canvas):
     else: # TH1
         gStyle.SetOptStat(111110+histo_name_flag)
 
+def validate_histogram(histo, histo_name):
+    """Check if histogram exists, is TH1, and not empty"""
+    
+    if not histo or not isinstance(histo, ROOT.TH1):
+        raise KeyError(f"Histogram '{histo_name}' not found or not a TH1 histogram")
+
+    if not hasattr(histo, 'GetEntries'):
+        raise KeyError(f"Histogram '{histo_name}' has no GetEntries method")
+
+    if histo.GetEntries() == 0:
+        raise ValueError(f"Histogram '{histo_name}' is empty (has zero entries)")
+    
+    return True
+
 # new Root Style for el9
 def initRootStyle():
     gStyle.SetCanvasBorderMode(1)
@@ -433,6 +447,22 @@ def createWebPageLite(refconfigname, testconfigname, refdir, testdir, imgdir):
                 
                 histo_2 = h2.Get(histo_name)
                 histo_1 = h1.Get(histo_name)
+                
+                try:
+                    validate_histogram(histo_1, histo_name)
+                    # Change the name of the histogram
+                    histo_1.SetName(histo_name + " - test")
+                except (KeyError, ValueError) as e:
+                    print(f"Error with {histo_name}: {e}")
+                    raise
+                
+                try:
+                    validate_histogram(histo_2, histo_name)
+                    # Change the name of the histogram
+                    histo_2.SetName(histo_name + " - ref")
+                except (KeyError, ValueError) as e:
+                    print(f"Error with {histo_name}: {e}")
+                    raise
                 
                 # Change the name of the histograms
                 histo_2.SetName(histo_name + " - ref")
