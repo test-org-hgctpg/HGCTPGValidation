@@ -15,7 +15,7 @@ import os
 import re
 
 def main(releaseName):
-    print(releaseName)
+    print(f"The default configuration files are rewritten with the configurations specific for the release {releaseName}")
     fileName = f"../HGCTPGValidation/config/config_{releaseName}.yaml"
     # Load the default.yaml
     if os.path.exists(fileName):
