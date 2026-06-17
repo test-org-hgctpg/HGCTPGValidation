@@ -11,15 +11,10 @@ fi
 DATA_DIR=$1
 PRCHANGE_ID=$2
 
-set +x
-echo '==> Clean the working environment. ============================'
-exec >> log_Jenkins
-echo '==> Clean the working environment. ============================'
-
 # Remove the test_dir that contains the ROOT files from the CMSSW test and ref simulations
 if [ -d "./test_dir" ]
 then
-    echo "Directory test_dir exists."
+    echo "Remove previous directory test_dir."
     rm -rf test_dir
 fi
 
