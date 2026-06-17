@@ -31,6 +31,7 @@ def check_schema_config(config, filename):
         "shortName": str,
         "longName": str,
         "description": str,
+        "origin": str,
         "parameters": {
             "nbOfEvents": int,
             "conditions": str,
