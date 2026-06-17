@@ -12,16 +12,15 @@ REF_RELEASE=$1
 LABEL_TEST=$2
 
 set +x
-echo '===> Quality checks'
-exec >> log_Jenkins
-echo '===> Quality checks'
+
 source /cvmfs/cms.cern.ch/cmsset_default.sh
 cd test_dir/${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src
 scram build code-checks
 scram build code-format
 GIT_STATUS=`git status --porcelain`
 if [ ! -z "$GIT_STATUS" ]; then
-    echo "Code-checks or code-format failed."
+    echo "Code-checks or code-format failed." >&2
     exit 1;
 fi
 echo '    '
+
