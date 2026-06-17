@@ -12,11 +12,7 @@
 # $7 label "ref" or "test"
 
 set +x
-echo '==> Build CMSSW Test ========================='
-echo '===> InstallCMSSW Test Step'
-exec >> log_Jenkins
-echo '==> Build CMSSW Test ========================='
-echo '===> InstallCMSSW Test Step'
+
 cd test_dir
 
 set -e
@@ -40,15 +36,22 @@ echo "Label: " $label
 source /cvmfs/cms.cern.ch/cmsset_default.sh
 module purge
 # Install working directory for the release CMSSW $relversion
+echo "Install working directory for the release CMSSW " $relversion
 scramv1 p -n ${relversion}_HGCalTPGValidation_$label CMSSW $relversion
 cd ${relversion}_HGCalTPGValidation_$label/src
 eval `scramv1 runtime -sh`
+
 # Get the reference (target) branch from the base remote
+echo "Get the reference (target) branch from the base remote" >&2
+echo "=> cms-merge-topic" >&2
 git cms-merge-topic $baseremote:$branch_ref
+echo "=> git checkout" >&2
 git checkout -b local_$branch_ref $baseremote/$branch_ref
+
 # Merge the change branch into the reference branch
+echo "Merge the change branch into the reference branch" >&2
 git cms-merge-topic $remote:$branch
+
 # Compile
+echo "Start compiling" >&2
 scram b -j8
-
-
