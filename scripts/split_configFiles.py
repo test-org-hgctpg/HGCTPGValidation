@@ -1,3 +1,6 @@
+# This script splits the GitHub comment into configuration files
+# Usage: python ../HGCTPGValidation/scripts/split_configFiles.py --releaseName ${REF_RELEASE}
+
 # use ruamel.yaml because it keeps the formatting 
 # when using dump function
 from ruamel.yaml import YAML
