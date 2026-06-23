@@ -35,7 +35,7 @@ def update_configs(new_data, default_data):
     default_data['parameters'] = new_params
     
     # Merge header keys
-    default_data["shortName"] = new_data.get("shortName")
+    default_data["shortName"] = new_data.get("shortName").replace(' ', '_')
     default_data["longName"] = new_data.get("longName", new_data.get("shortName"))
     default_data["description"] = new_data.get("description", "Configuration provided by user")
     default_data["origin"] = new_data.get("origin", "GitHub") # set explicitly that this config was given in a GitHub comment
