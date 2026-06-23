@@ -50,6 +50,7 @@ def update_subsets(new_data, default_data, defaultSubsetFile):
     # Get the name of the new subset
     newSubsetName = new_data.get("subsetName").replace(' ', '_')
     newSubsetDescription = new_data.get("description", "Configuration provided by user")
+    newOrigin = new_data.get("origin", "GitHub") 
     # Get the new couple of subsets
     newSubset = new_data.get("configuration")
     
@@ -63,6 +64,7 @@ def update_subsets(new_data, default_data, defaultSubsetFile):
     defaultConfig = yaml.load(subsetConfig)
     defaultConfig["subsetName"] = newSubsetName
     defaultConfig["description"] = newSubsetDescription
+    defaultConfig["origin"] = newOrigin
     
     # New file name
     filename = f"{newSubsetName}.yaml"
