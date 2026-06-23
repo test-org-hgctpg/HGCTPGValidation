@@ -14,7 +14,7 @@ from configFunctions import check_schema_subset, check_schema_config, read_subse
 
 # Run cmsDriver
 def run_cmsDriver(configdata, release, exec_flag):
-    configName=configdata['shortName']
+    configName=configdata['shortName'].replace(' ', '_')
     nbEvents=configdata['parameters']['nbOfEvents']
     conditions=configdata['parameters']['conditions']
     beamspot=configdata['parameters']['beamspot']
@@ -86,7 +86,7 @@ def main(subsetconfig, release):
               # Read the config file corresponding to key:value
               # the config_type=1 is set for reading parameters for running CMSSW HGCal TPG code
               config_data=read_config(path, value, 1)
-              confName=config_data['shortName']
+              confName=config_data['shortName'].replace(' ', '_')
               origin=config_data['origin']
               print(f"This is a {origin} configuration")
               # Generate and run the python configuration file with cmsDriver.py only if the file doesn't exist
