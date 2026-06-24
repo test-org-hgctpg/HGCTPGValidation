@@ -88,7 +88,7 @@ def main(subsetconfig, release):
               config_data=read_config(path, value, 1)
               confName=config_data['shortName'].replace(' ', '_')
               origin=config_data['origin']
-              print(f"This is a {origin} configuration")
+              print(f"{confName} is a {origin} configuration.")
               # Generate and run the python configuration file with cmsDriver.py only if the file doesn't exist
               if os.path.exists(f"hgcal_tpg_validation_{confName}_{release}_USER.py"):
                 print("Python file for the config ", value, ":", key, "was already created.")  
@@ -110,9 +110,9 @@ def main(subsetconfig, release):
                     cmd =   f"-s 'hgcal_tpg_validation_{confName}_{release}_USER.py'"
                     result = subprocess.run(['bash', '-c', cmd], text=True)
                     if ( result.returncode == 0 ):
-                        print(f"{origin} configuration: The script hgcal_tpg_validation_{confName}_{release}_USER.py was created.")
+                        print(f"{origin} configuration {confName}: The script hgcal_tpg_validation_{confName}_{release}_USER.py was created.")
                     else:
-                        raise Exception(f"\n\n !!!! {origin} configuration: cmsDriver failed to execute! The script hgcal_tpg_validation_{confName}_{release}_USER.py has not been created! \n\n")
+                        raise Exception(f"\n\n !!!! {origin} configuration {confName}: cmsDriver failed to execute! The script hgcal_tpg_validation_{confName}_{release}_USER.py has not been created! \n\n")
             else:
               print("Go for the next configuration.")
 
