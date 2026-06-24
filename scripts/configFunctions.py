@@ -21,8 +21,8 @@ def check_schema_subset(config, filename):
     try:
       validated_config_schema = config_schema.validate(config)
     except SchemaError as se:
-      print(f"\n\n === The configuration format of the subset {config['subsetName']} coming from {config['origin']} is not correct. Please check the subset file {filename}. === \n\n {se}")
-      raise Exception(f"\n\n === The configuration format of the subset {config['subsetName']} coming from {config['origin']} is not correct. Please check the subset file {filename}. === \n\n {se}")
+      print(f"\n\n === The configuration format of the subset {config['subsetName']} coming from {config['origin']} is not correct. === \n\n {se}")
+      raise Exception(f"\n\n === The configuration format of the subset {config['subsetName']} coming from {config['origin']} is not correct. === \n\n {se}")
 
     return validated_config_schema
     
@@ -50,8 +50,8 @@ def check_schema_config(config, filename):
     try:
         validated_config_schema = config_schema.validate(config)
     except SchemaError as se:
-        print(f"\n\n === The configuration format {config['shortName']} coming from {config['origin']} is not correct. Please check the file {filename}. === \n\n {se}")
-        raise Exception(f"\n\n The configuration format {config['shortName']} coming from {config['origin']} is not correct. Please check the file {filename}. === \n\n {se}")
+        print(f"\n\n === The configuration format {config['shortName']} coming from {config['origin']} is not correct. === \n\n {se}")
+        raise Exception(f"\n\n The configuration format {config['shortName']} coming from {config['origin']} is not correct. === \n\n {se}")
     
     return validated_config_schema
     
@@ -69,8 +69,8 @@ def check_schema_paramValJob(config, filename):
     try:
       validated_config_schema = config_schema.validate(config)
     except SchemaError as se:
-      print(f"\n\n === The configuration format is not correct. Please check the file {filename}. === \n\n {se}")
-      raise Exception(f"\n\n === The configuration format is not correct. Please check the file {filename}. === \n\n {se}")
+      print(f"\n\n === The configuration format is not correct. === \n\n {se}")
+      raise Exception(f"\n\n === The configuration format is not correct. === \n\n {se}")
     
     return validated_config_schema
     
