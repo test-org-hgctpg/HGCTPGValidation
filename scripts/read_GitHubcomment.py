@@ -41,7 +41,7 @@ def update_configs(new_data, default_data):
     default_data["origin"] = new_data.get("origin", "GitHub") # set explicitly that this config was given in a GitHub comment
 
     # Write the new configurations into separated files
-    filename = f"{new_data['shortName']}.yaml"
+    filename = f"{default_data['shortName']}.yaml"
     with open(f"../HGCTPGValidation/config/{filename}", "w") as file:
         yaml.explicit_start = True
         yaml.dump(default_data, file)
