@@ -364,7 +364,7 @@ pipeline {
                         sh '''#!/usr/bin/env bash
                         {
                         set +x
-                        echo '\n==> Produce reference data ======================='
+                        echo '\n==> Produce reference data testing ======================='
                         } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
                         '''
                         sh '''#!/usr/bin/env bash
