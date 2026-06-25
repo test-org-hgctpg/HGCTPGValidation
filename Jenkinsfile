@@ -378,7 +378,6 @@ pipeline {
                         echo "label=" ${LABEL_REF}
                         python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_REF}
                         statusProduceRef=$?
-                        #} >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                         } >> log_Jenkins 2> >(tee -a log_Jenkins out_err)
                         
                         # Move to the top directory
@@ -410,7 +409,6 @@ pipeline {
                         echo "label=" ${LABEL_TEST}
                         python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_TEST}
                         statusProduceTest=$?
-                        #} >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                         } >> log_Jenkins 2> >(tee -a log_Jenkins out_err)
                         
                         # Move to the top directory
