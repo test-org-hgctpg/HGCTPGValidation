@@ -365,7 +365,11 @@ pipeline {
                         {
                         set +x
                         echo '\n==> Produce reference data ======================='
-                        rm out_err
+                        
+                        if [ -f "out_err" ]; then
+                            echo "Remove the last created out_err."
+                            rm out_err
+                        fi
                         } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
                         '''
                         sh '''#!/usr/bin/env bash
@@ -396,7 +400,11 @@ pipeline {
                         {
                         set +x
                         echo '\n==> Produce test data ======================='
-                        rm out_err
+                        
+                        if [ -f "out_err" ]; then
+                            echo "Remove the last created out_err."
+                            rm out_err
+                        fi
                         } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
                         '''
                         sh '''#!/usr/bin/env bash
