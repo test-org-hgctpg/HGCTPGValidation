@@ -76,7 +76,7 @@ def check_schema_paramValJob(config, filename):
     
 # Read the file with configurations sets
 def read_subset(path, config):
-    filename = path + config + '.yaml'
+    filename = path + config.replace(' ', '_') + '.yaml'
 
     try:
         with open(filename) as f:
@@ -118,7 +118,7 @@ def get_listOfConfigs(path, confSubsets):
 # config_type = 1 config files with the parameters for cmsDriver.py
 # config_type = 2 config file with the parameters for the validation of the validation code 
 def read_config(path, configuration, config_type):
-    filename = path + configuration + '.yaml'
+    filename = path + configuration.replace(' ', '_')  + '.yaml'
 
     try:
         with open(filename) as f:
