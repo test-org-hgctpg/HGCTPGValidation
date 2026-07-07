@@ -13,6 +13,7 @@ def check_schema_subset(config, filename):
     config_schema = Schema({
         "subsetName": str,
         "description": str,
+        "origin": str,
         "configuration": 
             [{"ref": str, "test": str}]
     })
@@ -20,8 +21,8 @@ def check_schema_subset(config, filename):
     try:
       validated_config_schema = config_schema.validate(config)
     except SchemaError as se:
-      print(f"\n\n === The configuration format is not correct. Please check the file {filename}. === \n\n {se}")
-      raise Exception(f"\n\n === The configuration format is not correct. Please check the file {filename}. === \n\n {se}")
+      print(f"\n\n === The configuration format of the subset {config['subsetName']} coming from {config['origin']} is not correct. === \n\n {se}")
+      raise Exception(f"\n\n === The configuration format of the subset {config['subsetName']} coming from {config['origin']} is not correct. === \n\n {se}")
 
     return validated_config_schema
     
@@ -31,6 +32,7 @@ def check_schema_config(config, filename):
         "shortName": str,
         "longName": str,
         "description": str,
+        "origin": str,
         "parameters": {
             "nbOfEvents": int,
             "conditions": str,
@@ -48,8 +50,8 @@ def check_schema_config(config, filename):
     try:
         validated_config_schema = config_schema.validate(config)
     except SchemaError as se:
-        print(f"\n\n === The configuration format is not correct. Please check the file {filename}. === \n\n {se}")
-        raise Exception(f"\n\n The configuration format is not correct. Please check the file {filename}. === \n\n {se}")
+        print(f"\n\n === The configuration format {config['shortName']} coming from {config['origin']} is not correct. === \n\n {se}")
+        raise Exception(f"\n\n The configuration format {config['shortName']} coming from {config['origin']} is not correct. === \n\n {se}")
     
     return validated_config_schema
     
@@ -67,14 +69,14 @@ def check_schema_paramValJob(config, filename):
     try:
       validated_config_schema = config_schema.validate(config)
     except SchemaError as se:
-      print(f"\n\n === The configuration format is not correct. Please check the file {filename}. === \n\n {se}")
-      raise Exception(f"\n\n === The configuration format is not correct. Please check the file {filename}. === \n\n {se}")
+      print(f"\n\n === The configuration format is not correct. === \n\n {se}")
+      raise Exception(f"\n\n === The configuration format is not correct. === \n\n {se}")
     
     return validated_config_schema
     
 # Read the file with configurations sets
 def read_subset(path, config):
-    filename = path + config + '.yaml'
+    filename = path + config.replace(' ', '_') + '.yaml'
 
     try:
         with open(filename) as f:
@@ -116,7 +118,7 @@ def get_listOfConfigs(path, confSubsets):
 # config_type = 1 config files with the parameters for cmsDriver.py
 # config_type = 2 config file with the parameters for the validation of the validation code 
 def read_config(path, configuration, config_type):
-    filename = path + configuration + '.yaml'
+    filename = path + configuration.replace(' ', '_')  + '.yaml'
 
     try:
         with open(filename) as f:
