@@ -123,7 +123,7 @@ def main(tmpFile, defaultSubsetFile):
                     update_configs(block, default_data)
                 elif "subsetName" in block: # process the subset configuration
                     subsetName = update_subsets(block, default_data, defaultSubsetFile)
-                else:
+                else: # If len>=1 there should be a shortName or subsetName defined in the PR comment
                     raise Exception(f"\n\n The new configurations are not correct.\n Please check the spelling of the key words shortName and subsetName in the PR comment.\n\n")
     
     print(subsetName)
