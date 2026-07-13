@@ -69,8 +69,8 @@ def check_schema_paramValJob(config, filename):
     try:
       validated_config_schema = config_schema.validate(config)
     except SchemaError as se:
-      print(f"\n\n === The configuration format of the configuration {config} is not correct. === \n\n {se}")
-      raise Exception(f"\n\n === The configuration format of the configuration {config} is not correct. === \n\n {se}")
+      print(f"\n\n === The format of the configuration {config} used for the validation of the validation code is not correct. === \n\n {se}")
+      raise Exception(f"\n\n === The format of the configuration {config} used for the validation of the validation code is not correct. === \n\n {se}")
     
     return validated_config_schema
     
