@@ -18,7 +18,7 @@ import os
 import re
 
 def main(releaseName):
-    print(f"The default configuration files are rewritten with the configurations specific for the release {releaseName}")
+    print(f"The default configuration files will be rewritten with the configurations specific for the release {releaseName}")
     fileName = f"../HGCTPGValidation/config/config_{releaseName}.yaml"
     # Load the default.yaml
     if os.path.exists(fileName):
@@ -43,7 +43,7 @@ def main(releaseName):
                     yaml.explicit_start = True
                     yaml.dump(block, file)
     else:
-        print(f"WARNING: The global configuration {fileName} doesn't exist. The default configurations files will be used.")
+        print(f"WARNING: The global configuration {fileName} for the release {releaseName} doesn't exist. The default configurations files will be used.")
 
 if __name__ == "__main__":
     import optparse
