@@ -74,7 +74,7 @@ def update_subsets(new_data, default_data, defaultSubsetFile):
         yaml.dump(newSubset, f)
     
     # The new subset name will overwrite the environment variable CONFIG_SUBSET
-    return(newSubsetName)
+    return(newSubsetName)q
     
 def extract_yaml_block(comment):
     # Match text between ```yaml and ```
@@ -124,7 +124,7 @@ def main(tmpFile, defaultSubsetFile):
                 elif "subsetName" in block: # process the subset configuration
                     subsetName = update_subsets(block, default_data, defaultSubsetFile)
                 else: # If len>=1 there should be a shortName or subsetName defined in the PR comment
-                    raise Exception(f"\n\n The new configurations are not correct.\n Please check the spelling of the key words shortName and subsetName in the PR comment.\n\n")
+                    raise Exception(f"\n\n The new configurations coming from the PR comment are not correct.\n There should be key words shortName and/or subsetName.\n\n")
     
     print(subsetName)
 
