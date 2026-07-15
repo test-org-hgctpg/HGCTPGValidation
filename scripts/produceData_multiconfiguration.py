@@ -86,7 +86,7 @@ def main(subsetconfig, release):
               # Read the config file corresponding to key:value
               # the config_type=1 is set for reading parameters for running CMSSW HGCal TPG code
               config_data=read_config(path, value, 1)
-              confName=config_data['shortName'].replace(' ', '_')
+              confName=config_data['shortName']
               origin=config_data['origin']
               print(f"{confName} is a {origin} configuration.")
               # Generate and run the python configuration file with cmsDriver.py only if the file doesn't exist
