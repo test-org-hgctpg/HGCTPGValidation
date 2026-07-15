@@ -23,7 +23,11 @@ def check_schema_subset(config, filename):
     except SchemaError as se:
       print(f"\n\n === The configuration format of the subset {config['subsetName']} coming from {config['origin']} is not correct. === \n\n {se}")
       raise Exception(f"\n\n === The configuration format of the subset {config['subsetName']} coming from {config['origin']} is not correct. === \n\n {se}")
-
+    
+    # Check is the shortName contains spaces
+    if ' ' in config['subsetName']:
+        raise Exception(f"The subsetName {config['subsetName']} coming from {config['origin']} should not contain spaces. Please, change the subsetName!")
+        
     return validated_config_schema
     
 # Define the schema of the configuration data
@@ -52,6 +56,10 @@ def check_schema_config(config, filename):
     except SchemaError as se:
         print(f"\n\n === The configuration format {config['shortName']} coming from {config['origin']} is not correct. === \n\n {se}")
         raise Exception(f"\n\n The configuration format {config['shortName']} coming from {config['origin']} is not correct. === \n\n {se}")
+    
+    # Check is the shortName contains spaces
+    if ' ' in config['shortName']:
+        raise Exception(f"The configuration shortName {config['shortName']} coming from {config['origin']} should not contain spaces. Please, change the shortName!")
     
     return validated_config_schema
     
