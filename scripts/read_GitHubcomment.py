@@ -37,7 +37,7 @@ def update_configs(new_data, default_data):
     # Merge header keys
     default_data["shortName"] = new_data.get("shortName")
     # Check if shortName contains spaces
-    if ' ' in default_data["shortName"]
+    if ' ' in default_data["shortName"]:
         raise Exception(f"The configuration shortName should not contain spaces. Please, change the shortName given in the PR comment!")
     
     default_data["longName"] = new_data.get("longName", new_data.get("shortName"))
