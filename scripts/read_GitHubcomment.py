@@ -36,6 +36,10 @@ def update_configs(new_data, default_data):
     
     # Merge header keys
     default_data["shortName"] = new_data.get("shortName")
+    # Check if shortName contains spaces
+    if ' ' in default_data["shortName"]
+        raise Exception(f"The configuration shortName should not contain spaces. Please, change the shortName given in the PR comment!")
+    
     default_data["longName"] = new_data.get("longName", new_data.get("shortName"))
     default_data["description"] = new_data.get("description", "Configuration provided by user")
     default_data["origin"] = new_data.get("origin", "GitHub") # set explicitly that this config was given in a GitHub comment
@@ -49,6 +53,10 @@ def update_configs(new_data, default_data):
 def update_subsets(new_data, default_data, defaultSubsetFile):
     # Get the name of the new subset
     newSubsetName = new_data.get("subsetName")
+    # Check if newSubsetName contains spaces
+    if ' ' in newSubsetName:
+        raise Exception(f"The subset name should not contain spaces. Please, change the subset name given in the PR comment!")
+    
     newSubsetDescription = new_data.get("description", "Configuration provided by user")
     newOrigin = new_data.get("origin", "GitHub") 
     # Get the new couple of subsets
