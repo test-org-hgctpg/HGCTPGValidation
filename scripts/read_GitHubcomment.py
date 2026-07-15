@@ -35,7 +35,7 @@ def update_configs(new_data, default_data):
     default_data['parameters'] = new_params
     
     # Merge header keys
-    default_data["shortName"] = new_data.get("shortName").replace(' ', '_')
+    default_data["shortName"] = new_data.get("shortName")
     default_data["longName"] = new_data.get("longName", new_data.get("shortName"))
     default_data["description"] = new_data.get("description", "Configuration provided by user")
     default_data["origin"] = new_data.get("origin", "GitHub") # set explicitly that this config was given in a GitHub comment
@@ -48,7 +48,7 @@ def update_configs(new_data, default_data):
 
 def update_subsets(new_data, default_data, defaultSubsetFile):
     # Get the name of the new subset
-    newSubsetName = new_data.get("subsetName").replace(' ', '_')
+    newSubsetName = new_data.get("subsetName")
     newSubsetDescription = new_data.get("description", "Configuration provided by user")
     newOrigin = new_data.get("origin", "GitHub") 
     # Get the new couple of subsets
