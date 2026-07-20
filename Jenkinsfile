@@ -335,7 +335,7 @@ pipeline {
                 '''
             }
         }
-        stage(‘Parallel tasks'){
+        stage('Parallel tasks'){
             parallel{
                 stage('Compare_with_CMSSW_Ref_Release'){
                     stages{
