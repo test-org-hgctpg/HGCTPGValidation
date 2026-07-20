@@ -3,6 +3,7 @@ shortName: bcstc
 longName: BC+STC
 description: |
     Custom front-end algorithm: BestChoice in CE-E and STC in CE-H
+origin: default
 parameters:
     nbOfEvents: 50
     conditions: auto:phase2_realistic_T35

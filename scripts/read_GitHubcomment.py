@@ -36,11 +36,16 @@ def update_configs(new_data, default_data):
     
     # Merge header keys
     default_data["shortName"] = new_data.get("shortName")
+    # Check if shortName contains spaces
+    if ' ' in default_data["shortName"]:
+        raise Exception(f"The configuration shortName should not contain spaces. Please, change the shortName given in the PR comment!")
+    
     default_data["longName"] = new_data.get("longName", new_data.get("shortName"))
     default_data["description"] = new_data.get("description", "Configuration provided by user")
-    
+    default_data["origin"] = new_data.get("origin", "GitHub") # set explicitly that this config was given in a GitHub comment
+
     # Write the new configurations into separated files
-    filename = f"{new_data['shortName']}.yaml"
+    filename = f"{default_data['shortName']}.yaml"
     with open(f"../HGCTPGValidation/config/{filename}", "w") as file:
         yaml.explicit_start = True
         yaml.dump(default_data, file)
@@ -48,7 +53,12 @@ def update_configs(new_data, default_data):
 def update_subsets(new_data, default_data, defaultSubsetFile):
     # Get the name of the new subset
     newSubsetName = new_data.get("subsetName")
+    # Check if newSubsetName contains spaces
+    if ' ' in newSubsetName:
+        raise Exception(f"The subset name should not contain spaces. Please, change the subset name given in the PR comment!")
+    
     newSubsetDescription = new_data.get("description", "Configuration provided by user")
+    newOrigin = new_data.get("origin", "GitHub") 
     # Get the new couple of subsets
     newSubset = new_data.get("configuration")
     
@@ -62,9 +72,10 @@ def update_subsets(new_data, default_data, defaultSubsetFile):
     defaultConfig = yaml.load(subsetConfig)
     defaultConfig["subsetName"] = newSubsetName
     defaultConfig["description"] = newSubsetDescription
+    defaultConfig["origin"] = newOrigin
     
     # New file name
-    filename = f"{new_data['subsetName'].replace(' ', '_')}.yaml"
+    filename = f"{newSubsetName}.yaml"
     with open(f"../HGCTPGValidation/config/{filename}","w") as f:
         yaml.dump(defaultConfig, f)
         yaml.explicit_start = False # Needed in order to not use --- before the new set of configurations
@@ -104,13 +115,13 @@ def main(tmpFile, defaultSubsetFile):
         try:
             parsed_blocks = [yaml.load(block) for block in yaml_blocks]
         except ScannerError as e:
-            raise Exception(f"\n\n YAML ScannerError: likely caused by an invalid character or bad indentation in the PR comment. \n\n {e}")
+            raise Exception(f"\n\n YAML ScannerError  in configuration coming from GitHub comment: likely caused by an invalid character or bad indentation in the PR comment. \n\n {e}")
         except ParserError as e:
-            raise Exception(f"\n\n YAML ParserError: the configuration from the PR comment has a syntax issue (ex. different quotation marks). \n\n {e}")
+            raise Exception(f"\n\n YAML ParserError  in configuration coming from GitHub comment: the configuration from the PR comment has a syntax issue (ex. different quotation marks). \n\n {e}")
         except ConstructorError as e:
-            raise Exception(f"\n\n YAML ConstructorError: The YAML parser could not create a Python representation from the YAML element (scalar, list, mapping, or tagged object).\n\n {e}")
+            raise Exception(f"\n\n YAML ConstructorError  in configuration coming from GitHub comment: The YAML parser could not create a Python representation from the YAML element (scalar, list, mapping, or tagged object).\n\n {e}")
         except YAMLError as e:
-            raise Exception(f"\n\n General YAML Error.\n\n {e}")
+            raise Exception(f"\n\n General YAML Error  in configuration coming from GitHub comment.\n\n {e}")
         except Exception as e:
             raise Exception(f"\n\n An unexpected error occurred while reading the PR comment. \n\n {e}")
         
@@ -120,8 +131,8 @@ def main(tmpFile, defaultSubsetFile):
                     update_configs(block, default_data)
                 elif "subsetName" in block: # process the subset configuration
                     subsetName = update_subsets(block, default_data, defaultSubsetFile)
-                else:
-                    raise Exception(f"\n\n The new configurations are not correct.\n Please check the spelling of the key words shortName and subsetName in the PR comment.\n\n")
+                else: # If len>=1 there should be a shortName or subsetName defined in the PR comment
+                    raise Exception(f"\n\n The new configurations coming from the PR comment are not correct.\n There should be key words shortName and/or subsetName.\n\n")
     
     print(subsetName)
 

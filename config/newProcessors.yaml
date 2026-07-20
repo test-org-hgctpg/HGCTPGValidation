@@ -3,6 +3,7 @@ shortName: newProcessors
 longName: New processors
 description: |
     Activation of the new processors based on standalone algorithms
+origin: default
 parameters:
     nbOfEvents: 50
     conditions: auto:phase2_realistic_T35

@@ -18,7 +18,7 @@ url="$1"
 MESSAGE="$2"
 
 # Generate a token, the command "set +x" is mandatory
-set +x exec >> log_Jenkins; 
+set +x
 source ./HGCTPGValidation/env_install.sh
 
 # For the organization hgc-tpg

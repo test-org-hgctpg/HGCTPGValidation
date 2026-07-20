@@ -14,7 +14,7 @@ from configFunctions import check_schema_subset, check_schema_config, read_subse
 
 # Run cmsDriver
 def run_cmsDriver(configdata, release, exec_flag):
-    configName=configdata['shortName']
+    configName=configdata['shortName'].replace(' ', '_')
     nbEvents=configdata['parameters']['nbOfEvents']
     conditions=configdata['parameters']['conditions']
     beamspot=configdata['parameters']['beamspot']
@@ -87,6 +87,8 @@ def main(subsetconfig, release):
               # the config_type=1 is set for reading parameters for running CMSSW HGCal TPG code
               config_data=read_config(path, value, 1)
               confName=config_data['shortName']
+              origin=config_data['origin']
+              print(f"{confName} is a {origin} configuration.")
               # Generate and run the python configuration file with cmsDriver.py only if the file doesn't exist
               if os.path.exists(f"hgcal_tpg_validation_{confName}_{release}_USER.py"):
                 print("Python file for the config ", value, ":", key, "was already created.")  
@@ -108,9 +110,9 @@ def main(subsetconfig, release):
                     cmd =   f"-s 'hgcal_tpg_validation_{confName}_{release}_USER.py'"
                     result = subprocess.run(['bash', '-c', cmd], text=True)
                     if ( result.returncode == 0 ):
-                        print(f"The script hgcal_tpg_validation_{confName}_{release}_USER.py was created.")
+                        print(f"{origin} configuration {confName}: The script hgcal_tpg_validation_{confName}_{release}_USER.py was created.")
                     else:
-                        raise Exception(f"\n\n !!!! cmsDriver failed to execute! The script hgcal_tpg_validation_{confName}_{release}_USER.py has not been created! \n\n")
+                        raise Exception(f"\n\n !!!! {origin} configuration {confName}: cmsDriver failed to execute! The script hgcal_tpg_validation_{confName}_{release}_USER.py has not been created! \n\n")
             else:
               print("Go for the next configuration.")
 
