@@ -481,9 +481,26 @@ pipeline {
                         statusGeomCheck=$?
                         } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                         
-                        # If the script displayHistos.py fails, the pipeline stops
+                        # If the script geom_check.sh fails, the pipeline stops
                         {
                         ./HGCTPGValidation/scripts/check_command_status.sh $statusGeomCheck $STAGE_NAME
+                        } >> log_Jenkins 2> >(tee -a log_Jenkins 1>&2)
+                        sh '''#!/usr/bin/env bash
+                        {
+                        set +x
+                        git clone https://github.com/hgc-tpg/HGCTPGGeometryTools
+                        cd HGCTPGGeometryTools
+                        module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el9
+                        module load python/3.12.4
+                        module load quarto/1.10.8 
+                        python3 -m pip install --editable .
+                        cp ../test_dir/${TEST_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src/test_triggergeom.root resources
+                        snakemake --cores 1 all
+                        statusGeomCheckWebPages=$?
+                        } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
+                        # If the command snakemake fails, the pipeline stops
+                        {
+                        ./HGCTPGValidation/scripts/check_command_status.sh $statusGeomCheckWebPages $STAGE_NAME
                         } >> log_Jenkins 2> >(tee -a log_Jenkins 1>&2)
                         '''
                     }
