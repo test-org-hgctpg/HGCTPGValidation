@@ -485,6 +485,8 @@ pipeline {
                         {
                         ./HGCTPGValidation/scripts/check_command_status.sh $statusGeomCheck $STAGE_NAME
                         } >> log_Jenkins 2> >(tee -a log_Jenkins 1>&2)
+                        '''
+                        sh '''#!/usr/bin/env bash
                         {
                         set +x
                         git clone https://github.com/hgc-tpg/HGCTPGGeometryTools
