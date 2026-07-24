@@ -472,19 +472,25 @@ pipeline {
                         {
                         set +x
                         echo '\n==> Geom Check ======================='
-                        } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
+                        if [ -f "log_Jenkins_geomchecks" ]; then
+                            echo "Remove the last created log_Jenkins_geomchecks."
+                            rm log_Jenkins_geomchecks
+                        else
+                            echo "log_Jenkins_geomchecks does not exist."
+                        fi
+                        } >> log_Jenkins_geomchecks 1>&2> >(tee -a log_Jenkins_geomchecks 1>&2)
                         '''
                         sh '''#!/usr/bin/env bash
                         {
                         set +x
                         ./HGCTPGValidation/scripts/geom_check.sh ${TEST_RELEASE} ${LABEL_TEST}
                         statusGeomCheck=$?
-                        } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
+                        } >> log_Jenkins_geomchecks 2> >(tee -a log_Jenkins_geomchecks >&2)
                         
                         # If the script geom_check.sh fails, the pipeline stops
                         {
                         ./HGCTPGValidation/scripts/check_command_status.sh $statusGeomCheck $STAGE_NAME
-                        } >> log_Jenkins 2> >(tee -a log_Jenkins 1>&2)
+                        } >> log_Jenkins_geomchecks 2> >(tee -a log_Jenkins_geomchecks 1>&2)
                         '''
                         sh '''#!/usr/bin/env bash
                         {
@@ -498,14 +504,14 @@ pipeline {
                         cp ../test_dir/${TEST_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src/test_triggergeom.root resources
                         snakemake --cores 1 all
                         statusGeomCheckWebPages=$?
-                        } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
+                        } >> log_Jenkins_geomchecks 2> >(tee -a log_Jenkins_geomchecks >&2)
                         
                         cd ..
                         
                         # If the command snakemake fails, the pipeline stops
                         {
                         ./HGCTPGValidation/scripts/check_command_status.sh $statusGeomCheckWebPages $STAGE_NAME
-                        } >> log_Jenkins 2> >(tee -a log_Jenkins 1>&2)
+                        } >> log_Jenkins_geomchecks 2> >(tee -a log_Jenkins_geomchecks 1>&2)
                         '''
                     }
                 }
