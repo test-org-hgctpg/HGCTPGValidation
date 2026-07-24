@@ -502,6 +502,25 @@ pipeline {
                         module load quarto/1.10.8
                         python3 -m pip install --editable .
                         cp ../test_dir/${TEST_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src/test_triggergeom.root resources
+                        echo "===== Environment ====="
+                        whoami
+                        echo HOME=$HOME
+                        echo PATH=$PATH
+                        echo WORKSPACE=$WORKSPACE
+                        pwd
+                        
+                        echo "===== Python ====="
+                        which python3
+                        python3 --version
+                        
+                        python3 -m pip --version
+                        python3 -m site
+                        python3 -m site --user-base
+                        python3 -m site --user-site
+                        
+                        echo "===== Installed scripts ====="
+                        ls -l "$HOME/.local/bin" || true
+                        echo "===== Run snakemake ====="
                         snakemake --cores 1 all
                         statusGeomCheckWebPages=$?
                         } >> log_Jenkins_geomchecks 2> >(tee -a log_Jenkins_geomchecks >&2)
