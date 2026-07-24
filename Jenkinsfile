@@ -499,7 +499,7 @@ pipeline {
                         cd HGCTPGGeometryTools
                         module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el9
                         module load python/3.12.4
-                        module load quarto/1.10.8 
+                        module load quarto/1.10.8
                         python3 -m pip install --editable .
                         cp ../test_dir/${TEST_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src/test_triggergeom.root resources
                         snakemake --cores 1 all
