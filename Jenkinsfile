@@ -158,6 +158,7 @@ pipeline {
                         ls -lrt
                         pwd
                         git clone -b ${BRANCH_HGCTPGVAL} https://github.com/${REMOTE_HGCTPGVAL}/HGCTPGValidation HGCTPGValidation
+                        stash name: 'HGCTPGValidation-package', includes: './HGCTPGValidation'
                         ls -lrt
                         source HGCTPGValidation/env_install.sh
                         } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
@@ -484,6 +485,7 @@ pipeline {
                         sh '''#!/usr/bin/env bash
                         {
                         set +x
+                        unstash 'HGCTPGValidation-package'
                         ./HGCTPGValidation/scripts/geom_check.sh ${TEST_RELEASE} ${LABEL_TEST}
                         statusGeomCheck=$?
                         } >> log_Jenkins_geomchecks 2> >(tee -a log_Jenkins_geomchecks >&2)
