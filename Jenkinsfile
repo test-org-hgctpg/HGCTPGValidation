@@ -467,6 +467,7 @@ pipeline {
                     }
                 }
                 stage('Geom_Check') {
+                    label 'llrgrhgtrig02.in2p3.fr'
                     steps {
                         sh '''#!/usr/bin/env bash
                         {
