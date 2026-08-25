@@ -511,6 +511,7 @@ pipeline {
                         sh '''#!/usr/bin/env bash
                         {
                         set +x
+                        export PATH="$PATH:/data/jenkins/.local/bin:/data/jenkins/bin"
                         git clone https://github.com/hgc-tpg/HGCTPGGeometryTools
                         cd HGCTPGGeometryTools
                         module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el9
