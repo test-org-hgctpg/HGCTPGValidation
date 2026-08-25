@@ -163,7 +163,7 @@ pipeline {
                         } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                         '''
                         stash name: 'HGCTPGValidation-package', includes: 'HGCTPGValidation/**'
-                        sh 'find HGCTPGValidation-package -type f'
+                        sh 'find HGCTPGValidation -type f'
                     }
                 }
                 stage('Clean_the_working_environment'){
@@ -483,7 +483,7 @@ pipeline {
                         fi
                         } >> log_Jenkins_geomchecks 1>&2> >(tee -a log_Jenkins_geomchecks 1>&2)
                         '''
-                        sh 'find HGCTPGValidation-package -type f'
+                        sh 'find HGCTPGValidation -type f'
                         unstash 'HGCTPGValidation-package'
                         sh '''#!/usr/bin/env bash
                         {
