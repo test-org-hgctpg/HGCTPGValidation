@@ -486,7 +486,7 @@ pipeline {
                         } >> log_Jenkins_geomchecks 1>&2> >(tee -a log_Jenkins_geomchecks 1>&2)
                         '''
                         
-                        # Unstash needed packages
+                        // Unstash needed packages
                         unstash 'HGCTPGValidation-package'
                         sh 'find HGCTPGValidation -type f'
                         unstash name: 'CMSSW_REL_test'
