@@ -483,8 +483,10 @@ pipeline {
                         fi
                         } >> log_Jenkins_geomchecks 1>&2> >(tee -a log_Jenkins_geomchecks 1>&2)
                         '''
-                        sh 'find HGCTPGValidation -type f'
+                        
                         unstash 'HGCTPGValidation-package'
+                        sh 'find HGCTPGValidation -type f'
+                        
                         sh '''#!/usr/bin/env bash
                         {
                         set +x
