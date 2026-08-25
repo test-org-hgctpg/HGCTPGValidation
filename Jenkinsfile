@@ -312,6 +312,8 @@ pipeline {
                 {
                 ./HGCTPGValidation/scripts/check_command_status.sh $statusInstallTest $STAGE_NAME
                 } >> log_Jenkins 2> >(tee -a log_Jenkins 1>&2)
+                
+                stash name: 'CMSSW_REL_test', includes: 'test_dir/env.REF_RELEASE_HGCalTPGValidation_env.LABEL_TEST/**'
                 '''
             }
         }
@@ -484,11 +486,14 @@ pipeline {
                         } >> log_Jenkins_geomchecks 1>&2> >(tee -a log_Jenkins_geomchecks 1>&2)
                         '''
                         
+                        # Unstash needed packages
                         unstash 'HGCTPGValidation-package'
                         sh 'find HGCTPGValidation -type f'
+                        unstash name: 'CMSSW_REL_test'
                         
                         sh '''#!/usr/bin/env bash
                         {
+                        echo 'Run geom_check.sh'
                         set +x
                         pwd
                         find HGCTPGValidation -type f
