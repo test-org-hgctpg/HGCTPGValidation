@@ -313,9 +313,10 @@ pipeline {
                 ./HGCTPGValidation/scripts/check_command_status.sh $statusInstallTest $STAGE_NAME
                 } >> log_Jenkins 2> >(tee -a log_Jenkins 1>&2)
                 
-                echo "Resolved path: test_dir/${env.REF_RELEASE}_HGCalTPGValidation_${env.LABEL_TEST}"
-                stash name: 'CMSSW_REL_test', includes: "test_dir/${env.REF_RELEASE}_HGCalTPGValidation_${env.LABEL_TEST}/**"
                 '''
+                
+                stash name: 'CMSSW_REL_test', includes: "test_dir/${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/**"
+                
             }
         }
         stage('Quality_Checks'){
