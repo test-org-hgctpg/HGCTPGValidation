@@ -162,8 +162,6 @@ pipeline {
                         source HGCTPGValidation/env_install.sh
                         } >> log_Jenkins 2> >(tee -a log_Jenkins >&2)
                         '''
-                        stash name: 'HGCTPGValidation-package', includes: 'HGCTPGValidation/**'
-                        sh 'find HGCTPGValidation -type f'
                     }
                 }
                 stage('Clean_the_working_environment'){
@@ -314,8 +312,6 @@ pipeline {
                 } >> log_Jenkins 2> >(tee -a log_Jenkins 1>&2)
                 
                 '''
-                
-                stash name: 'CMSSW_REL_test', includes: "test_dir/${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/**"
                 
             }
         }
@@ -473,7 +469,7 @@ pipeline {
                     }
                 }
                 stage('Geom_Check') {
-                    agent { label 'llrgrhgtrig02.in2p3.fr' }
+                    
                     steps {
                         sh '''#!/usr/bin/env bash
                         {
@@ -487,11 +483,6 @@ pipeline {
                         fi
                         } >> log_Jenkins_geomchecks 1>&2> >(tee -a log_Jenkins_geomchecks 1>&2)
                         '''
-                        
-                        // Unstash needed packages
-                        unstash 'HGCTPGValidation-package'
-                        sh 'find HGCTPGValidation -type f'
-                        unstash name: 'CMSSW_REL_test'
                         
                         sh '''#!/usr/bin/env bash
                         {
