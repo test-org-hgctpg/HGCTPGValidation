@@ -15,10 +15,18 @@ echo "DATA_DIR = " $DATA_DIR
 echo "PRCHANGE_ID = " $PRCHANGE_ID
 pwd
 
+# max wait time in seconds
+MAX_WAIT=3600
+SECONDS=0
+
 while [ ! -d "../${DATA_DIR}/${PRCHANGE_ID}/geomcheck/" ]
 do
+    if (( SECONDS >= MAX_WAIT )); then
+        echo "Waiting for Display stage time > $MAX_WAIT seconds."
+        exit 1
+    fi
     sleep 300
-    echo "Waiting for Display stage."
+    echo "Waiting for Display stage to finish."
 done
 
 # Copy the pictures and the html page from GeomCheck stage
