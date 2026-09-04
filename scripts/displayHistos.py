@@ -45,9 +45,12 @@ def	extractTimeMemoryInfos(namefile, dirname):
     print("Extract Time&Memory information from ", namefile)
         
     # Output file MemoryReport_ref.log or MemoryReport_test.log
-    indicator = namefile.split("_")
-    #outputfile = f"MemoryReport_{indicator[1]}_{indicator[2]}"
-    outputfile = "MemoryReport_" + indicator[1] + "_" + indicator[2]
+    # Split only at the first "_"
+    indicator = namefile.split("_", 1)
+    if len(indicator):
+        outputfile = f"MemoryReport_{indicator[1]}"
+    else:
+        print("Please check the name of the ", namefile)
     print("oututfile = ", outputfile)
     
     # Input file out_ref.log or out_test.log
@@ -154,14 +157,16 @@ def readFileStatement(configname, rel, dirname):
                         listHistos[i].GetXaxis().SetRange(listHistos[i].FindFirstBinAbove(), listHistos[i].FindLastBinAbove() + 10)
     hFile.Write()
 
-def writeIntoFile(prnumber, configTest, configRef, prtitle, prdir):
+def writeIntoFile(prnumber, configTest, configRef, prtitle, prdir, geomCheck):
     print("Call writeIntoFile.")
     
     fileName = prdir + "/validation_webpages.txt"
     print(fileName)
     with open(fileName, 'a') as f:
         prnb  = "PR" + prnumber
-        if configTest=='':
+        if geomCheck!='':
+            title = "Geom: Geometry check\n"
+        elif configTest=='':
             title = prnb + " : " + prtitle + "\n"
         else:
             title = prnb + "_" + configTest + "_" + configRef + " : Test: " + configTest + " | " + "Ref: " + configRef + "\n"
@@ -199,7 +204,7 @@ def main(configset, refdir, testdir, datadir, prnumber, prtitle):
     os.system("ls -lrt " + prdir)
 
     # Write the first line of the validation_webpages.txt
-    writeIntoFile(prnumber, '', '', prtitle, prdir)
+    writeIntoFile(prnumber, '', '', prtitle, prdir, '')
     
     # Path to the config file
     path='../HGCTPGValidation/config/'
@@ -263,8 +268,14 @@ def main(configset, refdir, testdir, datadir, prnumber, prtitle):
             os.system("mkdir " + datadir_gif)
             print("cp -rf " + imgdir + "/. " + datadir_gif)
             os.system("cp -rf " + imgdir + "/. " + datadir_gif)
-            writeIntoFile(prnumber, confTest, confRef, prtitle, prdir)
-     
+            writeIntoFile(prnumber, confTest, confRef, prtitle, prdir, '')
+    # Geom check part
+    # Write into the file validation_webpages.txt
+    writeIntoFile(prnumber, confTest, confRef, prtitle, prdir, "geomCheck")
+    # Create the directory for the geometry images
+    datadir_geom_gif = prdir + "/" + "geomcheck"
+    os.system("mkdir " + datadir_geom_gif)
+    
 if __name__=='__main__':
     import optparse
     import importlib
