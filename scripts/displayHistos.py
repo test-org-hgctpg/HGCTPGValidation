@@ -165,7 +165,7 @@ def writeIntoFile(prnumber, configTest, configRef, prtitle, prdir, geomCheck):
     with open(fileName, 'a') as f:
         prnb  = "PR" + prnumber
         if geomCheck!='':
-            title = "Geom: Geometry check"\n"
+            title = "Geom: Geometry check\n"
         else if configTest=='':
             title = prnb + " : " + prtitle + "\n"
         else:
