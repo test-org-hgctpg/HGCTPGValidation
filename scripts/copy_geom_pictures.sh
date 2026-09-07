@@ -19,7 +19,9 @@ pwd
 MAX_WAIT=3600
 SECONDS=0
 
-while [ ! -d "../${DATA_DIR}/${PRCHANGE_ID}/geomcheck/" ]
+GEOM_CHECK_DIR = "Geom_check"
+
+while [ ! -d "../${DATA_DIR}/${PRCHANGE_ID}/${GEOM_CHECK_DIR}" ]
 do
     if (( SECONDS >= MAX_WAIT )); then
         echo "Waiting for Display stage time > $MAX_WAIT seconds."
@@ -30,5 +32,5 @@ do
 done
 
 # Copy the pictures and the html page from GeomCheck stage
-cp -rf ./HGCTPGGeometryTools/results/test_triggergeom/plot_errors_files ../${DATA_DIR}/${PRCHANGE_ID}/geomcheck/
-cp ./HGCTPGGeometryTools/results/test_triggergeom/plot_errors.html ../${DATA_DIR}/${PRCHANGE_ID}/geomcheck/index.html
+cp -rf ./HGCTPGGeometryTools/results/test_triggergeom/plot_errors_files ../${DATA_DIR}/${PRCHANGE_ID}/${GEOM_CHECK_DIR}/
+cp ./HGCTPGGeometryTools/results/test_triggergeom/plot_errors.html ../${DATA_DIR}/${PRCHANGE_ID}/${GEOM_CHECK_DIR}/index.html
