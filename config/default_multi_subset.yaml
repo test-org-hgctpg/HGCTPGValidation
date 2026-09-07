@@ -1,6 +1,7 @@
 ---
-subsetName: default subset
+subsetName: defaultSubset
 description: Default set of comparisons
+origin: default
 configuration:
     - ref: default
       test: default
