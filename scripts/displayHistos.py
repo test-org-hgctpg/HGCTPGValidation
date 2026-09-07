@@ -165,7 +165,7 @@ def writeIntoFile(prnumber, configTest, configRef, prtitle, prdir, geomCheck):
     with open(fileName, 'a') as f:
         prnb  = "PR" + prnumber
         if geomCheck!='':
-            title = "Geom: Geometry check\n"
+            title = "Geom_check : Geometry check\n"
         elif configTest=='':
             title = prnb + " : " + prtitle + "\n"
         else:
@@ -273,7 +273,7 @@ def main(configset, refdir, testdir, datadir, prnumber, prtitle):
     # Write into the file validation_webpages.txt
     writeIntoFile(prnumber, confTest, confRef, prtitle, prdir, "geomCheck")
     # Create the directory for the geometry images
-    datadir_geom_gif = prdir + "/" + "geomcheck"
+    datadir_geom_gif = prdir + "/" + "Geom_check"
     os.system("mkdir " + datadir_geom_gif)
     
 if __name__=='__main__':
