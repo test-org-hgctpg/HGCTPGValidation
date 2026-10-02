@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # This code is to use with Jenkins jobs triggering on Github Pull Request in the repository https://github.com/hgc-tpg
-# ./installCMSSW.sh $SCRAM_ARCH $REF_RELEASE $REMOTE $BASE_REMOTE $CHANGE_BRANCH $CHANGE_TARGET ${LABEL_TEST}
+# ./installCMSSW_global.sh $SCRAM_ARCH $REF_RELEASE $REMOTE $BASE_REMOTE $CHANGE_BRANCH $CHANGE_TARGET ${LABEL_TEST}
 
 # $1 SCRAM_ARCH
 # $2 release name
@@ -10,6 +10,10 @@
 # $5 branch name (corresponds to the branch containing the changes)
 # $6 reference branch name (this is the target or base branch to which the change could be merged, it is in https://github.com/hgc-tpg repository)
 # $7 label "ref" or "test"
+
+set +x
+
+cd test_dir
 
 set -e
 
@@ -32,14 +36,22 @@ echo "Label: " $label
 source /cvmfs/cms.cern.ch/cmsset_default.sh
 module purge
 # Install working directory for the release CMSSW $relversion
+echo "Install working directory for the release CMSSW " $relversion
 scramv1 p -n ${relversion}_HGCalTPGValidation_$label CMSSW $relversion
 cd ${relversion}_HGCalTPGValidation_$label/src
 eval `scramv1 runtime -sh`
-# Get the reference (target) branch from the base remote
-git cms-merge-topic $baseremote:$branch_ref
-git checkout -b local_$branch_ref $baseremote/$branch_ref
-# Merge the change branch into the reference branch
-git cms-merge-topic $remote:$branch
-# Compile
-scram b -j8
 
+# Get the reference (target) branch from the base remote
+echo "Get the reference (target) branch from the base remote" >&2
+echo "=> cms-merge-topic" >&2
+git cms-merge-topic $baseremote:$branch_ref
+echo "=> git checkout" >&2
+git checkout -b local_$branch_ref $baseremote/$branch_ref
+
+# Merge the change branch into the reference branch
+echo "Merge the change branch into the reference branch" >&2
+git cms-merge-topic $remote:$branch
+
+# Compile
+echo "Start compiling" >&2
+scram b -j8

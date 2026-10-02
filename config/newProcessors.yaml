@@ -3,13 +3,14 @@ shortName: newProcessors
 longName: New processors
 description: |
     Activation of the new processors based on standalone algorithms
+origin: default
 parameters:
     nbOfEvents: 50
-    conditions: auto:phase2_realistic_T15
-    beamspot: HLLHC14TeV
-    geometry: Extended2026D49
-    era: Phase2C9
+    conditions: auto:phase2_realistic_T35
+    beamspot: VtxSmearedHLLHC14TeV
+    geometry: ExtendedRun4D122
+    era: Phase2C26I13M9
     inputCommands: '"keep *","drop l1tTkPrimaryVertexs_L1TkPrimaryVertex__RECO"'
-    filein: file:/data_CMS_upgrade/data_jenkins/Phase2HLTTDRSummer20ReRECOMiniAOD/TT_TuneCP5_14TeV-powheg-pythia8/FEVT/PU200_111X_mcRun4_realistic_T15_v1-v2/003ACFBC-23B2-EA45-9A12-BECFF07760FC.root
+    filein: file:/data_CMS_upgrade/data_jenkins/relval/CMSSW_20_0_0/RelValTTbar_14TeV/GEN-SIM-DIGI-RAW/PU_150X_mcRun4_realistic_v1_STD_D127_RegeneratedGS_PU_16Aug26-v2/00f3dc39-4e7d-4438-863b-565ffb3094f0.root
     customise: L1Trigger/L1THGCal/customNewProcessors.custom_clustering_standalone,L1Trigger/L1THGCal/customNewProcessors.custom_tower_standalone,L1Trigger/L1THGCalUtilities/customNtuples.custom_ntuples_standalone_clustering,L1Trigger/L1THGCalUtilities/customNtuples.custom_ntuples_standalone_tower
 

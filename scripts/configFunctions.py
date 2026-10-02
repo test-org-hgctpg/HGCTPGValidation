@@ -13,6 +13,7 @@ def check_schema_subset(config, filename):
     config_schema = Schema({
         "subsetName": str,
         "description": str,
+        "origin": str,
         "configuration": 
             [{"ref": str, "test": str}]
     })
@@ -20,9 +21,13 @@ def check_schema_subset(config, filename):
     try:
       validated_config_schema = config_schema.validate(config)
     except SchemaError as se:
-      print(f"\n\n === The configuration format is not correct. Please check the file {filename}. === \n\n {se}")
-      raise Exception(f"\n\n === The configuration format is not correct. Please check the file {filename}. === \n\n {se}")
-
+      print(f"\n\n === The configuration format of the subset {config['subsetName']} coming from {config['origin']} is not correct. === \n\n {se}")
+      raise Exception(f"\n\n === The configuration format of the subset {config['subsetName']} coming from {config['origin']} is not correct. === \n\n {se}")
+    
+    # Check is the shortName contains spaces
+    if ' ' in config['subsetName']:
+        raise Exception(f"The subsetName {config['subsetName']} coming from {config['origin']} should not contain spaces. Please, change the subsetName!")
+        
     return validated_config_schema
     
 # Define the schema of the configuration data
@@ -31,6 +36,7 @@ def check_schema_config(config, filename):
         "shortName": str,
         "longName": str,
         "description": str,
+        "origin": str,
         "parameters": {
             "nbOfEvents": int,
             "conditions": str,
@@ -48,8 +54,12 @@ def check_schema_config(config, filename):
     try:
         validated_config_schema = config_schema.validate(config)
     except SchemaError as se:
-        print(f"\n\n === The configuration format is not correct. Please check the file {filename}. === \n\n {se}")
-        raise Exception(f"\n\n The configuration format is not correct. Please check the file {filename}. === \n\n {se}")
+        print(f"\n\n === The configuration format {config['shortName']} coming from {config['origin']} is not correct. === \n\n {se}")
+        raise Exception(f"\n\n The configuration format {config['shortName']} coming from {config['origin']} is not correct. === \n\n {se}")
+    
+    # Check is the shortName contains spaces
+    if ' ' in config['shortName']:
+        raise Exception(f"The configuration shortName {config['shortName']} coming from {config['origin']} should not contain spaces. Please, change the shortName!")
     
     return validated_config_schema
     
@@ -67,8 +77,8 @@ def check_schema_paramValJob(config, filename):
     try:
       validated_config_schema = config_schema.validate(config)
     except SchemaError as se:
-      print(f"\n\n === The configuration format is not correct. Please check the file {filename}. === \n\n {se}")
-      raise Exception(f"\n\n === The configuration format is not correct. Please check the file {filename}. === \n\n {se}")
+      print(f"\n\n === The format of the configuration {config} used for the validation of the validation code is not correct. === \n\n {se}")
+      raise Exception(f"\n\n === The format of the configuration {config} used for the validation of the validation code is not correct. === \n\n {se}")
     
     return validated_config_schema
     
@@ -80,11 +90,11 @@ def read_subset(path, config):
         with open(filename) as f:
             subset = yaml.safe_load(f)
     except OSError as e:
-        print(f"\n\n === Error occured when loading configuration subsets file {filename}. === \n\n {e}")
-        raise Exception(f"\n\n === Error occured when loading configuration subsets file {filename}. === \n\n {e}")
+        print(f"\n\n === Error occured when loading the configuration {config}. === \n\n {e}")
+        raise Exception(f"\n\n === Error occured when loading configuration {config}. === \n\n {e}")
     except yaml.YAMLError as e:
-        print(f"\n\n === Error parsing YAML file: {filename} === \n\n {e}")
-        raise Exception(f"\n\n === Error parsing YAML file: {filename}. === \n\n{e}")
+        print(f"\n\n === Error parsing the YAML file with the configuration {config} === \n\n {e}")
+        raise Exception(f"\n\n === Error parsing the YAML file with the configuration {config}. === \n\n{e}")
 
     validated_subset = check_schema_subset(subset, filename)
 
@@ -122,17 +132,17 @@ def read_config(path, configuration, config_type):
         with open(filename) as f:
             config = yaml.safe_load(f)
     except OSError as e:
-        print(f"\n\n === Error occured when loading configuration file {filename}. === \n\n {e}")
-        raise Exception(f"\n\n === Error occured when loading configuration file {filename} === \n\n {e}")
+        print(f"\n\n === Error occured when loading the configuration {configuration}. === \n\n {e}")
+        raise Exception(f"\n\n === Error occured when loading the configuration {configuration} === \n\n {e}")
     except yaml.YAMLError as e:
-        print(f"\n\n === Error parsing configuration YAML file: {filename}. === \n\n {e}")
-        raise Exception(f"\n\n === Error parsing configuration YAML file: {filename}. === \n\n {e}")
+        print(f"\n\n === Error parsing the YAML configuration {configuration}. === \n\n {e}")
+        raise Exception(f"\n\n === Error parsing the YAML configuration {configuration}. === \n\n {e}")
     
     if (config_type == 1):
         validated_config = check_schema_config(config, filename)
     elif (config_type == 2):
         validated_config = check_schema_paramValJob(config, filename)
     else:
-        print(f"\n\n === The config_type doesn't correspond to the defined validation types. === \n\n")
+        print(f"\n\n === The config_type doesn't correspond to the defined types: config_type=1 for the CMSSW validation and config_type=2 for the validation of the validation code. === \n\n")
 
     return validated_config
