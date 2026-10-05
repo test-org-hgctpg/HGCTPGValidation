@@ -363,7 +363,7 @@ pipeline {
                                 '''
                             }
                         }
-                        stage('Produce')
+                        stage('Produce'){
                             parallel{
                                 stage('Produce_Ref'){
                                     steps {
