@@ -13,8 +13,8 @@ sys.path.insert(0, '../../../HGCTPGValidation/scripts')
 from configFunctions import check_schema_subset, check_schema_config, read_subset, read_config, get_listOfConfigs
 
 # Run cmsDriver
-def run_cmsDriver(configdata, release):
-    configName=configdata['shortName']
+def run_cmsDriver(configdata, release, exec_flag):
+    configName=configdata['shortName'].replace(' ', '_')
     nbEvents=configdata['parameters']['nbOfEvents']
     conditions=configdata['parameters']['conditions']
     beamspot=configdata['parameters']['beamspot']
@@ -35,11 +35,15 @@ def run_cmsDriver(configdata, release):
     # else --customise {customiseUser}
     customise = f'{"" if customiseUser=="empty" else f"--customise {customiseUser}"}'
     
+    script_file = f"hgcal_tpg_validation_{configName}_{release}"
+    print("====> FILE ", script_file)
+    
     INTERVAL=int(10)
     RSS_limit=int(10000000)
     print("INTERVAL=", INTERVAL)
     print("RSS_limit=", RSS_limit)
-    command = f"echo $PWD; source /cvmfs/cms.cern.ch/cmsset_default.sh; eval `scramv1 runtime -sh`; \
+    
+    command_gen = f"echo $PWD; source /cvmfs/cms.cern.ch/cmsset_default.sh; eval `scramv1 runtime -sh`; \
     cmsDriver.py hgcal_tpg_validation_{configName}_{release} -n {str(nbEvents)} \
     --mc --eventcontent FEVTDEBUG --datatier GEN-SIM-DIGI-RAW \
     --conditions {conditions} \
@@ -53,6 +57,11 @@ def run_cmsDriver(configdata, release):
     {customise} \
     --customise_commands {customiseCommand}"
     
+    command_1 = f'{command_gen} --no_exec'
+    command_0 = f'set -euo pipefail; {command_gen} & pid=$!; ../../../HGCTPGValidation/scripts/get_rss_memory.sh "$pid" {INTERVAL} {RSS_limit}; wait "$pid"'
+    
+    command = f'{ command_1 if exec_flag==1 else command_0 }'
+    
     pprint.pprint(command)
     return command
     
@@ -62,7 +71,7 @@ def main(subsetconfig, release):
     
     # Path to the config files
     path='../../../HGCTPGValidation/config/'
-
+    
     # read the subset_config file
     data = read_subset(path, subsetconfig)
     config = data["configuration"]
@@ -78,14 +87,32 @@ def main(subsetconfig, release):
               # the config_type=1 is set for reading parameters for running CMSSW HGCal TPG code
               config_data=read_config(path, value, 1)
               confName=config_data['shortName']
+              origin=config_data['origin']
+              print(f"{confName} is a {origin} configuration.")
               # Generate and run the python configuration file with cmsDriver.py only if the file doesn't exist
               if os.path.exists(f"hgcal_tpg_validation_{confName}_{release}_USER.py"):
                 print("Python file for the config ", value, ":", key, "was already created.")  
               else:
                 print("Running on config: ", key, ": ", value)
-                command = run_cmsDriver(config_data, release)
-                sourceCmd = ['bash', '-c', command]
-                sourceProc = subprocess.run(sourceCmd, check=True, text=True)
+                # Launch cmsDriver with no_exec option
+                command = run_cmsDriver(config_data, release, 1)
+                res = subprocess.run(['bash', '-c', command], text=True)
+                status=res.returncode
+                print("status=", status)
+                # If the status of cmsDriver with no_exec option is 0
+                # then we call again run_cmsDriver and complete the full simulation
+                if status == 0:
+                    command = run_cmsDriver(config_data, release, 0)
+                    subprocess.run(['bash', '-c', command], check=True, text=True)
+                else:
+                    # If the script file exists and is not empty => OK
+                    # If this not the case, raise exception
+                    cmd =   f"-s 'hgcal_tpg_validation_{confName}_{release}_USER.py'"
+                    result = subprocess.run(['bash', '-c', cmd], text=True)
+                    if ( result.returncode == 0 ):
+                        print(f"{origin} configuration {confName}: The script hgcal_tpg_validation_{confName}_{release}_USER.py was created.")
+                    else:
+                        raise Exception(f"\n\n !!!! {origin} configuration {confName}: cmsDriver failed to execute! The script hgcal_tpg_validation_{confName}_{release}_USER.py has not been created! \n\n")
             else:
               print("Go for the next configuration.")
 
