@@ -363,74 +363,76 @@ pipeline {
                                 '''
                             }
                         }
-                        parallel{
-                            stage('Produce_Ref'){
-                                steps {
-                                    sh '''#!/usr/bin/env bash
-                                    {
-                                    set +x
-                                    echo '\n==> Produce reference data ======================='
-                                    
-                                    if [ -f "out_err" ]; then
-                                        echo "Remove the last created out_err."
-                                        rm out_err
-                                    fi
-                                    } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
-                                    '''
-                                    sh '''#!/usr/bin/env bash
-                                    {
-                                    set +x
-                                    cd test_dir/${REF_RELEASE}_HGCalTPGValidation_${LABEL_REF}/src
-                                    source ../../../HGCTPGValidation/env_install.sh
-                                    
-                                    echo "CONFIG_SUBSET=" ${CONFIG_SUBSET}
-                                    echo "label=" ${LABEL_REF}
-                                    python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_REF}
-                                    statusProduceRef=$?
-                                    } >> log_Jenkins 2> >(tee -a log_Jenkins out_err)
-                                    
-                                    # Move to the top directory
-                                    cd ../../../
-                                    
-                                    # If the script produceData_multiconfiguration.py fails, the pipeline stops
-                                    {
-                                    ./HGCTPGValidation/scripts/check_command_status.sh $statusProduceRef $STAGE_NAME
-                                    } >> log_Jenkins 2> >(tee -a log_Jenkins 1>&2)
-                                    '''
+                        stage('Produce')
+                            parallel{
+                                stage('Produce_Ref'){
+                                    steps {
+                                        sh '''#!/usr/bin/env bash
+                                        {
+                                        set +x
+                                        echo '\n==> Produce reference data ======================='
+                                        
+                                        if [ -f "out_err" ]; then
+                                            echo "Remove the last created out_err."
+                                            rm out_err
+                                        fi
+                                        } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
+                                        '''
+                                        sh '''#!/usr/bin/env bash
+                                        {
+                                        set +x
+                                        cd test_dir/${REF_RELEASE}_HGCalTPGValidation_${LABEL_REF}/src
+                                        source ../../../HGCTPGValidation/env_install.sh
+                                        
+                                        echo "CONFIG_SUBSET=" ${CONFIG_SUBSET}
+                                        echo "label=" ${LABEL_REF}
+                                        python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_REF}
+                                        statusProduceRef=$?
+                                        } >> log_Jenkins 2> >(tee -a log_Jenkins out_err)
+                                        
+                                        # Move to the top directory
+                                        cd ../../../
+                                        
+                                        # If the script produceData_multiconfiguration.py fails, the pipeline stops
+                                        {
+                                        ./HGCTPGValidation/scripts/check_command_status.sh $statusProduceRef $STAGE_NAME
+                                        } >> log_Jenkins 2> >(tee -a log_Jenkins 1>&2)
+                                        '''
+                                    }
                                 }
-                            }
-                            stage('Produce_Test'){
-                                steps {
-                                    sh '''#!/usr/bin/env bash
-                                    {
-                                    set +x
-                                    echo '\n==> Produce test data ======================='
-                                    if [ -f "out_err" ]; then
-                                        echo "Remove the last created out_err."
-                                        rm out_err
-                                    fi
-                                    } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
-                                    '''
-                                    sh '''#!/usr/bin/env bash
-                                    {
-                                    set +x
-                                    cd test_dir/${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src
-                                    source ../../../HGCTPGValidation/env_install.sh
-                                    
-                                    echo "CONFIG_SUBSET=" ${CONFIG_SUBSET}
-                                    echo "label=" ${LABEL_TEST}
-                                    python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_TEST}
-                                    statusProduceTest=$?
-                                    } >> log_Jenkins 2> >(tee -a log_Jenkins out_err)
-                                    
-                                    # Move to the top directory
-                                    cd ../../../
-                                    
-                                    # If the script produceData_multiconfiguration.py fails, the pipeline stops
-                                    {
-                                    ./HGCTPGValidation/scripts/check_command_status.sh $statusProduceTest $STAGE_NAME
-                                    } >> log_Jenkins 2> >(tee -a log_Jenkins 1>&2)
-                                    '''
+                                stage('Produce_Test'){
+                                    steps {
+                                        sh '''#!/usr/bin/env bash
+                                        {
+                                        set +x
+                                        echo '\n==> Produce test data ======================='
+                                        if [ -f "out_err" ]; then
+                                            echo "Remove the last created out_err."
+                                            rm out_err
+                                        fi
+                                        } >> log_Jenkins 1>&2> >(tee -a log_Jenkins 1>&2)
+                                        '''
+                                        sh '''#!/usr/bin/env bash
+                                        {
+                                        set +x
+                                        cd test_dir/${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src
+                                        source ../../../HGCTPGValidation/env_install.sh
+                                        
+                                        echo "CONFIG_SUBSET=" ${CONFIG_SUBSET}
+                                        echo "label=" ${LABEL_TEST}
+                                        python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_TEST}
+                                        statusProduceTest=$?
+                                        } >> log_Jenkins 2> >(tee -a log_Jenkins out_err)
+                                        
+                                        # Move to the top directory
+                                        cd ../../../
+                                        
+                                        # If the script produceData_multiconfiguration.py fails, the pipeline stops
+                                        {
+                                        ./HGCTPGValidation/scripts/check_command_status.sh $statusProduceTest $STAGE_NAME
+                                        } >> log_Jenkins 2> >(tee -a log_Jenkins 1>&2)
+                                        '''
+                                    }
                                 }
                             }
                         }
