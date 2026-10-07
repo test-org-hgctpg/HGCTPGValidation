@@ -1,3 +1,20 @@
+def getEmailForJob(jobName) {
+    def elements = jobName.split('/')
+    def shortJobName = elements.length >= 2 ? elements[-2] : elements[-1]
+    
+    def emailMap = [
+        'HGC TPG CMSSW Validation': env.HGCTPG_EMAIL_TO_MAIN,
+        'HGC TPG Automatic Validation - TEST': env.HGCTPG_EMAIL_TO_EB,
+        'HGC TPG Automatic Validation - TEST ebecheva': env.HGCTPG_EMAIL_TO_EB,
+        'HGC TPG Automatic Validation - TEST jbsauvan': env.HGCTPG_EMAIL_TO_JB,
+        'HGC TPG Validation Validation': env.HGCTPG_EMAIL_TO_MAIN,
+        'HGC TPG Dev Validation - ebecheva': env.HGCTPG_EMAIL_TO_EB,
+        'HGC TPG Validation - org': env.EMAIL_TO=env.HGCTPG_EMAIL_TO_EB,
+        'CMSSW Dev Validation - org': env.EMAIL_TO=env.HGCTPG_EMAIL_TO_EB
+    ]
+    return emailMap.get(shortJobName, env.HGCTPG_EMAIL_TO_MAIN)
+}
+
 pipeline {
     agent {
         label 'llrgrhgtrig02.in2p3.fr'
@@ -5,6 +22,7 @@ pipeline {
     environment {
         LABEL_TEST='test'
         LABEL_REF='ref'
+        EMAIL_TO = "${getEmailForJob(env.JOB_NAME)}"
     }
     options {
         skipDefaultCheckout()
