@@ -3,7 +3,9 @@ pipeline {
     agent {
         label 'llrgrhgtrig02.in2p3.fr'
     }
-    
+    options {
+        skipDefaultCheckout()
+    }
     stages {
         stage('Install HGCTPGValidation package') {
             steps {
