@@ -186,13 +186,17 @@ pipeline {
         }
         stage('Install - Bash script') {
             steps {
-                checked('Install - Bash script', 'bash ./install_test.sh')
+                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                    checked('Install - Bash script', 'bash ./install_test.sh')
+                }
             }
         }
 
         stage('Produce - Python script') {
             steps {
-                checked('Produce - Python script', 'python produce_test.py')
+                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                    checked('Produce - Python script', 'python produce_test.py')
+                }
             }
         }
     }
