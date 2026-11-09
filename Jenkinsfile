@@ -2,20 +2,32 @@ def checked(String name, String cmd) {
     def logFile = "${name.replaceAll('[^A-Za-z0-9]', '_')}.log"
     publishChecks name: name, status: 'IN_PROGRESS',
                   title: name, summary: 'Running...'
+    try {
+        def rc = sh(script: "${cmd} > ${logFile} 2>&1", returnStatus: true)
+        def output = readFile(logFile).trim()
+        echo output
+        if (output.length() > 2000) {
+            output = output.substring(output.length() - 2000)
+        }
 
-    def rc = sh(script: "${cmd} > ${logFile} 2>&1", returnStatus: true)
-    def output = readFile(logFile).trim()
-    echo output // keep the output visible in the console log
-
-    if (rc == 0) {
+        if (rc == 0) {
+            publishChecks name: name, title: name,
+                          summary: 'Succeeded', conclusion: 'SUCCESS'
+        } else {
+            publishChecks name: name, title: name,
+                          summary: "Failed with exit code ${rc}",
+                          text: '```\n' + output + '\n```',
+                          conclusion: 'FAILURE'
+            error("${name} failed with exit code ${rc}")
+        }
+    } catch (org.jenkinsci.plugins.workflow.steps.FlowInterruptedException e) {
         publishChecks name: name, title: name,
-                      summary: 'Succeeded', conclusion: 'SUCCESS'
-    } else {
+                      summary: 'Aborted', conclusion: 'CANCELED'
+        throw e
+    } catch (e) {
         publishChecks name: name, title: name,
-                      summary: "Failed with exit code ${rc}",
-                      text: "```\n${output.takeRight(2000)}\n```",
-                      conclusion: 'FAILURE'
-        error("${name} failed with exit code ${rc}")
+                      summary: "Unexpected error: ${e.message}", conclusion: 'FAILURE'
+        throw e
     }
 }
 
@@ -174,7 +186,7 @@ pipeline {
         }
         stage('Install - Bash script') {
             steps {
-                checked('Install - Besah script', 'bash ./install_test.sh')
+                checked('Install - Bash script', 'bash ./install_test.sh')
             }
         }
 
