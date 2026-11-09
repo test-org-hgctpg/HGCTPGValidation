@@ -1,6 +1,7 @@
 pipeline {
-    label 'llrgrhgtrig02.in2p3.fr'
-
+    agent {
+        label 'llrgrhgtrig02.in2p3.fr'
+    }
     stages {
         stage('Install - Bash script') {
             steps {
