@@ -1,3 +1,24 @@
+def checked(String name, String cmd) {
+    def logFile = "${name.replaceAll('[^A-Za-z0-9]', '_')}.log"
+    publishChecks name: name, status: 'IN_PROGRESS',
+                  title: name, summary: 'Running...'
+
+    def rc = sh(script: "${cmd} > ${logFile} 2>&1", returnStatus: true)
+    def output = readFile(logFile).trim()
+    echo output // keep the output visible in the console log
+
+    if (rc == 0) {
+        publishChecks name: name, title: name,
+                      summary: 'Succeeded', conclusion: 'SUCCESS'
+    } else {
+        publishChecks name: name, title: name,
+                      summary: "Failed with exit code ${rc}",
+                      text: "```\n${output.takeRight(2000)}\n```",
+                      conclusion: 'FAILURE'
+        error("${name} failed with exit code ${rc}")
+    }
+}
+
 pipeline {
     agent {
         label 'llrgrhgtrig02.in2p3.fr'
@@ -153,45 +174,13 @@ pipeline {
         }
         stage('Install - Bash script') {
             steps {
-                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                    withChecks('Install - Bash script') {
-                        script {
-                            try {
-                                sh 'bash ./HGCTPGValidation/scripts/install_test.sh'
-                                publishChecks title: 'Install stage',
-                                              summary: 'Succeeded',
-                                              conclusion: 'SUCCESS'
-                            } catch (e) {
-                                publishChecks title: 'Install stage',
-                                              summary: "Failed: ${e.message}",
-                                              conclusion: 'FAILURE'
-                                throw e
-                            }
-                        }
-                    }
-                }
+                checked('Install - Besah script', 'bash ./install_test.sh')
             }
         }
 
         stage('Produce - Python script') {
             steps {
-                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                    withChecks('Produce - Python script') {
-                        script {
-                            try {
-                                sh 'python ./HGCTPGValidation/scripts/produce_test.py'
-                                publishChecks title: 'Produce stage',
-                                              summary: 'Succeeded',
-                                              conclusion: 'SUCCESS'
-                            } catch (e) {
-                                publishChecks title: 'Produce stage',
-                                              summary: "Failed: ${e.message}",
-                                              conclusion: 'FAILURE'
-                                throw e
-                            }
-                        }
-                    }
-                }
+                checked('Produce - Python script', 'python produce_test.py')
             }
         }
     }
