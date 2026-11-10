@@ -1,9 +1,12 @@
 def checked(String name, String cmd) {
     def logFile = "${name.replaceAll('[^A-Za-z0-9]', '_')}.log"
+    def rc = -1
+    def failed = false
+
     publishChecks name: name, status: 'IN_PROGRESS',
                   title: name, summary: 'Running...'
     try {
-        def rc = sh(script: "${cmd} > ${logFile} 2>&1", returnStatus: true)
+        rc = sh(script: "${cmd} > ${logFile} 2>&1", returnStatus: true)
         def output = readFile(logFile).trim()
         echo output
         if (output.length() > 2000) {
@@ -18,7 +21,7 @@ def checked(String name, String cmd) {
                           summary: "Failed with exit code ${rc}",
                           text: '```\n' + output + '\n```',
                           conclusion: 'FAILURE'
-            error("${name} failed with exit code ${rc}")
+            failed = true
         }
     } catch (org.jenkinsci.plugins.workflow.steps.FlowInterruptedException e) {
         publishChecks name: name, title: name,
@@ -28,6 +31,10 @@ def checked(String name, String cmd) {
         publishChecks name: name, title: name,
                       summary: "Unexpected error: ${e.message}", conclusion: 'FAILURE'
         throw e
+    }
+
+    if (failed) {
+        error("${name} failed with exit code ${rc}")
     }
 }
 
