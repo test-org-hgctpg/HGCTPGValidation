@@ -30,12 +30,13 @@ from graphFunctionsMulticonfigs import createWebPageLite, initRootStyle
 from configFunctions import get_listOfConfigs, check_schema_config, read_config 
 
 def checkSubprocessStatus(subProc, logfile):
-    if subProc.wait() != 0:
+    return_status = subProc.wait()
+    if return_status != 0:
        print('------------------------------------------------------------------------')
        print('=> Execution failed! There were some errors. Please, check the logfile.')
        print('------------------------------------------------------------------------')
        logfile.write('=> Execution failed! There were some errors.\n')
-       sys.exit()
+       sys.exit(return_status)
     else:
        print('Subprocess completed successfully!')
        logfile.write('=> Subprocess completed successfully!\n')
@@ -45,9 +46,12 @@ def	extractTimeMemoryInfos(namefile, dirname):
     print("Extract Time&Memory information from ", namefile)
         
     # Output file MemoryReport_ref.log or MemoryReport_test.log
-    indicator = namefile.split("_")
-    #outputfile = f"MemoryReport_{indicator[1]}_{indicator[2]}"
-    outputfile = "MemoryReport_" + indicator[1] + "_" + indicator[2]
+    # Split only at the first "_"
+    indicator = namefile.split("_", 1)
+    if len(indicator):
+        outputfile = f"MemoryReport_{indicator[1]}"
+    else:
+        print("Please check the name of the ", namefile)
     print("oututfile = ", outputfile)
     
     # Input file out_ref.log or out_test.log
@@ -75,7 +79,7 @@ def	extractTimeMemoryInfos(namefile, dirname):
                     RSS_values.append(indicator[7])
                 # Read Time summary information
                 if " Time Summary:" in line:
-                    # Read 18 lines starting from " Time Summary:"
+                    # Read 18 lines starting from " Time Seummary:"
                     lines_cache = islice(f, 2, 5, None)
                     for current_line in lines_cache:
                         indicator = current_line.split(" ")
@@ -154,11 +158,12 @@ def readFileStatement(configname, rel, dirname):
                         listHistos[i].GetXaxis().SetRange(listHistos[i].FindFirstBinAbove(), listHistos[i].FindLastBinAbove() + 10)
     hFile.Write()
 
-def writeIntoFile(prnumber, configTest, configRef, prtitle, prdir):
+def writeIntoFile(prnumber, configTest, configRef, prtitle, prdir, geomCheck):
     print("Call writeIntoFile.")
     
     fileName = prdir + "/validation_webpages.txt"
     print(fileName)
+    
     with open(fileName, 'a') as f:
         prnb  = "PR" + prnumber
         if configTest=='':
@@ -166,6 +171,18 @@ def writeIntoFile(prnumber, configTest, configRef, prtitle, prdir):
         else:
             title = prnb + "_" + configTest + "_" + configRef + " : Test: " + configTest + " | " + "Ref: " + configRef + "\n"
         f.write(title)
+
+import shutil
+from pathlib import Path
+
+def clean_subdirs(prdir, keep="Geom_check"):
+    prdir = Path(prdir)
+    if not prdir.exists():
+        return
+    
+    for entry in prdir.iterdir():
+        if entry.is_dir() and entry.name != keep:
+            shutil.rmtree(entry)
 
 def main(configset, refdir, testdir, datadir, prnumber, prtitle):
     print(' == Main == ')
@@ -183,23 +200,21 @@ def main(configset, refdir, testdir, datadir, prnumber, prtitle):
     prdir = "../../" + datadir + "/PR" + prnumber
     print('prdir = ', prdir)
     if os.path.exists(prdir):
-        # Remove directory before copying new histograms, this is used when running only Display script
-        # When running the job with Jenkins, this directory is removed at the beginning of the job
+        # Remove configuration directories before copying new histograms, this is used when running only Display script
+        # or when the PR directory was created by Geom_check stage
         print("The data directory for the PR ", prdir, "already exists. It will be deleted.")
         mess = "The data directory for the PR " + prdir + "already exists. It will be deleted."
         logfile.write(mess)
-        os.system("rm -rf " + prdir)
+        clean_subdirs(prdir, keep="Geom_check")
     else:
         print("The data directory for the PR ", prdir, "doesn't exist. It will be created")
         mess = "The data directory for the PR " + prdir + "doesn't exist. It will be created"
         logfile.write(mess)
+        os.system("mkdir " + prdir)
+        os.system("ls -lrt " + prdir)
     
-    print("Will do mkdir " + prdir)
-    os.system("mkdir " + prdir)
-    os.system("ls -lrt " + prdir)
-
     # Write the first line of the validation_webpages.txt
-    writeIntoFile(prnumber, '', '', prtitle, prdir)
+    writeIntoFile(prnumber, '', '', prtitle, prdir, '')
     
     # Path to the config file
     path='../HGCTPGValidation/config/'
@@ -263,8 +278,8 @@ def main(configset, refdir, testdir, datadir, prnumber, prtitle):
             os.system("mkdir " + datadir_gif)
             print("cp -rf " + imgdir + "/. " + datadir_gif)
             os.system("cp -rf " + imgdir + "/. " + datadir_gif)
-            writeIntoFile(prnumber, confTest, confRef, prtitle, prdir)
-     
+            writeIntoFile(prnumber, confTest, confRef, prtitle, prdir, '')
+    
 if __name__=='__main__':
     import optparse
     import importlib

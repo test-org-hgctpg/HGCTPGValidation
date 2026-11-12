@@ -1,29 +1,66 @@
+def checked(String name, String cmd) {
+    def logFile = "${name.replaceAll('[^A-Za-z0-9]', '_')}.log"
+    def rc = -1
+    def failed = false
+
+    publishChecks name: name, status: 'IN_PROGRESS',
+                  title: name, summary: 'Running...'
+    try {
+        rc = sh(script: "${cmd} > ${logFile} 2>&1", returnStatus: true)
+        def output = readFile(logFile).trim()
+        echo output
+        if (output.length() > 2000) {
+            output = output.substring(output.length() - 2000)
+        }
+
+        if (rc == 0) {
+            publishChecks name: name, title: name,
+                          summary: 'Succeeded', conclusion: 'SUCCESS'
+        } else {
+            publishChecks name: name, title: name,
+                          summary: "Failed with exit code ${rc}",
+                          text: '```\n' + output + '\n```',
+                          conclusion: 'FAILURE'
+            failed = true
+        }
+    } catch (org.jenkinsci.plugins.workflow.steps.FlowInterruptedException e) {
+        publishChecks name: name, title: name,
+                      summary: 'Aborted', conclusion: 'CANCELED'
+        throw e
+    } catch (e) {
+        publishChecks name: name, title: name,
+                      summary: "Unexpected error: ${e.message}", conclusion: 'FAILURE'
+        throw e
+    }
+
+    if (failed) {
+        error("${name} failed with exit code ${rc}")
+    }
+}
+
 pipeline {
     agent {
-        label 'llrgrhgtrig.in2p3.fr'
-    }
-    environment {
-        LABEL_TEST='test'
-        LABEL_REF='ref'
-        CONFIG_SUBSET = 'default_multi_subset'
+        label 'llrgrhgtrig02.in2p3.fr'
     }
     options {
-        skipDefaultCheckout() 
+        skipDefaultCheckout()
     }
+    
     stages {
-        stage('Set environment variables'){
+        stage('Set_environment_variables'){
             steps{
-                sh '''
+                sh '''#!/usr/bin/env bash
+                {
                 set +x
-                echo '==> Set environment variables'
-                exec >> log_Jenkins
                 if [ -f "log_Jenkins" ]; then
                     echo "Remove the last created log_Jenkins."
                     rm log_Jenkins
-                else 
+                else
                     echo "log_Jenkins does not exist."
-                fi 
-                echo '==> Set environment variables'
+                fi
+                
+                echo '\n==> Set environment variables ============================'
+                } >> log_Jenkins 1>&2> >(tee -a log_Jenkins >&2)
                 '''
                 script{
                     String s = env.JOB_NAME
@@ -81,6 +118,22 @@ pipeline {
                             env.WEBPAGES_VAL=env.HGCTPG_WEBPAGES_VAL_CMSSW_TEST_EB
                             env.JOB_FLAG=1
                             break
+                        case 'HGC TPG Validation - org':
+                            env.EMAIL_TO=env.HGCTPG_EMAIL_TO_EB
+                            env.BASE_REMOTE=env.HGCTPG_BASE_REMOTE_EB_org
+                            env.DATA_DIR=env.HGCTPG_DATA_DIR_EB
+                            env.WEBPAGES_VAL=env.HGCTPG_WEBPAGES_VAL_CMSSW_TEST_EB
+                            env.JOB_FLAG=1
+                            break
+                        case 'CMSSW Dev Validation - org':
+                            env.EMAIL_TO=env.HGCTPG_EMAIL_TO_EB
+                            env.BASE_REMOTE=env.HGCTPG_BASE_REMOTE_EB_org
+                            env.REMOTE_HGCTPGVAL=env.BASE_REMOTE
+                            env.DATA_DIR=env.HGCTPG_DATA_DIR_EB
+                            env.BRANCH_HGCTPGVAL=env.HGCTPG_BRANCH_VAL_EB_ORG
+                            env.WEBPAGES_VAL=env.HGCTPG_WEBPAGES_VAL_CMSSW_TEST_EB
+                            env.JOB_FLAG=0
+                            break
                         default: 
                             println("The job name is unknown"); 
                             break
@@ -98,253 +151,90 @@ pipeline {
                             env.REMOTE_HGCTPGVAL = env.BASE_REMOTE
                         }
                     }
-                    
-                    println(env.REMOTE_HGCTPGVAL)
-                    println(env.BRANCH_HGCTPGVAL)
-                    
-                    
-                    println(env.BASE_REMOTE)
-                    println(env.DATA_DIR)
-                    println(env.CHANGE_TARGET)
-                    println(env.CHANGE_BRANCH)
-                    println(env.CHANGE_URL)
-                    println(env.CHANGE_FORK)
+                    env.CONFIG_SUBSET = 'default_multi_subset'
                 }
+                sh '''#!/usr/bin/env bash
+                {   pwd
+                    echo 'JOB_NAME=' $JOB_NAME
+                    echo 'JOB_FLAG=' $JOB_FLAG
+                    echo 'CHANGE_URL=' $CHANGE_URL
+                    echo 'CHANGE_FORK=' $CHANGE_FORK
+                    echo 'CHANGE_BRANCH=' $CHANGE_BRANCH
+                    echo 'CHANGE_TARGET=' $CHANGE_TARGET
+                    echo 'CONFIG_SUBSET=' $CONFIG_SUBSET
+                    echo 'REMOTE_HGCTPGVAL=' $REMOTE_HGCTPGVAL
+                    echo 'BRANCH_HGCTPGVAL=' $BRANCH_HGCTPGVAL
+                    echo 'BASE_REMOTE=' $BASE_REMOTE
+                    echo 'DATA_DIR=' $DATA_DIR
+                    echo 'EMAIL_TO=' $EMAIL_TO
+                    echo 'WEBPAGES_VAL=' $WEBPAGES_VAL
+                } >> log_Jenkins 1>&2> >(tee -a log_Jenkins >&2)
+                '''
             }  
         }
-        stage('Initialize'){
-            stages{
-                stage('Clean the working environment'){
-                    steps{
-                        sh '''
-                        set +x
-                        echo '==> Clean the working environment. ============================'
-                        exec >> log_Jenkins
-                        echo '==> Clean the working environment. ============================'
-                        if [ -d "/data/jenkins/workspace/${DATA_DIR}/PR$CHANGE_ID" ]
-                        then
-                            rm -rf /data/jenkins/workspace/${DATA_DIR}/PR$CHANGE_ID
-                        fi
-                        echo '   '
-                        '''
-                    }
-                }
-                stage('Install automatic validation package HGCTPGValidation') {
-                    steps {
-                        sh '''
-                        set +x
-                        echo '==> Install automatic validation package HGCTPGValidation. ============================'
-                        exec >> log_Jenkins
-                        echo '==> Install automatic validation package HGCTPGValidation. ============================'
-                        uname -a
-                        whoami
-                        pwd
-                        ls -l
-                        if [ -d "./HGCTPGValidation" ] 
-                        then
-                            rm -rf HGCTPGValidation
-                        fi
-                        git clone -b ${BRANCH_HGCTPGVAL} https://github.com/${REMOTE_HGCTPGVAL}/HGCTPGValidation HGCTPGValidation
-                        source HGCTPGValidation/env_install.sh
-                        pip install attrs
-                        if [ -d "./test_dir" ] 
-                        then
-                            echo "Directory test_dir exists."
-                            rm -rf test_dir
-                        fi
-                        mkdir test_dir
-                        ls -lrt ..
-                        echo '   '
-                        '''
-                    }
-                }
-                stage('Set CMSSW environment variables'){
-                    steps{
-                        script{
-                            sh '''
-                            set +x
-                            echo 'echo ==> Set CMSSW environment variables. ============================'
-                            exec >> log_Jenkins
-                            echo 'echo ==> Set CMSSW environment variables. ============================'
-                            '''
-                            if ( env.JOB_FLAG == '0' ){
-                                env.REF_RELEASE = sh(returnStdout: true, script: 'set +x exec >> log_Jenkins; source ./HGCTPGValidation/scripts/extractReleaseName.sh ${CHANGE_TARGET}').trim()
-                                env.SCRAM_ARCH = sh(returnStdout: true, script: 'set +x exec >> log_Jenkins; source ./HGCTPGValidation/scripts/getScramArch.sh ${REF_RELEASE}').trim()
-                                
-                                if (env.CHANGE_FORK){
-                                    env.REMOTE = env.CHANGE_FORK
-                                }
-                                else {
-                                    env.REMOTE = env.BASE_REMOTE
-                                }
-                                
-                                println(env.REF_RELEASE)
-                                println(env.SCRAM_ARCH)
-                                println(env.REMOTE)
-                            } 
-                            else {
-                                env.REF_BRANCH = sh(returnStdout: true, script: 'set +x exec >> log_Jenkins; module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/; module purge; module load python/3.9.9; python ./HGCTPGValidation/scripts/get_cmsswRefBranch.py').trim()
-                                env.REF_RELEASE = sh(returnStdout: true, script: 'set +x exec >> log_Jenkins; source ./HGCTPGValidation/scripts/extractReleaseName.sh ${REF_BRANCH}').trim()
-                                env.SCRAM_ARCH = sh(returnStdout: true, script: 'set +x exec >> log_Jenkins; source ./HGCTPGValidation/scripts/getScramArch.sh ${REF_RELEASE}').trim()
-                                env.BASE_REMOTE = sh(returnStdout: true, script: 'set +x exec >> log_Jenkins; module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/; module purge; module load python/3.9.9; python ./HGCTPGValidation/scripts/get_remoteParam.py').trim()
-                                env.CHANGE_BRANCH = env.REF_BRANCH
-                                env.CHANGE_TARGET = env.REF_BRANCH
-                                env.REMOTE = env.BASE_REMOTE
-
-                                println(env.REF_BRANCH)
-                                println(env.REF_RELEASE)
-                                println(env.SCRAM_ARCH)
-                                println(env.BASE_REMOTE)
-                                println(env.REMOTE)
-                            }
-                        }
-                        sh '''
-                        set +x
-                        exec >> log_Jenkins
-                        echo '  '
-                        '''
-                    }
-                }
-            }
-        }
-        stage('Build CMSSW Test release'){
-            stages{
-                stage('Install'){
-                    steps {
-                        sh '''
-                        set +x
-                        echo '==> Build CMSSW Test ========================='
-                        echo '===> InstallCMSSW Test Step'
-                        exec >> log_Jenkins
-                        echo '==> Build CMSSW Test ========================='
-                        echo '===> InstallCMSSW Test Step'
-                        pwd
-                        cd test_dir
-                        ../HGCTPGValidation/scripts/installCMSSW.sh $SCRAM_ARCH $REF_RELEASE $REMOTE $BASE_REMOTE $CHANGE_BRANCH $CHANGE_TARGET ${LABEL_TEST}
-                        echo '     '
-                        '''
-                    }
-                }
-                stage('Quality Checks'){
-                    steps{
-                        sh '''
-                        set +x
-                        echo '===> Quality checks'
-                        exec >> log_Jenkins
-                        echo '===> Quality checks'
-                        source /cvmfs/cms.cern.ch/cmsset_default.sh
-                        cd test_dir/${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src
-                        scram build code-checks
-                        scram build code-format
-                        GIT_STATUS=`git status --porcelain`
-                        if [ ! -z "$GIT_STATUS" ]; then
-                            echo "Code-checks or code-format failed."
-                            exit 1;
-                        fi
-                        echo '    '
-                        '''
-                    }
-                }
-                stage('Produce'){
-                    steps {
-                        sh '''
-                        set +x
-                        echo '===> Produce test data.'
-                        exec >> log_Jenkins
-                        echo '===> Produce test data.'
-                        pwd
-                        cd test_dir/${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src
-                        module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/
-                        module purge
-                        module load python/3.9.9
-                        python --version
-                        echo ' CONFIG_SUBSET = ' ${CONFIG_SUBSET}
-                        echo 'LABEL_TEST = ' ${LABEL_TEST}
-                        echo 'SCRAM_ARCH = ' ${SCRAM_ARCH}
-                        python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_TEST}
-                        echo '      '
-                        '''
-                    }
-                }
-            }
-        }
-        stage('Build CMSSW Ref release'){
-            stages{
-                stage('Install'){
-                    steps {
-                        sh '''
-                        set +x
-                        echo '==> Build CMSSW Reference ======================='
-                        echo '===> InstallCMSSW Ref'
-                        exec >> log_Jenkins
-                        echo '==> Build CMSSW Reference ======================='
-                        echo '===> InstallCMSSW Ref'
-                        pwd
-                        cd test_dir
-                        ../HGCTPGValidation/scripts/installCMSSW.sh $SCRAM_ARCH $REF_RELEASE $BASE_REMOTE $BASE_REMOTE $CHANGE_TARGET $CHANGE_TARGET ${LABEL_REF}
-                        echo '      '
-                        '''
-                    }
-                }           
-                stage('Produce'){
-                    steps {
-                        sh '''
-                        set +x
-                        echo '===> Produce reference data.'
-                        exec >> log_Jenkins
-                        echo '===> Produce reference data.'
-                        pwd
-                        cd test_dir/${REF_RELEASE}_HGCalTPGValidation_${LABEL_REF}/src
-                        module use /opt/exp_soft/vo.llr.in2p3.fr/modulefiles_el7/
-                        module purge
-                        module load python/3.9.9
-                        python --version
-                        echo ' CONFIG_SUBSET = ' ${CONFIG_SUBSET}
-                        python ../../../HGCTPGValidation/scripts/produceData_multiconfiguration.py --subsetconfig ${CONFIG_SUBSET} --label ${LABEL_REF}
-                        echo '      '
-                        '''
-                    }
-                }
-            }
-        }
-        stage('Display') {
+        stage('Install_automatic_validation_package_HGCTPGValidation') {
             steps {
-                sh '''
+                sh '''#!/usr/bin/env bash
+                {
                 set +x
-                echo '==> Display ======================='
-                exec >> log_Jenkins
-                echo '==> Display ======================='
-                cd test_dir
-                source ../HGCTPGValidation/env_install.sh
-                echo $PWD
-                python ../HGCTPGValidation/scripts/displayHistos.py --subsetconfig ${CONFIG_SUBSET} --refdir ${REF_RELEASE}_HGCalTPGValidation_${LABEL_REF}/src --testdir ${REF_RELEASE}_HGCalTPGValidation_${LABEL_TEST}/src --datadir ${DATA_DIR} --prnumber $CHANGE_ID --prtitle "$CHANGE_TITLE (from $CHANGE_AUTHOR, $CHANGE_URL)"
-                echo '      '
+                if [ -d "./HGCTPGValidation" ] 
+                then
+                    echo "Remove previsous HGCTPGValidation package."
+                    rm -rf HGCTPGValidation
+                fi
+                ls -lrt
+                pwd
+                git clone -b ${BRANCH_HGCTPGVAL} https://github.com/${REMOTE_HGCTPGVAL}/HGCTPGValidation HGCTPGValidation
+                ls -lrt
+                source HGCTPGValidation/env_install.sh
+                } 
                 '''
             }
         }
-    }
-    post {
-        always {
-            script{
-                if ( env.JOB_FLAG=='1' ) {    
-                    env.CHANGE_BRANCH = env.BRANCH_HGCTPGVAL
-                    env.CHANGE_TARGET = env.CHANGE_TARGET_HGCTPGVAL
-                    println( "Validation of the validation: Set the original name of CHANGE_BRANCH => " + env.CHANGE_BRANCH )
+        stage('Install test - Bash script') {
+            steps {
+                checked('Install test - Bash script', 'bash ./HGCTPGValidation/scripts/install_test.sh')
+            }
+        }
+        stage('Quality checks - Bash script') {
+            steps {
+                checked('Quality checks - Bash script', 'bash ./HGCTPGValidation/scripts/quality_testing.sh')
+            }
+        }
+        stage('Parallel tasks'){
+            parallel{
+                stage('Reference part'){
+                    stages{
+                        stage('Install ref - Bash script') {
+                            steps {
+                                checked('Install ref - Bash script', 'bash ./HGCTPGValidation/scripts/install_test.sh')
+                            }
+                        }
+                        stage('Produce ref - Python script') {
+                            steps {
+                                checked('Produce ref - Python script', 'python ./HGCTPGValidation/scripts/produce_ref.py')
+                            }
+                        }
+                    }
+                }
+                stage('Produce test - Python script') {
+                    steps {
+                        checked('Produce test - Python script', 'python ./HGCTPGValidation/scripts/produce_test.py')
+                    }
+                }
+                stage('Geom check - Bash script') {
+                    steps {
+                        catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                            checked('Geom check - Bash script', 'bash ./HGCTPGValidation/scripts/geom_check_testing.sh')
+                        }
+                    }
                 }
             }
-            archiveArtifacts artifacts: 'log_Jenkins', fingerprint: true
         }
-        success {
-            echo 'The job finished successfully.'
-            mail to: "${EMAIL_TO}",
-                 subject: "Jenkins job succeded: ${currentBuild.fullDisplayName}",
-                 body:  "The job finished successfully. \n\n Pull request: ${env.BRANCH_NAME} build number: #${env.BUILD_NUMBER} \n\n Title: ${env.CHANGE_TITLE} \n\n Author of the PR: ${env.CHANGE_AUTHOR} \n\n Target branch: ${env.CHANGE_TARGET} \n\n Feature branch: ${env.CHANGE_BRANCH} \n\n Check console output at ${env.BUILD_URL} \n\n and ${env.CHANGE_URL} to view the results.  \n\n The validation histograms are available at ${env.WEBPAGES_VAL} \n\n"
-        }
-        failure {
-            echo 'Job failed'
-            mail to: "${EMAIL_TO}",
-                 subject: "Jenkins job failed: ${currentBuild.fullDisplayName}",
-                 body: "The compilation or the build steps failed. \n\n Pull request: ${env.BRANCH_NAME} build number: #${env.BUILD_NUMBER} \n\n Title: ${env.CHANGE_TITLE} \n\n Author of the PR: ${env.CHANGE_AUTHOR} \n\n Target branch: ${env.CHANGE_TARGET} \n\n Feature branch: ${env.CHANGE_BRANCH} \n\n Check console output at ${env.BUILD_URL} \n\n and ${env.CHANGE_URL} to view the results.  \n\n The validation histograms are available at ${env.WEBPAGES_VAL} \n\n"
+        stage('Display - Python script') {
+            steps {
+                checked('Display - Python script', 'python ./HGCTPGValidation/scripts/display_testing.py')
+            }
         }
     }
 }
