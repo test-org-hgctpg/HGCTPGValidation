@@ -4,8 +4,8 @@
 # Stops the script at the first failing command
 set -e
 
-echo "Starting install stage ..."
+echo "Starting test install stage ..."
 
 # Try to list a non existing script
-ls ./my_script.sh
-echo "Install script finished!"
+ls -lrt
+echo "Install test script finished!"
