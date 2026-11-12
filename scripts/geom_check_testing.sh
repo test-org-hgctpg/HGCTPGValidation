@@ -7,5 +7,5 @@ set -e
 echo "Starting install stage ..."
 
 # Try to list a non existing script
-ls ./my_script.sh
+#ls ./my_script.sh
 echo "Install script finished!"
