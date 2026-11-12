@@ -194,14 +194,14 @@ pipeline {
         stage('Install test - Bash script') {
             steps {
                 catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                    checked('Install - Bash script', 'bash ./HGCTPGValidation/scripts/install_test.sh')
+                    checked('Install test - Bash script', 'bash ./HGCTPGValidation/scripts/install_test.sh')
                 }
             }
         }
         stage('Quality checks - Bash script') {
             steps {
                 catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                    checked('Install - Bash script', 'bash ./HGCTPGValidation/scripts/quality_testing.sh')
+                    checked('Quality checks - Bash script', 'bash ./HGCTPGValidation/scripts/quality_testing.sh')
                 }
             }
         }
@@ -212,14 +212,14 @@ pipeline {
                         stage('Install ref - Bash script') {
                             steps {
                                 catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                                    checked('Install - Bash script', 'bash ./HGCTPGValidation/scripts/install_test.sh')
+                                    checked('Install ref - Bash script', 'bash ./HGCTPGValidation/scripts/install_test.sh')
                                 }
                             }
                         }
                         stage('Produce ref - Python script') {
                             steps {
                                 catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                                    checked('Produce - Python script', 'python ./HGCTPGValidation/scripts/produce_ref.py')
+                                    checked('Produce ref - Python script', 'python ./HGCTPGValidation/scripts/produce_ref.py')
                                 }
                             }
                         }
@@ -228,14 +228,14 @@ pipeline {
                 stage('Produce test - Python script') {
                     steps {
                         catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                            checked('Produce - Python script', 'python ./HGCTPGValidation/scripts/produce_test.py')
+                            checked('Produce test - Python script', 'python ./HGCTPGValidation/scripts/produce_test.py')
                         }
                     }
                 }
                 stage('Geom check - Bash script') {
                     steps {
                         catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                            checked('Install - Bash script', 'bash ./HGCTPGValidation/scripts/geom_check_testing.sh')
+                            checked('Geom check - Bash script', 'bash ./HGCTPGValidation/scripts/geom_check_testing.sh')
                         }
                     }
                 }
@@ -244,7 +244,7 @@ pipeline {
         stage('Display - Python script') {
             steps {
                 catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                    checked('Produce - Python script', 'python ./HGCTPGValidation/scripts/display_testing.py')
+                    checked('Display - Python script', 'python ./HGCTPGValidation/scripts/display_testing.py')
                 }
             }
         }
