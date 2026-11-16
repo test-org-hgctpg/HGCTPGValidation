@@ -215,8 +215,8 @@ pipeline {
                                 script{
                                     parallel(
                                         failFast: false,
-                                        'Produce ref - Python script': { stage('4 - Produce ref - Python script') { checked('Produce ref - Python script', 'python ./HGCTPGValidation/scripts/produce_ref.py') } },
-                                        'Produce test - Python script': { stage('5 - Produce test - Python script') { checked('Produce test - Python script', 'python ./HGCTPGValidation/scripts/produce_test.py') } }
+                                        'Produce ref - Python script': { stage('Produce ref - Python script') { checked('4 - Produce ref - Python script', 'python ./HGCTPGValidation/scripts/produce_ref.py') } },
+                                        'Produce test - Python script': { stage('Produce test - Python script') { checked('5 - Produce test - Python script', 'python ./HGCTPGValidation/scripts/produce_test.py') } }
                                     )
                                 }
                             }
