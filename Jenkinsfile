@@ -203,23 +203,32 @@ pipeline {
         }
         stage('Parallel tasks'){
             parallel{
-                stage('Reference part'){
+                stage('Compare_with_CMSSW_Ref_Release'){
                     stages{
                         stage('Install ref - Bash script') {
                             steps {
                                 checked('Install ref - Bash script', 'bash ./HGCTPGValidation/scripts/install_test.sh')
                             }
                         }
-                        stage('Produce ref - Python script') {
-                            steps {
-                                checked('Produce ref - Python script', 'python ./HGCTPGValidation/scripts/produce_ref.py')
+                        stage('Production'){
+                            parallel{
+                                stage('Produce ref - Python script') {
+                                    steps {
+                                        checked('Produce ref - Python script', 'python ./HGCTPGValidation/scripts/produce_ref.py')
+                                    }
+                                }
+                                stage('Produce test - Python script') {
+                                    steps {
+                                        checked('Produce test - Python script', 'python ./HGCTPGValidation/scripts/produce_test.py')
+                                    }
+                                }
                             }
                         }
-                    }
-                }
-                stage('Produce test - Python script') {
-                    steps {
-                        checked('Produce test - Python script', 'python ./HGCTPGValidation/scripts/produce_test.py')
+                        stage('Display - Python script') {
+                            steps {
+                                checked('Display - Python script', 'python ./HGCTPGValidation/scripts/display_testing.py')
+                            }
+                        }
                     }
                 }
                 stage('Geom check - Bash script') {
@@ -229,11 +238,6 @@ pipeline {
                         }
                     }
                 }
-            }
-        }
-        stage('Display - Python script') {
-            steps {
-                checked('Display - Python script', 'python ./HGCTPGValidation/scripts/display_testing.py')
             }
         }
     }
