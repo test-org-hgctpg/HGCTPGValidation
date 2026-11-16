@@ -191,23 +191,23 @@ pipeline {
                 '''
             }
         }
-        stage('1 - Install test - Bash script') {
+        stage('Install test - Bash script') {
             steps {
-                checked('Install test - Bash script', 'bash ./HGCTPGValidation/scripts/install_test.sh')
+                checked('1 - Install test - Bash script', 'bash ./HGCTPGValidation/scripts/install_test.sh')
             }
         }
-        stage('2 - Quality checks - Bash script') {
+        stage('Quality checks - Bash script') {
             steps {
-                checked('Quality checks - Bash script', 'bash ./HGCTPGValidation/scripts/quality_testing.sh')
+                checked('2 - Quality checks - Bash script', 'bash ./HGCTPGValidation/scripts/quality_testing.sh')
             }
         }
         stage('Parallel tasks'){
             parallel{
                 stage('Compare_with_CMSSW_Ref_Release'){
                     stages{
-                        stage('3 - Install ref - Bash script') {
+                        stage('Install ref - Bash script') {
                             steps {
-                                checked('Install ref - Bash script', 'bash ./HGCTPGValidation/scripts/install_test.sh')
+                                checked('3 - Install ref - Bash script', 'bash ./HGCTPGValidation/scripts/install_test.sh')
                             }
                         }
                         stage('Production'){
@@ -215,23 +215,23 @@ pipeline {
                                 script{
                                     parallel(
                                         failFast: false,
-                                        '4 - Produce ref - Python script': { stage('Produce ref - Python script') { checked('Produce ref - Python script', 'python ./HGCTPGValidation/scripts/produce_ref.py') } },
-                                        '5 - Produce test - Python script': { stage('Produce test - Python script') { checked('Produce test - Python script', 'python ./HGCTPGValidation/scripts/produce_test.py') } }
+                                        'Produce ref - Python script': { stage('4 - Produce ref - Python script') { checked('Produce ref - Python script', 'python ./HGCTPGValidation/scripts/produce_ref.py') } },
+                                        'Produce test - Python script': { stage('5 - Produce test - Python script') { checked('Produce test - Python script', 'python ./HGCTPGValidation/scripts/produce_test.py') } }
                                     )
                                 }
                             }
                         }
-                        stage('6 - Display - Python script') {
+                        stage('Display - Python script') {
                             steps {
-                                checked('Display - Python script', 'python ./HGCTPGValidation/scripts/display_testing.py')
+                                checked('6 - Display - Python script', 'python ./HGCTPGValidation/scripts/display_testing.py')
                             }
                         }
                     }
                 }
-                stage('7 - Geom check - Bash script') {
+                stage('Geom check - Bash script') {
                     steps {
                         catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                            checked('Geom check - Bash script', 'bash ./HGCTPGValidation/scripts/geom_check_testing.sh')
+                            checked('7 - Geom check - Bash script', 'bash ./HGCTPGValidation/scripts/geom_check_testing.sh')
                         }
                     }
                 }
