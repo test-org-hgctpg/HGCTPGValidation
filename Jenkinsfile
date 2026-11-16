@@ -191,12 +191,12 @@ pipeline {
                 '''
             }
         }
-        stage('Install test - Bash script') {
+        stage('1 - Install test - Bash script') {
             steps {
                 checked('Install test - Bash script', 'bash ./HGCTPGValidation/scripts/install_test.sh')
             }
         }
-        stage('Quality checks - Bash script') {
+        stage('2 - Quality checks - Bash script') {
             steps {
                 checked('Quality checks - Bash script', 'bash ./HGCTPGValidation/scripts/quality_testing.sh')
             }
@@ -205,7 +205,7 @@ pipeline {
             parallel{
                 stage('Compare_with_CMSSW_Ref_Release'){
                     stages{
-                        stage('Install ref - Bash script') {
+                        stage('3 - Install ref - Bash script') {
                             steps {
                                 checked('Install ref - Bash script', 'bash ./HGCTPGValidation/scripts/install_test.sh')
                             }
@@ -215,20 +215,20 @@ pipeline {
                                 script{
                                     parallel(
                                         failFast: false,
-                                        'Produce ref - Python script': { stage('Produce ref - Python script') { checked('Produce ref - Python script', 'python ./HGCTPGValidation/scripts/produce_ref.py') } },
-                                        'Produce test - Python script': { stage('Produce test - Python script') { checked('Produce test - Python script', 'python ./HGCTPGValidation/scripts/produce_test.py') } }
+                                        '4 - Produce ref - Python script': { stage('Produce ref - Python script') { checked('Produce ref - Python script', 'python ./HGCTPGValidation/scripts/produce_ref.py') } },
+                                        '5 - Produce test - Python script': { stage('Produce test - Python script') { checked('Produce test - Python script', 'python ./HGCTPGValidation/scripts/produce_test.py') } }
                                     )
                                 }
                             }
                         }
-                        stage('Display - Python script') {
+                        stage('6 - Display - Python script') {
                             steps {
                                 checked('Display - Python script', 'python ./HGCTPGValidation/scripts/display_testing.py')
                             }
                         }
                     }
                 }
-                stage('Geom check - Bash script') {
+                stage('7 - Geom check - Bash script') {
                     steps {
                         catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
                             checked('Geom check - Bash script', 'bash ./HGCTPGValidation/scripts/geom_check_testing.sh')
