@@ -211,15 +211,12 @@ pipeline {
                             }
                         }
                         stage('Production'){
-                            parallel{
-                                stage('Produce ref - Python script') {
-                                    steps {
-                                        checked('Produce ref - Python script', 'python ./HGCTPGValidation/scripts/produce_ref.py')
-                                    }
-                                }
-                                stage('Produce test - Python script') {
-                                    steps {
-                                        checked('Produce test - Python script', 'python ./HGCTPGValidation/scripts/produce_test.py')
+                            steps{
+                                script{
+                                    parallel{
+                                        failFast: false,
+                                        'Produce ref - Python script': { stage('Produce ref - Python script') { checked('Produce ref - Python script', 'python ./HGCTPGValidation/scripts/produce_ref.py') } },
+                                        'Produce test - Python script': { stage('Produce test - Python script') { checked('Produce test - Python script', 'python ./HGCTPGValidation/scripts/produce_test.py') } }
                                     }
                                 }
                             }
