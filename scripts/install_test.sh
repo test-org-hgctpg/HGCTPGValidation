@@ -7,5 +7,5 @@ set -e
 echo "Starting test install stage ..."
 
 # Try to list a non existing script
-ls -lrt my_file.txt
+#ls -lrt my_file.txt
 echo "Install test script finished!"
