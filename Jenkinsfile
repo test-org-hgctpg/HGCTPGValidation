@@ -1,18 +1,37 @@
 def checked(String name, String cmd) {
+    # Builds a log file name from the check name. replaceAll swaps every character 
+    # that is not a letter or digit (spaces, dashes, ...) for _
+    # logFile the stdout and stderrs
     def logFile = "${name.replaceAll('[^A-Za-z0-9]', '_')}.log"
+    # rc will hold the exit code 
     def rc = -1
+    # The flag failde becomes true when the script exits with a non-zero code
     def failed = false
 
+    # Publishes the check on GitHub with status "in progress"
     publishChecks name: name, status: 'IN_PROGRESS',
                   title: name, summary: 'Running...'
     try {
+        # Runs the command with its stdout and stderr (2>&1) redirected into the log file (>).
+        # returnStatus: true makes sh return the exit code instead of throwing on failure.
+        # The code is stored in rc. 
         rc = sh(script: "${cmd} > ${logFile} 2>&1", returnStatus: true)
+        
+        # Reads the log file back into a string, removes leading and trailing whitespace,
+        # and prints it to the Jenkins console
         def output = readFile(logFile).trim()
+        
+        # Print the stdout&stderr on the consol
         echo output
+        # GitHub limits the size of check output, so if the log is longer than 2000 characters,
+        # keep only the last 2000. Errors are usually at the end.
         if (output.length() > 2000) {
             output = output.substring(output.length() - 2000)
         }
-
+        
+        # Publish the status on GitHub
+        # Exit code rc=0 => the check is completed with SUCCESS.
+        # Otherwise it is completed with FAILURE, in this case the output with the error message is printed to GitHub
         if (rc == 0) {
             publishChecks name: name, title: name,
                           summary: 'Succeeded', conclusion: 'SUCCESS'
@@ -23,16 +42,21 @@ def checked(String name, String cmd) {
                           conclusion: 'FAILURE'
             failed = true
         }
+    # FlowInterruptedException is what Jenkins throws when someone aborts the build. 
+    # The check is closed as CANCELED so it doesn’t stay “in progress”, and throw e rethrows the exception so the abort still stops the pipeline.
     } catch (org.jenkinsci.plugins.workflow.steps.FlowInterruptedException e) {
         publishChecks name: name, title: name,
                       summary: 'Aborted', conclusion: 'CANCELED'
         throw e
+    # Catches any other unplanned error (for example readFile failing or a Groovy error),
+    # closes the check as FAILURE with the error message, and rethrows it.
     } catch (e) {
         publishChecks name: name, title: name,
                       summary: "Unexpected error: ${e.message}", conclusion: 'FAILURE'
         throw e
     }
 
+    # returnStatus: true hid the failure, so this line aises an error that marks the stage as failed
     if (failed) {
         error("${name} failed with exit code ${rc}")
     }
